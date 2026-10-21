@@ -5,13 +5,17 @@ title: "feat: "
 labels: enhancement
 ---
 
+## Tarea
+
+<!-- ID de docs/TAREAS.md, p. ej. F1, B2, I3 -->
+
 ## Descripción
 
 ## Área
 
-- [ ] Frontend (Persona 1)
-- [ ] Backend (Persona 2)
-- [ ] Integración / panel institucional (Persona 3)
+- [ ] Frontend — Brayan Garzón
+- [ ] Backend — Camilo Clavijo
+- [ ] Integración / panel institucional — Camila
 
 ## Criterios de aceptación
 
