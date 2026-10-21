@@ -15,7 +15,7 @@
 
 Ramas iniciales de la Fase 00:
 
-- `chore/repository-foundation` — estructura, CI y documentación (Camila).
+- `chore/repository-foundation` — estructura, CI y documentación (Elizabeth).
 - `feat/frontend-foundation` — trabajo de frontend sobre la base (Brayan Garzón).
 - `feat/backend-foundation` — trabajo de backend sobre la base (Camilo Clavijo).
 

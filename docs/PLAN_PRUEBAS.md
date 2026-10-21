@@ -7,7 +7,7 @@
 | Unitarias / componentes (frontend) | Vitest + Testing Library | `frontend/src/**/*.test.tsx` | Brayan Garzón |
 | Unitarias / API (backend) | Pytest + TestClient | `backend/tests/` | Camilo Clavijo |
 | Migraciones | Alembic (upgrade/downgrade en CI) | `.github/workflows/ci.yml` | Camilo Clavijo |
-| Extremo a extremo | Pendiente (propuesta: Playwright) | Pendiente | Camila |
+| Extremo a extremo | Pendiente (propuesta: Playwright) | Pendiente | Elizabeth |
 | Análisis estático | ESLint, Prettier, `tsc`, Ruff | CI | Todos |
 
 ## Pruebas existentes (Fase 00)
