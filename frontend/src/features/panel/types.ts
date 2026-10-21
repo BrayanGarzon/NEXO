@@ -80,3 +80,29 @@ export type DatosServicio = Pick<
 >
 
 export type DatosFuente = Omit<Fuente, 'id'>
+
+/** Fuente junto con el servicio al que respalda (vista Fuentes). */
+export interface FuenteConServicio extends Fuente {
+  servicioId: string
+  servicioNombre: string
+  servicioEstado: EstadoServicio
+}
+
+/*
+ * Personal institucional con acceso al panel. Nunca personas jóvenes ni usuarias de la web
+ * pública. Roles PROVISIONALES hasta aprobar el documento de autenticación y roles (tarea I5).
+ */
+export type RolUsuario = 'administrador' | 'editor' | 'revisor'
+
+export interface UsuarioInstitucional {
+  id: string
+  nombre: string
+  correo: string
+  institucion: string
+  rol: RolUsuario
+  activo: boolean
+  /** Fecha y hora ISO; `null` si aún no ha aceptado la invitación. */
+  ultimoAcceso: string | null
+}
+
+export type DatosUsuario = Pick<UsuarioInstitucional, 'nombre' | 'correo' | 'institucion' | 'rol'>

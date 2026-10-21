@@ -1,13 +1,24 @@
 import { hoyIso, sumarDias } from '../fechas'
 import { crearDatosSinteticos, USUARIO_DEMO, type DatosPanel } from '../mocks/datosSinteticos'
-import { motivoBloqueo, PLAZO_VIGENCIA_DIAS, transicionesDesde } from '../reglas'
+import {
+  aplicarConfiguracion,
+  CONFIGURACION_POR_DEFECTO,
+  configuracionActual,
+  motivoBloqueo,
+  transicionesDesde,
+  type ConfiguracionPanel,
+} from '../reglas'
 import type {
   AccionRevision,
   DatosFuente,
   DatosServicio,
   EstadoServicio,
+  DatosUsuario,
   EventoRevision,
+  FuenteConServicio,
+  RolUsuario,
   ServicioAdmin,
+  UsuarioInstitucional,
 } from '../types'
 
 /*
@@ -23,10 +34,11 @@ const LATENCIA_SIMULADA_MS = 250
 let datos: DatosPanel = crearDatosSinteticos()
 let secuencia = 0
 
-/** Restaura los datos sintéticos iniciales (pruebas). */
+/** Restaura los datos sintéticos y la configuración iniciales (pruebas y Configuración). */
 export function reiniciarDatosPanel(hoy?: Date) {
   datos = crearDatosSinteticos(hoy)
   secuencia = 0
+  aplicarConfiguracion(CONFIGURACION_POR_DEFECTO)
 }
 
 export class ErrorPanel extends Error {}
@@ -147,7 +159,7 @@ export function cambiarEstado(
     if (a === 'publicado') {
       const hoy = hoyIso()
       servicio.ultimaRevision = hoy
-      servicio.vigenteHasta = sumarDias(hoy, PLAZO_VIGENCIA_DIAS)
+      servicio.vigenteHasta = sumarDias(hoy, configuracionActual().plazoVigenciaDias)
     }
     registrar(servicio, transicion.accion, anterior, comentario.trim() || null)
     return servicio
@@ -201,4 +213,145 @@ export function cargarObservatorio(
         .map((evento) => ({ ...evento, servicioNombre: nombres.get(evento.servicioId) ?? '' })),
     }
   }, opciones)
+}
+
+// ---------- Fuentes ----------
+
+/** Todas las fuentes del catálogo con el servicio al que respaldan. */
+export function listarFuentes(opciones?: Opciones): Promise<FuenteConServicio[]> {
+  return responder(
+    () =>
+      datos.servicios
+        .flatMap((servicio) =>
+          servicio.fuentes.map((fuente) => ({
+            ...fuente,
+            servicioId: servicio.id,
+            servicioNombre: servicio.nombre,
+            servicioEstado: servicio.estado,
+          })),
+        )
+        .sort((a, b) => a.fechaConsulta.localeCompare(b.fechaConsulta)),
+    opciones,
+  )
+}
+
+/** Registra que la fuente se volvió a consultar hoy (`PATCH …/fuentes/{id}`). */
+export function marcarFuenteConsultada(servicioId: string, fuenteId: string) {
+  return responder(() => {
+    const servicio = buscar(servicioId)
+    const fuente = servicio.fuentes.find((item) => item.id === fuenteId)
+    if (!fuente) throw new ErrorPanel('La fuente no existe.')
+    fuente.fechaConsulta = hoyIso()
+    registrar(
+      servicio,
+      'fuente_actualizada',
+      servicio.estado,
+      `Fuente consultada: ${fuente.titulo}`,
+    )
+    return {
+      ...fuente,
+      servicioId,
+      servicioNombre: servicio.nombre,
+      servicioEstado: servicio.estado,
+    }
+  })
+}
+
+// ---------- Usuarios institucionales ----------
+
+const CORREO_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+export function listarUsuarios(opciones?: Opciones): Promise<UsuarioInstitucional[]> {
+  return responder(
+    () => [...datos.usuarios].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es')),
+    opciones,
+  )
+}
+
+function buscarUsuario(id: string) {
+  const usuario = datos.usuarios.find((item) => item.id === id)
+  if (!usuario) throw new ErrorPanel('El usuario no existe.')
+  return usuario
+}
+
+/** Debe quedar siempre al menos un administrador activo. */
+function comprobarAdministradores(cambiado: UsuarioInstitucional) {
+  const quedan = datos.usuarios.some(
+    (usuario) => usuario.activo && usuario.rol === 'administrador' && usuario !== cambiado,
+  )
+  if (!quedan) throw new ErrorPanel('Debe quedar al menos un administrador activo.')
+}
+
+export function invitarUsuario(nuevo: DatosUsuario): Promise<UsuarioInstitucional> {
+  return responder(() => {
+    const correo = nuevo.correo.trim().toLowerCase()
+    if (!nuevo.nombre.trim() || !nuevo.institucion.trim()) {
+      throw new ErrorPanel('El nombre y la institución son obligatorios.')
+    }
+    if (!CORREO_VALIDO.test(correo)) throw new ErrorPanel('Escribe un correo válido.')
+    if (datos.usuarios.some((usuario) => usuario.correo === correo)) {
+      throw new ErrorPanel('Ya existe un usuario con ese correo.')
+    }
+    const usuario: UsuarioInstitucional = {
+      id: nuevoId('us'),
+      nombre: nuevo.nombre.trim(),
+      correo,
+      institucion: nuevo.institucion.trim(),
+      rol: nuevo.rol,
+      activo: true,
+      ultimoAcceso: null,
+    }
+    datos.usuarios.push(usuario)
+    return usuario
+  })
+}
+
+export function cambiarRolUsuario(id: string, rol: RolUsuario): Promise<UsuarioInstitucional> {
+  return responder(() => {
+    const usuario = buscarUsuario(id)
+    if (usuario.rol === 'administrador' && rol !== 'administrador')
+      comprobarAdministradores(usuario)
+    usuario.rol = rol
+    return usuario
+  })
+}
+
+export function cambiarActivoUsuario(id: string, activo: boolean): Promise<UsuarioInstitucional> {
+  return responder(() => {
+    const usuario = buscarUsuario(id)
+    if (!activo && usuario.rol === 'administrador') comprobarAdministradores(usuario)
+    usuario.activo = activo
+    return usuario
+  })
+}
+
+// ---------- Configuración ----------
+
+export const LIMITES_CONFIGURACION: Record<keyof ConfiguracionPanel, [number, number]> = {
+  plazoVigenciaDias: [30, 730],
+  antiguedadMaximaFuenteDias: [30, 1095],
+  avisoPorVencerDias: [1, 90],
+  revisionProlongadaDias: [1, 90],
+}
+
+export function obtenerConfiguracion(opciones?: Opciones): Promise<ConfiguracionPanel> {
+  return responder(() => configuracionActual(), opciones)
+}
+
+export function guardarConfiguracion(nueva: ConfiguracionPanel): Promise<ConfiguracionPanel> {
+  return responder(() => {
+    for (const [clave, [minimo, maximo]] of Object.entries(LIMITES_CONFIGURACION)) {
+      const valor = nueva[clave as keyof ConfiguracionPanel]
+      if (!Number.isInteger(valor) || valor < minimo || valor > maximo) {
+        throw new ErrorPanel(
+          `Revisa los valores: deben ser días enteros entre ${minimo} y ${maximo}.`,
+        )
+      }
+    }
+    if (nueva.avisoPorVencerDias >= nueva.plazoVigenciaDias) {
+      throw new ErrorPanel('El aviso «por vencer» debe ser menor que el plazo de vigencia.')
+    }
+    aplicarConfiguracion(nueva)
+    return configuracionActual()
+  })
 }

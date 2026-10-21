@@ -1,10 +1,14 @@
 import { Navigate, type RouteObject } from 'react-router'
 import { RouteErrorBoundary } from '../../components/RouteErrorBoundary'
+import { CategoriasPage } from './categorias/CategoriasPage'
+import { ConfiguracionPage } from './configuracion/ConfiguracionPage'
+import { FuentesPage } from './fuentes/FuentesPage'
 import { ServicioDetallePage } from './fuente-viva/ServicioDetallePage'
 import { ServicioFormPage } from './fuente-viva/ServicioFormPage'
 import { ServiciosPage } from './fuente-viva/ServiciosPage'
 import { ObservatorioPage } from './observatorio/ObservatorioPage'
 import { PanelLayout } from './PanelLayout'
+import { UsuariosPage } from './usuarios/UsuariosPage'
 
 /*
  * Punto de entrada del panel institucional (Fuente Viva y Observatorio).
@@ -25,6 +29,10 @@ export const panelRoutes: RouteObject = {
     { path: 'servicios/nuevo', element: <ServicioFormPage /> },
     { path: 'servicios/:id', element: <ServicioDetallePage /> },
     { path: 'servicios/:id/editar', element: <ServicioFormPage /> },
+    { path: 'categorias', element: <CategoriasPage /> },
+    { path: 'fuentes', element: <FuentesPage /> },
+    { path: 'usuarios', element: <UsuariosPage /> },
+    { path: 'configuracion', element: <ConfiguracionPage /> },
     { path: '*', element: <Navigate to="observatorio" replace /> },
   ],
 }

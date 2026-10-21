@@ -67,16 +67,23 @@ a.panel-nav__item:hover {
   font-weight: var(--font-weight-bold);
 }
 
-.panel-nav__item--disabled {
-  color: color-mix(in srgb, var(--color-text-inverse) 60%, transparent);
-  cursor: default;
+/* Botón «Más»: solo existe en pantallas pequeñas */
+.panel-nav__more {
+  display: none;
 }
 
-.panel-nav__soon {
-  margin-left: auto;
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+button.panel-nav__item {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
+button.panel-nav__item:hover {
+  background: color-mix(in srgb, var(--color-text-inverse) 10%, transparent);
+  color: var(--color-text-inverse);
 }
 
 .panel-sidebar__note {
@@ -960,13 +967,35 @@ a.panel-nav__item:hover {
     grid-area: nav;
   }
 
+  /* Cuatro pestañas: Dashboard, Servicios, Verificación y «Más» */
   .panel-sidebar__nav ul {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-1);
   }
 
-  .panel-nav__item--disabled,
-  .panel-sidebar__nav li:has(.panel-nav__item--disabled),
+  .panel-nav__more {
+    display: block;
+  }
+
+  .panel-nav__secondary {
+    display: none;
+    order: 1;
+    grid-column: span 2;
+  }
+
+  .panel-sidebar__nav--open .panel-nav__secondary {
+    display: block;
+  }
+
+  .panel-sidebar__nav--open .panel-nav__secondary .panel-nav__item {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: var(--space-2);
+    padding-inline: var(--space-3);
+    font-size: var(--font-size-sm);
+  }
+
   .panel-sidebar__note,
   .panel-header__note {
     display: none;
@@ -983,6 +1012,11 @@ a.panel-nav__item:hover {
 }
 
 @media (max-width: 40rem) {
+  button.panel-nav__item {
+    font-size: var(--font-size-xs);
+    line-height: inherit;
+  }
+
   .panel-main {
     gap: var(--space-4);
     padding: var(--space-5) var(--space-4) var(--space-7);
@@ -1164,5 +1198,220 @@ a.panel-nav__item:hover {
     position: absolute;
     top: var(--space-4);
     right: var(--space-3);
+  }
+}
+
+/* ---------- Filtro por categoría (Fuente Viva) ---------- */
+
+.panel-toolbar__select {
+  flex: 0 1 14rem;
+}
+
+.panel-toolbar__select select {
+  border-radius: var(--radius-pill);
+}
+
+/* ---------- Categorías ---------- */
+
+.panel-category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.panel-category {
+  justify-items: start;
+}
+
+.panel-category__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.panel-category__head .panel-cat-icon {
+  margin-right: 0;
+}
+
+.panel-category__total {
+  margin-left: auto;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+.panel-category__states {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2) var(--space-4);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--font-size-sm);
+}
+
+.panel-category__states li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.panel-category__states strong {
+  margin-left: auto;
+}
+
+.panel-category__quality {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+/* ---------- Usuarios ---------- */
+
+.panel-person {
+  display: grid;
+}
+
+.panel-person__name {
+  font-weight: var(--font-weight-semibold);
+}
+
+.panel-person__mail {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-regular);
+  overflow-wrap: anywhere;
+}
+
+.panel-select {
+  min-height: 2.25rem;
+  padding: var(--space-1) var(--space-3);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.panel-roles {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding-left: var(--space-5);
+  font-size: var(--font-size-sm);
+}
+
+.panel-table--matrix td {
+  text-align: center;
+}
+
+.panel-check {
+  color: var(--color-success);
+  font-weight: var(--font-weight-bold);
+}
+
+/* ---------- Pantallas pequeñas: vistas nuevas ---------- */
+
+@media (max-width: 60rem) {
+  .panel-table__cell-action {
+    grid-column: 1 / -1;
+  }
+
+  .panel-table--cards .panel-select {
+    width: 100%;
+  }
+}
+
+@media (max-width: 40rem) {
+  .panel-toolbar__select {
+    flex-basis: 100%;
+  }
+
+  .panel-category-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Tablas cuyo texto puede pasar a otra línea (Fuentes, Usuarios) */
+.panel-table--wrap :is(th, td) {
+  white-space: normal;
+}
+
+.panel-table--wrap .panel-table__cell-action {
+  white-space: nowrap;
+}
+
+.panel-cell-stack {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-1);
+}
+
+@media (max-width: 40rem) {
+  /* Botones con textos largos: pasan a dos líneas en lugar de desbordar */
+  .panel-main .button {
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+  }
+
+  /* Permisos: cada acción con los roles que la tienen, en lugar de una matriz ancha */
+  .panel-table--matrix thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .panel-table--matrix,
+  .panel-table--matrix tbody,
+  .panel-table--matrix tr {
+    display: block;
+  }
+
+  .panel-table--matrix tr {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-2);
+    padding: var(--space-3) 0;
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .panel-table--matrix tr :is(th, td) {
+    padding: 0;
+    border: 0;
+  }
+
+  .panel-table--matrix tbody th {
+    flex-basis: 100%;
+  }
+
+  .panel-table--matrix td {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 0.15rem var(--space-2);
+    border-radius: var(--radius-pill);
+    background: var(--color-success-bg);
+    color: var(--color-success);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .panel-table--matrix td::before {
+    content: attr(data-label);
+  }
+
+  .panel-table--matrix td.panel-matrix__no {
+    display: none;
   }
 }

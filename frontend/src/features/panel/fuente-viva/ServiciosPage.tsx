@@ -5,7 +5,8 @@ import { Icon } from '../../../components/Icon'
 import { SearchField } from '../../../components/SearchField'
 import { StatusMessage } from '../../../components/StatusMessage'
 import { Chip } from '../../../components/Tag'
-import { categories } from '../../../content/categories'
+import { categories, categoryOrder } from '../../../content/categories'
+import type { ServiceCategory } from '../../../types/catalog'
 import { EstadoTag } from '../EstadoTag'
 import { formatearFecha } from '../fechas'
 import { PanelHeader } from '../PanelHeader'
@@ -20,17 +21,23 @@ function esEstado(valor: string | null): valor is EstadoServicio {
   return estados.includes(valor as EstadoServicio)
 }
 
+function esCategoria(valor: string | null): valor is ServiceCategory {
+  return categoryOrder.includes(valor as ServiceCategory)
+}
+
 /** Fuente Viva — listado de servicios (panel 06 del moodboard). */
 export function ServiciosPage() {
   const [params, setParams] = useSearchParams()
   const estadoParam = params.get('estado')
   const estado = esEstado(estadoParam) ? estadoParam : null
   const consulta = params.get('q') ?? ''
+  const categoriaParam = params.get('categoria')
+  const categoria = esCategoria(categoriaParam) ? categoriaParam : null
 
   const cargar = useCallback((signal: AbortSignal) => listarServicios({ signal }), [])
   const { state, reintentar } = useCarga(cargar)
 
-  function cambiarFiltro(clave: 'estado' | 'q', valor: string | null) {
+  function cambiarFiltro(clave: 'estado' | 'q' | 'categoria', valor: string | null) {
     setParams(
       (actuales) => {
         const siguientes = new URLSearchParams(actuales)
@@ -43,8 +50,9 @@ export function ServiciosPage() {
   }
 
   const servicios = state.status === 'ready' ? state.data : []
-  const visibles = filtrarServicios(servicios, estado, consulta)
-  const conteo = (valor: EstadoServicio | null) => filtrarServicios(servicios, valor, '').length
+  const visibles = filtrarServicios(servicios, { estado, categoria, consulta })
+  const conteo = (valor: EstadoServicio | null) =>
+    filtrarServicios(servicios, { estado: valor, categoria }).length
 
   return (
     <>
@@ -58,6 +66,23 @@ export function ServiciosPage() {
             value={consulta}
             onChange={(valor) => cambiarFiltro('q', valor)}
           />
+        </div>
+        <div className="panel-field panel-toolbar__select">
+          <label htmlFor="filtro-categoria" className="visually-hidden">
+            Filtrar por categoría
+          </label>
+          <select
+            id="filtro-categoria"
+            value={categoria ?? ''}
+            onChange={(event) => cambiarFiltro('categoria', event.target.value || null)}
+          >
+            <option value="">Todas las categorías</option>
+            {categoryOrder.map((valor) => (
+              <option key={valor} value={valor}>
+                {categories[valor].label}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="panel-toolbar__filters" role="group" aria-label="Filtrar por estado">
           <Chip selected={estado === null} onClick={() => cambiarFiltro('estado', null)}>

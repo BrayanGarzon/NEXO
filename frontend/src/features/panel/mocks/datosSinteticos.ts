@@ -6,6 +6,7 @@ import type {
   FechaIso,
   Fuente,
   ServicioAdmin,
+  UsuarioInstitucional,
 } from '../types'
 
 /*
@@ -399,7 +400,68 @@ function fechaHora(fecha: FechaIso, hora: number) {
 export interface DatosPanel {
   servicios: ServicioAdmin[]
   eventos: EventoRevision[]
+  usuarios: UsuarioInstitucional[]
 }
+
+/** Personal institucional de ejemplo (correos en example.org, que no existe). */
+const usuariosSemilla: (Omit<UsuarioInstitucional, 'ultimoAcceso'> & {
+  accesoHaceDias: number | null
+})[] = [
+  {
+    id: 'us-maria',
+    nombre: USUARIO_DEMO,
+    correo: 'maria.gonzalez@example.org',
+    institucion: 'Secretaría de Juventud (ejemplo)',
+    rol: 'administrador',
+    activo: true,
+    accesoHaceDias: 0,
+  },
+  {
+    id: 'us-andres',
+    nombre: 'Andrés Rojas',
+    correo: 'andres.rojas@example.org',
+    institucion: 'Secretaría de Salud (ejemplo)',
+    rol: 'editor',
+    activo: true,
+    accesoHaceDias: 1,
+  },
+  {
+    id: 'us-laura',
+    nombre: 'Laura Méndez',
+    correo: 'laura.mendez@example.org',
+    institucion: 'Secretaría de Educación (ejemplo)',
+    rol: 'revisor',
+    activo: true,
+    accesoHaceDias: 3,
+  },
+  {
+    id: 'us-jorge',
+    nombre: 'Jorge Castaño',
+    correo: 'jorge.castano@example.org',
+    institucion: 'Instituto de deporte (ejemplo)',
+    rol: 'editor',
+    activo: true,
+    accesoHaceDias: 12,
+  },
+  {
+    id: 'us-paula',
+    nombre: 'Paula Herrera',
+    correo: 'paula.herrera@example.org',
+    institucion: 'Casa de la cultura (ejemplo)',
+    rol: 'editor',
+    activo: false,
+    accesoHaceDias: 95,
+  },
+  {
+    id: 'us-camila',
+    nombre: 'Camila Ortiz',
+    correo: 'camila.ortiz@example.org',
+    institucion: 'Agencia de empleo (ejemplo)',
+    rol: 'revisor',
+    activo: true,
+    accesoHaceDias: null,
+  },
+]
 
 export function crearDatosSinteticos(hoy: Date = new Date()): DatosPanel {
   const hoyIso = aFechaIso(hoy)
@@ -443,5 +505,10 @@ export function crearDatosSinteticos(hoy: Date = new Date()): DatosPanel {
     }
   })
 
-  return { servicios, eventos }
+  const usuarios = usuariosSemilla.map(({ accesoHaceDias, ...usuario }) => ({
+    ...usuario,
+    ultimoAcceso: accesoHaceDias === null ? null : fechaHora(sumarDias(hoyIso, -accesoHaceDias), 8),
+  }))
+
+  return { servicios, eventos, usuarios }
 }

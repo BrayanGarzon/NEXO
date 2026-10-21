@@ -87,7 +87,11 @@ test.describe('Panel institucional', () => {
   test('menú del panel adaptado al tamaño', async ({ page }) => {
     await page.goto('/panel/observatorio')
     const menu = page.getByRole('navigation', { name: 'Panel institucional' })
-    for (const nombre of ['Dashboard', 'Servicios', 'Verificación']) {
+    const principales = ['Dashboard', 'Servicios', 'Verificación']
+    const secundarias = ['Categorías', 'Fuentes', 'Usuarios', 'Configuración']
+    const mas = menu.getByRole('button', { name: 'Más' })
+
+    for (const nombre of principales) {
       const enlace = menu.getByRole('link', { name: nombre })
       await expectCompletoEnPantalla(enlace)
       if (esPantallaPequena(page)) {
@@ -95,9 +99,42 @@ test.describe('Panel institucional', () => {
         expect((await enlace.boundingBox())!.height).toBeGreaterThanOrEqual(44)
       }
     }
-    const proximamente = menu.getByText('Categorías')
-    if (esPantallaPequena(page)) await expect(proximamente).toBeHidden()
-    else await expect(proximamente).toBeVisible()
+
+    if (esPantallaPequena(page)) {
+      // En celular y tablet las vistas secundarias están dentro de «Más»
+      await expectCompletoEnPantalla(mas)
+      expect((await mas.boundingBox())!.height).toBeGreaterThanOrEqual(44)
+      for (const nombre of secundarias) {
+        await expect(menu.getByRole('link', { name: nombre })).toBeHidden()
+      }
+      await mas.click()
+      await expect(mas).toHaveAttribute('aria-expanded', 'true')
+    } else {
+      await expect(mas).toBeHidden()
+    }
+
+    for (const nombre of secundarias) {
+      const enlace = menu.getByRole('link', { name: nombre })
+      await expectCompletoEnPantalla(enlace)
+      if (esPantallaPequena(page)) {
+        expect((await enlace.boundingBox())!.height).toBeGreaterThanOrEqual(44)
+      }
+    }
+    await comprobarSinDesbordes(page)
+
+    // Al elegir una vista, el menú se cierra y la vista queda marcada
+    await menu.getByRole('link', { name: 'Fuentes' }).click()
+    await expect(page).toHaveURL(/\/panel\/fuentes$/)
+    if (esPantallaPequena(page)) {
+      await expect(mas).toHaveAttribute('aria-expanded', 'false')
+      await expect(mas).toHaveClass(/panel-nav__item--active/)
+    } else {
+      await expect(menu.getByRole('link', { name: 'Fuentes' })).toHaveAttribute(
+        'aria-current',
+        'page',
+      )
+    }
+    await adjuntarCaptura(page, 'menu')
   })
 
   test('Observatorio cabe y muestra todos sus bloques', async ({ page }) => {
@@ -184,5 +221,95 @@ test.describe('Panel institucional', () => {
     }
     await expectCompletoEnPantalla(page.getByRole('button', { name: 'Crear borrador' }))
     await adjuntarCaptura(page, 'formulario')
+  })
+
+  test('Categorías: tarjetas completas y acceso a sus servicios', async ({ page }) => {
+    await page.goto('/panel/categorias')
+    const lista = page.getByRole('list', { name: 'Categorías del catálogo' })
+    await expect(lista).toBeVisible()
+    await comprobarSinDesbordes(page)
+    for (const nombre of ['Salud mental', 'Recreación']) {
+      await expectCompletoEnPantalla(lista.getByRole('heading', { name: nombre }))
+    }
+    const verCultura = page.getByRole('link', { name: 'Ver servicios de Cultura' })
+    await expectCompletoEnPantalla(verCultura)
+    await adjuntarCaptura(page, 'categorias')
+
+    await verCultura.click()
+    await expect(page).toHaveURL(/categoria=cultura/)
+    await expectCompletoEnPantalla(page.getByLabel('Filtrar por categoría'))
+    await expect(page.getByRole('link', { name: 'Casa de la Juventud', exact: true })).toBeVisible()
+    await comprobarSinDesbordes(page)
+  })
+
+  test('Fuentes: listado, filtros y acción completos', async ({ page }) => {
+    await page.goto('/panel/fuentes')
+    await expect(page.getByRole('list', { name: 'Resumen de fuentes' })).toBeVisible()
+    await comprobarSinDesbordes(page)
+
+    const fila = page.getByRole('row').filter({ hasText: 'Boletín de la agencia (ejemplo)' })
+    await expectCompletoEnPantalla(fila.getByRole('link', { name: 'Ruta de Empleo Joven' }))
+    await expectCompletoEnPantalla(fila.getByText('Antigua'))
+    const marcar = fila.getByRole('button', { name: /como consultada hoy/ })
+    await expectCompletoEnPantalla(marcar)
+    await adjuntarCaptura(page, 'fuentes')
+
+    await marcar.click()
+    await expect(page.getByText('quedó consultada hoy.')).toBeVisible()
+    await page
+      .getByRole('group', { name: 'Filtrar por antigüedad' })
+      .getByRole('button', { name: 'Antiguas' })
+      .click()
+    await expect(page.getByText('No hay fuentes con esos filtros')).toBeVisible()
+    await comprobarSinDesbordes(page)
+  })
+
+  test('Usuarios: listado, invitación y permisos completos', async ({ page }) => {
+    await page.goto('/panel/usuarios')
+    await expect(page.getByRole('region', { name: 'Listado de usuarios' })).toBeVisible()
+    await comprobarSinDesbordes(page)
+
+    const fila = page.getByRole('row').filter({ hasText: 'Laura Méndez' })
+    await expectCompletoEnPantalla(fila.getByText('laura.mendez@example.org'))
+    await expectCompletoEnPantalla(fila.getByLabel('Rol de Laura Méndez'))
+    await expectCompletoEnPantalla(fila.getByRole('button', { name: 'Desactivar a Laura Méndez' }))
+    await expectCompletoEnPantalla(page.getByRole('columnheader', { name: 'Revisión' }))
+
+    await page.getByRole('button', { name: 'Invitar usuario' }).click()
+    const formulario = page.getByRole('form', { name: 'Invitar usuario' })
+    await expectCompletoEnPantalla(formulario.getByLabel('Correo institucional *'))
+    await formulario.getByLabel('Nombre *').fill('Ana Pérez')
+    await formulario.getByLabel('Correo institucional *').fill('ana.perez@example.org')
+    await formulario.getByLabel('Institución *').fill('Biblioteca (ejemplo)')
+    await expectCompletoEnPantalla(formulario.getByRole('button', { name: 'Registrar invitación' }))
+    await formulario.getByRole('button', { name: 'Registrar invitación' }).click()
+    await expect(page.getByText(/Invitación registrada/)).toBeVisible()
+    await comprobarSinDesbordes(page)
+    await adjuntarCaptura(page, 'usuarios')
+  })
+
+  test('Configuración: formulario completo y guardado', async ({ page }) => {
+    await page.goto('/panel/configuracion')
+    const aviso = page.getByLabel('Aviso «por vencer» (días)')
+    await expect(aviso).toBeVisible()
+    await comprobarSinDesbordes(page)
+    for (const campo of [
+      'Vigencia de un servicio publicado (días)',
+      'Antigüedad máxima de una fuente (días)',
+      'Aviso «por vencer» (días)',
+      'Revisión prolongada (días)',
+    ]) {
+      await expectCompletoEnPantalla(page.getByLabel(campo))
+    }
+    await aviso.fill('45')
+    const guardar = page.getByRole('button', { name: 'Guardar configuración' })
+    await expectCompletoEnPantalla(guardar)
+    await guardar.click()
+    await expect(page.getByText('Configuración guardada.')).toBeVisible()
+    await expectCompletoEnPantalla(
+      page.getByRole('button', { name: 'Restablecer datos de demostración' }),
+    )
+    await comprobarSinDesbordes(page)
+    await adjuntarCaptura(page, 'configuracion')
   })
 })

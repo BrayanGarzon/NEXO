@@ -9,7 +9,7 @@ import { categories } from '../../../content/categories'
 import { EstadoTag } from '../EstadoTag'
 import { formatearFechaHora, hoyIso } from '../fechas'
 import { PanelHeader } from '../PanelHeader'
-import { accionLabels, AVISO_POR_VENCER_DIAS } from '../reglas'
+import { accionLabels, configuracionActual } from '../reglas'
 import { cargarObservatorio, type DatosObservatorio } from '../services/panelData'
 import type { EstadoServicio } from '../types'
 import { useCarga } from '../useCarga'
@@ -173,7 +173,8 @@ function Tablero({ datos }: { datos: DatosObservatorio }) {
               <strong>{vigencia.vigentes}</strong> Vigentes
             </li>
             <li className="panel-stat panel-stat--pendiente">
-              <strong>{vigencia.porVencer}</strong> Por vencer ({AVISO_POR_VENCER_DIAS} días)
+              <strong>{vigencia.porVencer}</strong> Por vencer (
+              {configuracionActual().avisoPorVencerDias} días)
             </li>
             <li className="panel-stat panel-stat--sin">
               <strong>{vigencia.vencidos}</strong> Vencidos

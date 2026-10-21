@@ -1,13 +1,7 @@
 import { categoryOrder } from '../../../content/categories'
 import type { ServiceCategory } from '../../../types/catalog'
 import { diasEntre } from '../fechas'
-import {
-  AVISO_POR_VENCER_DIAS,
-  estados,
-  fuenteVigente,
-  REVISION_PROLONGADA_DIAS,
-  tieneFuenteVerificable,
-} from '../reglas'
+import { configuracionActual, estados, fuenteVigente, tieneFuenteVerificable } from '../reglas'
 import type { EstadoServicio, FechaIso, ServicioAdmin } from '../types'
 
 /*
@@ -77,7 +71,7 @@ export function calcularVigencia(servicios: ServicioAdmin[], hoy: FechaIso): Vig
   publicados(servicios).forEach((servicio) => {
     const restantes = servicio.vigenteHasta ? diasEntre(hoy, servicio.vigenteHasta) : -1
     if (restantes < 0) vigencia.vencidos += 1
-    else if (restantes <= AVISO_POR_VENCER_DIAS) vigencia.porVencer += 1
+    else if (restantes <= configuracionActual().avisoPorVencerDias) vigencia.porVencer += 1
     else vigencia.vigentes += 1
   })
   return vigencia
@@ -144,7 +138,7 @@ const detectores: Record<TipoIncidencia, (servicio: ServicioAdmin, hoy: FechaIso
   campos_incompletos: camposIncompletos,
   en_revision_prolongada: (servicio, hoy) =>
     servicio.estado === 'en_revision' &&
-    diasEntre(servicio.actualizadoEn, hoy) > REVISION_PROLONGADA_DIAS,
+    diasEntre(servicio.actualizadoEn, hoy) > configuracionActual().revisionProlongadaDias,
 }
 
 /** Incidencias de los servicios activos (los no vigentes ya están fuera del catálogo). */

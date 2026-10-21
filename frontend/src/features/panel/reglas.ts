@@ -5,12 +5,37 @@ import type { AccionRevision, EstadoServicio, FechaIso, ServicioAdmin, TipoFuent
  * Reglas del flujo de revisión (docs/API_CONTRACTS.md §4.1).
  *
  * Los plazos son PROVISIONALES hasta resolver la decisión pendiente 9 (vigencia y antigüedad
- * de fuentes). Están aquí para cambiarlos en un solo lugar.
+ * de fuentes). Se pueden ajustar desde la vista Configuración; las funciones de este módulo
+ * y los indicadores del Observatorio leen siempre la configuración vigente.
  */
-export const PLAZO_VIGENCIA_DIAS = 180
-export const ANTIGUEDAD_MAXIMA_FUENTE_DIAS = 365
-export const AVISO_POR_VENCER_DIAS = 30
-export const REVISION_PROLONGADA_DIAS = 14
+export interface ConfiguracionPanel {
+  /** Días que un servicio publicado se considera vigente. */
+  plazoVigenciaDias: number
+  /** Días tras los cuales una fuente se considera antigua. */
+  antiguedadMaximaFuenteDias: number
+  /** Días antes del vencimiento en que un servicio aparece «por vencer». */
+  avisoPorVencerDias: number
+  /** Días en revisión a partir de los cuales la revisión se considera prolongada. */
+  revisionProlongadaDias: number
+}
+
+export const CONFIGURACION_POR_DEFECTO: ConfiguracionPanel = {
+  plazoVigenciaDias: 180,
+  antiguedadMaximaFuenteDias: 365,
+  avisoPorVencerDias: 30,
+  revisionProlongadaDias: 14,
+}
+
+let configuracion: ConfiguracionPanel = { ...CONFIGURACION_POR_DEFECTO }
+
+export function configuracionActual(): ConfiguracionPanel {
+  return configuracion
+}
+
+/** Solo la usa la capa de datos (services/panelData.ts). */
+export function aplicarConfiguracion(nueva: ConfiguracionPanel) {
+  configuracion = { ...nueva }
+}
 
 export const estados: EstadoServicio[] = ['borrador', 'en_revision', 'publicado', 'no_vigente']
 
@@ -63,7 +88,7 @@ export function transicionesDesde(estado: EstadoServicio): Transicion[] {
 
 /** Una fuente cuenta como verificable si se consultó dentro del plazo de antigüedad. */
 export function fuenteVigente(fechaConsulta: FechaIso, hoy: FechaIso): boolean {
-  return diasEntre(fechaConsulta, hoy) <= ANTIGUEDAD_MAXIMA_FUENTE_DIAS
+  return diasEntre(fechaConsulta, hoy) <= configuracion.antiguedadMaximaFuenteDias
 }
 
 export function tieneFuenteVerificable(servicio: ServicioAdmin, hoy: FechaIso): boolean {
