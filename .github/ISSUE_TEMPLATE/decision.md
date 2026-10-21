@@ -13,6 +13,6 @@ labels: decision
 
 ## Aprobaciones
 
-- [ ] Frontend
-- [ ] Backend
-- [ ] Integración
+- [ ] Frontend — Brayan Garzón
+- [ ] Backend — Camilo Clavijo
+- [ ] Integración — Camila

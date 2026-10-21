@@ -150,7 +150,7 @@ autogeneración los detecte. Ver [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
 
 ```text
 .
-├── frontend/                 # React + Vite (Persona 1)
+├── frontend/                 # React + Vite (Brayan Garzón)
 │   └── src/
 │       ├── app/              # App, router y definición de rutas
 │       ├── components/       # componentes compartidos
@@ -160,7 +160,7 @@ autogeneración los detecte. Ver [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
 │       ├── types/            # tipos compartidos (espejo de los contratos)
 │       ├── styles/           # tokens de diseño y estilos globales
 │       └── test/             # configuración de pruebas
-├── backend/                  # FastAPI (Persona 2)
+├── backend/                  # FastAPI (Camilo Clavijo)
 │   ├── app/
 │   │   ├── api/routes/       # endpoints HTTP
 │   │   ├── core/             # configuración
@@ -189,6 +189,7 @@ requests. **No se desarrolla directamente sobre `main`.**
 - Contratos de integración: [`docs/API_CONTRACTS.md`](docs/API_CONTRACTS.md)
 - Guía visual: [`docs/DISENO_VISUAL.md`](docs/DISENO_VISUAL.md)
 - Plan de pruebas: [`docs/PLAN_PRUEBAS.md`](docs/PLAN_PRUEBAS.md)
+- Tareas asignadas por integrante: [`docs/TAREAS.md`](docs/TAREAS.md)
 
 ## Pendientes de la Fase 00
 
