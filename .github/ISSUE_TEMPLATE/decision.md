@@ -15,4 +15,4 @@ labels: decision
 
 - [ ] Frontend — Brayan Garzón
 - [ ] Backend — Camilo Clavijo
-- [ ] Integración — Camila
+- [ ] Integración — Elizabeth

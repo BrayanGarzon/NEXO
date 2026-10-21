@@ -15,7 +15,7 @@ labels: enhancement
 
 - [ ] Frontend — Brayan Garzón
 - [ ] Backend — Camilo Clavijo
-- [ ] Integración / panel institucional — Camila
+- [ ] Integración / panel institucional — Elizabeth
 
 ## Criterios de aceptación
 

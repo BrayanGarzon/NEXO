@@ -6,13 +6,13 @@
 | ---------- | -------------- | --------------------------------- | ------------------------------------------------- |
 | Persona 1  | Brayan Garzón  | Frontend                          | `frontend/`                                       |
 | Persona 2  | Camilo Clavijo | Backend                           | `backend/`                                        |
-| Persona 3  | Camila         | Integración y panel institucional | `docs/`, `.github/`, `compose.yaml`, pruebas E2E  |
+| Persona 3  | Elizabeth      | Integración y panel institucional | `docs/`, `.github/`, `compose.yaml`, pruebas E2E  |
 
 La propiedad detallada de cada archivo y las tareas asignadas están en
 [`docs/TAREAS.md`](docs/TAREAS.md).
 
 - Cada integrante es responsable de revisar los PR que toquen su área.
-- **La Persona 3 (Camila) no modifica archivos de `frontend/` o `backend/` sin coordinarlo
+- **La Persona 3 (Elizabeth) no modifica archivos de `frontend/` o `backend/` sin coordinarlo
   antes** con la persona responsable (issue o comentario en el PR).
 - Los archivos compartidos (`docs/API_CONTRACTS.md`, `.env.example`, `compose.yaml`,
   `frontend/src/types/api.ts`, `backend/app/schemas/`) requieren la aprobación de los

@@ -11,7 +11,7 @@ entregables (documentos, contratos, datos) que el resto solo lee.
 | --- | ---------- | --------- |
 | Persona 1 — Frontend | **Brayan Garzón** | `feat/frontend-foundation` |
 | Persona 2 — Backend | **Camilo Clavijo** | `feat/backend-foundation` |
-| Persona 3 — Integración y panel institucional | **Camila** | `chore/repository-foundation` |
+| Persona 3 — Integración y panel institucional | **Elizabeth** | `chore/repository-foundation` |
 
 ## Propiedad de archivos
 
@@ -24,12 +24,12 @@ issue o lo pide en el PR del responsable; no lo edita directamente.
 | `docs/DISENO_VISUAL.md`, `docs/diseno/**` | Brayan |
 | `backend/**` | Camilo |
 | `docs/API_CONTRACTS.md`, `docs/MODELO_DATOS.md` | Camilo (redacta; aprueban los tres) |
-| `.github/**`, `compose.yaml`, `.env.example` | Camila |
-| `e2e/**` (pruebas de extremo a extremo) | Camila |
-| `docs/contenido/**` (datos reales de servicios) | Camila |
-| `README.md`, `CONTRIBUTING.md`, `docs/ARQUITECTURA.md`, `docs/GIT_WORKFLOW.md`, `docs/PLAN_PRUEBAS.md`, `docs/PANEL_INSTITUCIONAL.md`, `docs/TAREAS.md` | Camila |
+| `.github/**`, `compose.yaml`, `.env.example` | Elizabeth |
+| `e2e/**` (pruebas de extremo a extremo) | Elizabeth |
+| `docs/contenido/**` (datos reales de servicios) | Elizabeth |
+| `README.md`, `CONTRIBUTING.md`, `docs/ARQUITECTURA.md`, `docs/GIT_WORKFLOW.md`, `docs/PLAN_PRUEBAS.md`, `docs/PANEL_INSTITUCIONAL.md`, `docs/TAREAS.md` | Elizabeth |
 
-> Variables de entorno nuevas: quien las necesite las pide en un issue, y Camila las
+> Variables de entorno nuevas: quien las necesite las pide en un issue, y Elizabeth las
 > añade a `.env.example` y `compose.yaml`. Así esos archivos nunca se editan desde dos ramas.
 
 ## Tareas
@@ -60,7 +60,7 @@ de los issues y de los PR.
 | B5 | Script de datos semilla para desarrollo que carga los datos de `docs/contenido/` | `backend/app/db/seed.py` | B3, I3 |
 | B6 | Manejo de errores uniforme y validación según el contrato | `backend/app/core/`, `backend/app/main.py` | B2 aprobado |
 
-### Camila — Integración y panel institucional
+### Elizabeth — Integración y panel institucional
 
 | ID | Tarea | Archivos | Depende de |
 | -- | ----- | -------- | ---------- |
@@ -75,24 +75,24 @@ de los issues y de los PR.
 
 ```text
 Etapa 1 (en paralelo, sin dependencias)
-  Brayan: F1 → F2, F3      Camilo: espera I3 y avanza B1      Camila: I1, I2, I3, I4, I5
+  Brayan: F1 → F2, F3      Camilo: espera I3 y avanza B1      Elizabeth: I1, I2, I3, I4, I5
 
 Etapa 2 (contratos)
   Camilo: B2  ──►  revisión y aprobación de los tres
-  Brayan: F4                Camila: revisa B2 y lo contrasta con I3 e I5
+  Brayan: F4                Elizabeth: revisa B2 y lo contrasta con I3 e I5
 
 Etapa 3 (implementación en paralelo sobre el contrato aprobado)
-  Brayan: F5 (con mocks)    Camilo: B3 → B4, B5, B6         Camila: mantiene CI y e2e
+  Brayan: F5 (con mocks)    Camilo: B3 → B4, B5, B6         Elizabeth: mantiene CI y e2e
 
 Etapa 4 (integración)
-  Brayan: F6                Camila: I6                       Camilo: corrige lo que detecten las pruebas
+  Brayan: F6                Elizabeth: I6                       Camilo: corrige lo que detecten las pruebas
 ```
 
 ## Puntos de coordinación
 
 - **Contrato de API (B2):** es el único punto en el que deben estar de acuerdo los tres. Hasta
   que se apruebe, el frontend trabaja con *mocks* y el backend no crea endpoints de negocio.
-- **Datos reales (I3 → B1, B5):** Camila entrega los datos y Camilo solo los lee; si falta un
+- **Datos reales (I3 → B1, B5):** Elizabeth entrega los datos y Camilo solo los lee; si falta un
   campo, Camilo abre un issue en lugar de editar `docs/contenido/`.
 - **Cambios en archivos ajenos:** se piden con un issue que mencione al responsable.
 - **Revisión de PR:** cada PR lo revisa al menos una persona distinta del autor; los PR que
