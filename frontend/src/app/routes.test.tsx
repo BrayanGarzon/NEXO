@@ -1,12 +1,6 @@
-import { render, screen } from '@testing-library/react'
-import { createMemoryRouter, RouterProvider } from 'react-router'
+import { screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { routes } from './routes'
-
-function renderAt(path: string) {
-  const router = createMemoryRouter(routes, { initialEntries: [path] })
-  return render(<RouterProvider router={router} />)
-}
+import { renderRoute } from '../test/renderRoute'
 
 describe('routes', () => {
   beforeEach(() => {
@@ -17,15 +11,33 @@ describe('routes', () => {
     vi.unstubAllGlobals()
   })
 
-  it('muestra la página base en /', async () => {
-    renderAt('/')
-    expect(screen.getByRole('heading', { level: 1, name: 'NEXO JOVEN 360' })).toBeInTheDocument()
-    expect(screen.getByText(/Estructura base/)).toBeInTheDocument()
+  it('muestra la página de inicio en /', async () => {
+    renderRoute('/')
+    expect(
+      screen.getByRole('heading', { level: 1, name: /Tu bienestar también construye/ }),
+    ).toBeInTheDocument()
     expect(await screen.findByText('API no disponible')).toBeInTheDocument()
   })
 
+  it.each([
+    ['/brujula', /Cuéntanos, ¿qué estás buscando hoy\?/],
+    ['/territorio', 'Nexo Territorio'],
+    ['/pausa', 'Un momento para ti'],
+    ['/mi-siguiente-paso', 'Mi siguiente paso'],
+    ['/informacion', 'Información'],
+  ])('muestra la página de %s', (path, title) => {
+    renderRoute(path)
+    expect(screen.getByRole('heading', { level: 1, name: title })).toBeInTheDocument()
+  })
+
+  it('marca el enlace activo de la navegación principal', () => {
+    renderRoute('/brujula')
+    const nav = screen.getByRole('navigation', { name: 'Navegación principal' })
+    expect(nav.querySelector('a.active')).toHaveTextContent('Brújula')
+  })
+
   it('muestra la página 404 en rutas desconocidas', () => {
-    renderAt('/ruta-inexistente')
+    renderRoute('/ruta-inexistente')
     expect(screen.getByRole('heading', { name: 'Página no encontrada' })).toBeInTheDocument()
   })
 })
