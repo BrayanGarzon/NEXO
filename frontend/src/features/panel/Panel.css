@@ -320,7 +320,7 @@ a.panel-nav__item:hover {
   margin-left: auto;
 }
 
-.panel-table-card {
+.panel-card.panel-table-card {
   padding: 0;
   overflow: hidden;
 }
@@ -932,23 +932,41 @@ a.panel-nav__item:hover {
     grid-template-rows: auto 1fr;
   }
 
+  /* La barra lateral pasa a ser una cabecera: logo + salida arriba, pestañas debajo */
   .panel-sidebar {
     position: static;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'brand exit'
+      'nav nav';
+    align-items: center;
     height: auto;
     gap: var(--space-3);
-    padding: var(--space-3) var(--gutter);
+    padding: var(--space-3) var(--gutter) var(--space-2);
+  }
+
+  .panel-sidebar__brand {
+    grid-area: brand;
+    padding-inline: 0;
+  }
+
+  .panel-sidebar__exit {
+    grid-area: exit;
+    font-size: var(--font-size-xs);
+  }
+
+  .panel-sidebar__nav {
+    grid-area: nav;
   }
 
   .panel-sidebar__nav ul {
-    display: flex;
-    overflow-x: auto;
-  }
-
-  .panel-nav__item {
-    white-space: nowrap;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .panel-nav__item--disabled,
+  .panel-sidebar__nav li:has(.panel-nav__item--disabled),
   .panel-sidebar__note,
   .panel-header__note {
     display: none;
@@ -965,9 +983,59 @@ a.panel-nav__item:hover {
 }
 
 @media (max-width: 40rem) {
+  .panel-main {
+    gap: var(--space-4);
+    padding: var(--space-5) var(--space-4) var(--space-7);
+  }
+
+  .panel-nav__item {
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-1);
+    min-height: 3.5rem;
+    padding: var(--space-2) var(--space-1);
+    font-size: var(--font-size-xs);
+    text-align: center;
+  }
+
+  /* Encabezado: título arriba; aviso de demo y avatar en una sola fila */
+  .panel-header {
+    gap: var(--space-3);
+  }
+
+  .panel-header__title {
+    font-size: var(--font-size-xl);
+  }
+
+  .panel-header__user {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .panel-user__name,
+  .panel-user__role {
+    display: none;
+  }
+
+  .panel-user__avatar {
+    width: 2rem;
+    height: 2rem;
+    font-size: var(--font-size-xs);
+  }
+
+  .panel-card {
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+  }
+
   .panel-grid,
   .panel-form {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .panel-grid {
+    gap: var(--space-4);
   }
 
   .panel-dl__row {
@@ -975,11 +1043,126 @@ a.panel-nav__item:hover {
     gap: 0;
   }
 
+  /* Barra de herramientas: buscador y botón a lo ancho; filtros en una fila deslizable */
   .panel-toolbar__search {
+    flex-basis: 100%;
     max-width: none;
   }
 
+  .panel-toolbar__filters,
+  .panel-chips {
+    flex-wrap: nowrap;
+    width: calc(100% + 2 * var(--space-4));
+    margin-inline: calc(-1 * var(--space-4));
+    padding: var(--space-1) var(--space-4);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  :is(.panel-toolbar__filters, .panel-chips) .chip {
+    flex: none;
+  }
+
   .panel-toolbar > .button {
+    width: 100%;
     margin-left: 0;
+  }
+
+  /* Tablas del Observatorio: el texto se ajusta en lugar de desbordar */
+  .panel-table:not(.panel-table--cards) :is(th, td) {
+    padding: var(--space-2) var(--space-3);
+    white-space: normal;
+  }
+
+  .panel-table thead th {
+    white-space: normal;
+  }
+
+  .panel-ratio {
+    width: 2.5rem;
+  }
+
+  .panel-kpis {
+    gap: var(--space-3);
+  }
+
+  .panel-kpi {
+    padding: var(--space-3);
+    column-gap: var(--space-2);
+  }
+
+  .panel-kpi__icon {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .panel-quality {
+    justify-content: center;
+  }
+
+  .panel-bars {
+    height: 10rem;
+  }
+
+  .panel-source {
+    padding: var(--space-3);
+  }
+}
+
+/* Tabla de servicios como tarjetas en tablet y celular */
+@media (max-width: 60rem) {
+  .panel-table--cards thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .panel-table--cards,
+  .panel-table--cards tbody,
+  .panel-table--cards tr,
+  .panel-table--cards :is(th, td) {
+    display: block;
+  }
+
+  .panel-table--cards tr {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-2) var(--space-3);
+    padding: var(--space-4);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .panel-table--cards tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  .panel-table--cards :is(th, td) {
+    padding: 0;
+    border: 0;
+    white-space: normal;
+  }
+
+  .panel-table--cards th[scope='row'] {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    padding-right: 7.5rem;
+    min-height: 2.25rem;
+  }
+
+  .panel-table--cards td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+  }
+
+  .panel-table__actions {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-3);
   }
 }

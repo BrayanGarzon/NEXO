@@ -115,7 +115,7 @@ function TablaServicios({ servicios, total }: { servicios: ServicioAdmin[]; tota
         {titulo}
       </h3>
       <div className="panel-table-scroll" tabIndex={0} role="region" aria-label={titulo}>
-        <table className="panel-table">
+        <table className="panel-table panel-table--cards">
           <thead>
             <tr>
               <th scope="col">Nombre</th>
@@ -139,13 +139,13 @@ function TablaServicios({ servicios, total }: { servicios: ServicioAdmin[]; tota
                       {servicio.nombre}
                     </Link>
                   </th>
-                  <td>{categoria.label}</td>
-                  <td>{servicio.institucion}</td>
-                  <td>
+                  <td data-label="Categoría">{categoria.label}</td>
+                  <td data-label="Institución">{servicio.institucion}</td>
+                  <td data-label="Estado">
                     <EstadoTag estado={servicio.estado} />
                   </td>
-                  <td>{formatearFecha(servicio.actualizadoEn)}</td>
-                  <td>
+                  <td data-label="Actualizado">{formatearFecha(servicio.actualizadoEn)}</td>
+                  <td className="panel-table__actions">
                     <div className="panel-actions">
                       <Link
                         to={`/panel/servicios/${servicio.id}/editar`}
