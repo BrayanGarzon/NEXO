@@ -7,16 +7,16 @@
 | Unitarias / componentes (frontend) | Vitest + Testing Library (jsdom) | `frontend/src/**/*.test.ts(x)` | Brayan Garzón |
 | Unitarias / API (backend) | Pytest + TestClient | `backend/tests/` | Camilo Clavijo |
 | Migraciones | Alembic (upgrade/downgrade en CI) | `.github/workflows/ci.yml` | Camilo Clavijo |
-| Extremo a extremo | Pendiente (propuesta: Playwright, tarea I4) | Pendiente (`e2e/`) | Elizabeth |
+| Extremo a extremo | Pendiente (propuesta: Playwright, tarea I4, postergada) | Pendiente (`e2e/`) | Elizabeth |
 | Análisis estático | ESLint, Prettier, `tsc`, Ruff | CI | Todos |
 
 ## Pruebas existentes
 
-### Frontend — 40 pruebas en 11 archivos
+### Frontend — 41 pruebas en 11 archivos
 
 | Archivo | Qué cubre |
 | ------- | --------- |
-| `app/routes.test.tsx` | La página única renderiza todas las secciones y un solo `h1`; las rutas antiguas redirigen a su sección conservando parámetros; 404 |
+| `app/routes.test.tsx` | La página única renderiza todas las secciones y un solo `h1`; las rutas antiguas redirigen a su sección conservando parámetros; `/panel` tiene su propia entrada; 404 |
 | `app/useSectionNavigation.test.tsx` | Sección activa: franja de lectura, preferencia por el enlace pulsado cuando dos secciones comparten fila, huecos entre secciones, observación tras redirigir |
 | `layouts/MainLayout.test.tsx` | El menú lleva a la sección y desplaza la vista; menú móvil abre y cierra; Inicio activo al cargar; enlace "Saltar al contenido" |
 | `features/home/HomePage.test.tsx` | Accesos a secciones; servicios destacados marcados como demostración; el buscador filtra Territorio sin salir de la página |

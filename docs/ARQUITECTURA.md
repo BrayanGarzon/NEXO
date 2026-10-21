@@ -38,6 +38,7 @@ servicios que muestra el frontend es **sintético** y no pasa por la API (ver "F
 | ---- | -------- |
 | `/` | `MainLayout` → `HomePage` (página única con anclas `#inicio`, `#brujula`, `#territorio`, `#pausa`, `#mi-siguiente-paso`, `#informacion`) |
 | `/brujula`, `/territorio`, `/pausa`, `/mi-siguiente-paso`, `/informacion` | `RedirectToSection`: redirige a `/#<sección>` conservando `?…` |
+| `/panel/*` | `panelRoutes` (`src/features/panel/`, Persona 3): panel institucional con layout propio, fuera de `MainLayout` |
 | `*` | `NotFoundPage` |
 
 El estado de Nexo Territorio vive en la URL (`?q=`, `?categoria=`, `?servicio=`, `?verificados=1`),

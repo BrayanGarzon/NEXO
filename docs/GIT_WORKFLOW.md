@@ -139,6 +139,8 @@ estar en verde. Ejecútalos también en local antes de subir:
 
 - Al menos una aprobación de una persona distinta del autor.
 - Fusionar con **squash merge** y borrar la rama.
+  **Excepción:** el PR `feat/frontend-identidad-inicio` se fusiona con *Create a merge commit*,
+  porque `feat/panel-admin` parte de él (ver [`PLAN_PERSONA_3.md`](PLAN_PERSONA_3.md) §8).
 - Después de fusionar, cada integrante actualiza su `main` local (`git switch main && git pull`).
 
 ## Configuración recomendada en GitHub

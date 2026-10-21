@@ -1,8 +1,18 @@
 # Plan de trabajo — Persona 3 (Elizabeth): paneles institucionales
 
 Alcance y reglas para desarrollar **Fuente Viva** y **Observatorio** sin bloquear ni romper la
-web pública. Complementa las tareas I1–I6 de [`TAREAS.md`](TAREAS.md); la tarea I5
-(`docs/PANEL_INSTITUCIONAL.md`: requisitos, autenticación y roles) sigue siendo de la Persona 3.
+web pública. Corresponden a las tareas **I7** e **I8** de [`TAREAS.md`](TAREAS.md), que son la
+**prioridad actual** de la Persona 3. Las tareas originales I1–I6 (GitHub, datos reales, QA y
+pruebas E2E, documento de autenticación) quedan postergadas hasta terminar el panel.
+
+| | |
+| --- | --- |
+| Rama | `feat/panel-admin` |
+| Carpeta (propiedad exclusiva) | `frontend/src/features/panel/` |
+| Punto de entrada | `frontend/src/features/panel/panelRoutes.tsx` (ya registrado en `app/routes.tsx`) |
+| URL en desarrollo | http://localhost:5173/panel |
+| Datos | Sintéticos |
+| Orden | I7 Fuente Viva → I8 Observatorio |
 
 ## 1. Punto de partida
 
@@ -60,34 +70,38 @@ Panel 07 del moodboard ("Resumen general — Estado del catálogo y calidad de l
 
 ## 3. Qué puede hacer la Persona 3 de forma independiente
 
-Sin esperar al backend:
+Todo el panel se puede construir sin esperar al backend ni a la autenticación:
 
-1. **Documento I5** (`docs/PANEL_INSTITUCIONAL.md`): roles (p. ej. gestor, revisor,
-   administrador), quién puede crear/revisar/publicar y propuesta de autenticación.
-2. **Layout de panel** con barra lateral y encabezado, según el moodboard.
-3. **Pantallas de Fuente Viva y Observatorio con datos sintéticos** detrás de un módulo de
-   servicios (mismo patrón que `frontend/src/services/catalog.ts`), para cambiar después a la API
-   sin tocar los componentes.
-4. **Pruebas** de componentes y flujos con Vitest + Testing Library.
-5. **E2E (I4)** con Playwright sobre la web pública: convertir en pruebas automáticas la
-   verificación manual de `PLAN_PRUEBAS.md` (menú, scroll, rutas antiguas, responsive).
-6. **Revisión de la propuesta de contratos** (§4 de `API_CONTRACTS.md`) junto con Camilo.
+1. **Layout de panel** con barra lateral y encabezado, según el moodboard (inicio de I7).
+2. **Datos sintéticos del panel** (servicios con estado, fuentes, fechas de consulta y eventos de
+   revisión) en `features/panel/mocks/`, servidos por un módulo propio en `features/panel/services/`
+   (mismo patrón que `frontend/src/services/catalog.ts`), para cambiar después a la API sin tocar
+   los componentes.
+3. **Fuente Viva (I7)** y luego **Observatorio (I8)**, que calcula sus indicadores sobre esos
+   mismos datos.
+4. **Revisar la propuesta de contratos** (§4 de `API_CONTRACTS.md`) con Camilo a medida que el
+   panel revele campos necesarios.
 
-### Ubicación propuesta de archivos
+**Postergado** (después del panel): documento de autenticación y roles (I5), pruebas E2E con
+Playwright (I4, I6), configuración de GitHub (I1), verificación de clon limpio (I2) y datos reales
+(I3).
 
-Para que nadie edite los mismos archivos a la vez, la Persona 3 sería responsable de:
+### Ubicación de archivos
+
+La Persona 3 es responsable exclusiva de `frontend/src/features/panel/`. Hoy contiene un punto
+de entrada temporal (`panelRoutes.tsx` + `PanelPlaceholder.tsx`) que ella sustituye. Estructura
+sugerida:
 
 ```text
-frontend/src/features/panel/            # todo lo de los paneles
+frontend/src/features/panel/
+├── panelRoutes.tsx                     # YA EXISTE: rutas /panel/… (editar libremente)
+├── PanelPlaceholder.tsx                # YA EXISTE: marcador temporal (borrar al tener el layout)
 ├── PanelLayout.tsx / .css              # barra lateral + encabezado
-├── panelRoutes.tsx                     # rutas /panel/…
-├── fuente-viva/                        # pantallas de Fuente Viva
-├── observatorio/                       # pantallas de Observatorio
-├── mocks/                              # datos sintéticos de los paneles
+├── fuente-viva/                        # I7
+├── observatorio/                       # I8
+├── mocks/                              # datos sintéticos del panel
 ├── services/                           # acceso a datos (mocks → API)
-└── types.ts                            # tipos provisionales de los paneles
-e2e/                                    # Playwright (I4, I6)
-docs/PANEL_INSTITUCIONAL.md             # I5
+└── types.ts                            # tipos provisionales del panel
 ```
 
 Rutas propuestas (fuera de la página única pública):
@@ -99,9 +113,9 @@ Rutas propuestas (fuera de la página única pública):
 | `/panel/servicios` | Listado de Fuente Viva |
 | `/panel/servicios/:id` | Detalle, fuentes, revisión e historial |
 
-> Hay que actualizar `TAREAS.md` (archivo de la Persona 3) para registrar la propiedad de
-> `frontend/src/features/panel/**` y `e2e/**`, y añadir las tareas del panel (sugerencia: I7
-> Fuente Viva, I8 Observatorio).
+Las rutas hijas se declaran dentro de `panelRoutes` (por ejemplo con `children` y un
+`<Outlet />` en `PanelLayout`). Como la ruta es `/panel/*`, cualquier URL del panel llega a su
+código sin tocar `app/routes.tsx`.
 
 ## 4. Componentes compartidos que debe reutilizar
 
@@ -138,9 +152,10 @@ Sin coordinar con Brayan, **no editar**:
 - `frontend/src/mocks/demoServices.ts`, `frontend/src/services/catalog.ts`,
   `frontend/src/types/catalog.ts`
 
-Único punto de contacto previsto: **una línea en `frontend/src/app/routes.tsx`** para registrar
-`panelRoutes` como ruta hermana de la página pública (no dentro de `MainLayout`). Se hace en el
-primer PR del panel, con revisión de Brayan.
+Tampoco hace falta editar `frontend/src/app/routes.tsx`: ya registra `panelRoutes` como ruta
+hermana de la página pública (fuera de `MainLayout`). Si su PR solo cambia archivos dentro de
+`frontend/src/features/panel/`, no puede entrar en conflicto con el trabajo de Brayan ni de
+Camilo.
 
 ## 6. Contratos que deben acordarse antes de integrar el backend
 
@@ -159,38 +174,54 @@ que `types/catalog.ts` en la web pública.
 
 ## 7. Pruebas y evidencias a entregar
 
-En cada PR:
+El trabajo de QA completo (E2E, accesibilidad a fondo) está **postergado**. Para esta fase, el
+mínimo en el PR es:
 
-- [ ] `npm run format:check`, `lint`, `typecheck`, `test` y `build` en verde (y CI en verde).
-- [ ] Pruebas de componentes/flujos: filtros de la tabla, transición de estado (permitida y
-      rechazada), alta y edición de fuentes, publicación bloqueada sin fuente, cálculo de
-      porcentajes del Observatorio, estados de carga/vacío/error.
-- [ ] Pruebas de accesibilidad básicas: nombres accesibles de acciones de la tabla, foco visible,
-      navegación por teclado de la barra lateral.
-- [ ] Capturas de escritorio y móvil de cada pantalla, junto al panel correspondiente del
-      moodboard.
+- [ ] `npm run format:check`, `lint`, `typecheck`, `test` y `build` en verde (CI en verde).
+- [ ] Una prueba sencilla por vista que compruebe que se muestra (p. ej. `/panel/servicios`
+      muestra la tabla y `/panel/observatorio` muestra el resumen).
+- [ ] Capturas de escritorio y móvil de cada vista, junto al panel correspondiente del moodboard.
 - [ ] Declaración en el PR: "Usa solo datos sintéticos; no incluye datos de personas ni de salud".
 - [ ] La web pública sigue intacta: las pruebas existentes pasan sin modificarlas.
 
+Recomendable si hay tiempo: probar las transiciones de estado (permitida y rechazada) y el
+cálculo de porcentajes del Observatorio, que son lógica pura y fácil de probar.
+
 ## 8. Integración mediante pull request
 
-Orden sugerido, un PR por paso (detalles de comandos en [`GIT_WORKFLOW.md`](GIT_WORKFLOW.md)):
+Una sola rama para el panel: **`feat/panel-admin`** (detalles en
+[`GIT_WORKFLOW.md`](GIT_WORKFLOW.md)).
 
-| # | Rama | Contenido | Revisa |
-| - | ---- | --------- | ------ |
-| 1 | `docs/panel-institucional` | I5 + actualización de `TAREAS.md` (propiedad y tareas I7/I8) | Brayan y Camilo |
-| 2 | `feat/panel-layout` | `PanelLayout`, `panelRoutes` y la línea en `routes.tsx` | Brayan |
-| 3 | `feat/panel-observatorio` | Observatorio con datos sintéticos | Brayan |
-| 4 | `feat/panel-fuente-viva` | Fuente Viva con datos sintéticos | Brayan |
-| 5 | `test/e2e-pagina-unica` | Playwright + job de CI (I4) | Brayan y Camilo |
-| 6 | (tras aprobar contratos) | Sustituir mocks por la API | Camilo |
+| Paso | Qué | Cuándo |
+| ---- | --- | ------ |
+| 1 | Descargar `feat/panel-admin` (ya creada; parte de la rama del frontend, que trae los componentes y `panelRoutes`) | Ya |
+| 2 | Abrir un PR **en borrador** (*Draft*) hacia `main` | Con el primer commit, para que el equipo vea el avance y CI lo valide |
+| 3 | I7 Fuente Viva | Commits pequeños en la misma rama |
+| 4 | I8 Observatorio | Ídem |
+| 5 | Marcar el PR como listo (*Ready for review*) | Con las dos vistas y las evidencias de §7; revisa Brayan |
+| 6 | Squash merge y borrar la rama | Tras la aprobación |
+| 7 | Sustituir mocks por la API | Más adelante, en otra rama, cuando se aprueben los contratos |
 
 Cómo empezar:
 
 ```bash
-git switch main
-git pull
-cd frontend && npm install && npm run dev     # verificar que la web pública arranca
-cd ..
-git switch -c docs/panel-institucional
+git fetch origin
+git switch feat/panel-admin                   # crea la rama local a partir de origin/feat/panel-admin
+cd frontend && npm install && npm run dev     # abrir http://localhost:5173/panel
+```
+
+> **Por qué la rama no sale de `main`:** cuando se creó, `main` aún no tenía el sistema visual ni
+> `panelRoutes` (están en el PR `feat/frontend-identidad-inicio`). Para que `feat/panel-admin`
+> no arrastre esos commits en su propio PR, **el PR del frontend debe fusionarse con
+> *Create a merge commit*** (no con *squash*). Así, al hacer `git rebase origin/main`, Git
+> reconoce esos commits como ya integrados y el PR del panel solo muestra el trabajo de
+> Elizabeth. Si se fusionara con *squash* antes de que ella empiece, basta con recrear la rama:
+> `git switch main && git pull && git branch -f feat/panel-admin main`.
+
+Mientras trabaja, si `main` avanza:
+
+```bash
+git fetch origin
+git rebase origin/main
+git push --force-with-lease
 ```

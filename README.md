@@ -205,7 +205,7 @@ Dentro de Docker: `docker compose exec backend pytest`. Más detalle en
 | Componente | Estado |
 | ---------- | ------ |
 | Frontend público | Funcional con datos de demostración; ver [`frontend/README.md`](frontend/README.md) |
-| Paneles institucionales | No implementados; alcance en [`docs/PLAN_PERSONA_3.md`](docs/PLAN_PERSONA_3.md) |
+| Paneles institucionales | En desarrollo por Elizabeth (I7, I8) en `feat/panel-admin`; entrada en `/panel`; alcance en [`docs/PLAN_PERSONA_3.md`](docs/PLAN_PERSONA_3.md) |
 | Backend | `GET /health` y `GET /health/db`; sin endpoints de negocio |
 | Base de datos | PostgreSQL configurado; migración base `0001` sin tablas de negocio |
 | Autenticación | Sin definir |

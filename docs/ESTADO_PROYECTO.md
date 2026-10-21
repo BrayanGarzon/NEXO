@@ -8,11 +8,11 @@
 | Área | Estado |
 | ---- | ------ |
 | Frontend público | Primera versión navegable (página única), con datos de demostración |
-| Paneles institucionales | No iniciados; plan en [`PLAN_PERSONA_3.md`](PLAN_PERSONA_3.md) |
+| Paneles institucionales | Asignados a Elizabeth (I7, I8); entrada `/panel` preparada; plan en [`PLAN_PERSONA_3.md`](PLAN_PERSONA_3.md) |
 | Backend | Solo endpoints técnicos (`/health`, `/health/db`) |
 | Base de datos | PostgreSQL configurado; sin tablas de negocio |
 | Contratos de negocio | Solo propuestas ([`API_CONTRACTS.md`](API_CONTRACTS.md) §3–4) |
-| Pruebas E2E | No configuradas |
+| Pruebas E2E | No configuradas (postergadas) |
 
 ## Implementado
 
@@ -51,7 +51,7 @@
 | `npm run format:check` | ✓ |
 | `npm run lint` | ✓ |
 | `npm run typecheck` | ✓ |
-| `npm test` | ✓ 40 pruebas en 11 archivos |
+| `npm test` | ✓ 41 pruebas en 11 archivos |
 | `npm run build` | ✓ (JS ≈ 113 kB gzip, CSS ≈ 8 kB gzip) |
 | `ruff check .` / `ruff format --check .` | ✓ |
 | `pytest` | ✓ 7 pruebas (sin PostgreSQL: usan una sesión falsa) |
@@ -101,7 +101,7 @@ datos es también ficticio.
 | Contratos de API sin aprobar (B2) | Frontend y paneles no pueden integrarse con el backend | Reunión de los tres sobre `API_CONTRACTS.md` §3–4 |
 | Autenticación sin definir | Los paneles no pueden publicarse | Priorizar I5 |
 | CI nunca verificada en GitHub | Un PR podría fallar por diferencias de entorno (Node 22 en CI, Node 24 en local) | Revisar el primer PR |
-| `main` sin protección y sin `CODEOWNERS` | Riesgo de commits directos | Tarea I1 |
+| `main` sin protección y sin `CODEOWNERS` (I1 postergada) | Riesgo de commits directos | Activar la protección de `main` en GitHub aunque I1 completa espere (5 minutos, *Settings → Branches*) |
 | Rama de frontend con 11+ commits sin fusionar | Conflictos si otros parten de `main` antiguo | Abrir y fusionar el PR pronto |
 | Archivos de otros responsables modificados en esta entrega (`README.md`, `docs/ARQUITECTURA.md`, `docs/GIT_WORKFLOW.md`, `docs/PLAN_PRUEBAS.md` → Elizabeth; `docs/API_CONTRACTS.md` → Camilo) | Requieren su aprobación | Pedir su revisión en el PR |
 | Sin fotografías con licencia | La fidelidad con el moodboard queda incompleta | Conseguirlas y registrarlas en `docs/diseno/RECURSOS.md` |
@@ -110,8 +110,8 @@ datos es también ficticio.
 
 1. **Todos:** revisar y fusionar el PR del frontend; acordar los contratos (catálogo público y
    paneles).
-2. **Elizabeth:** I1 (protección de `main`, `CODEOWNERS`), I5 (`PANEL_INSTITUCIONAL.md`), layout
-   de panel y Observatorio/Fuente Viva con datos sintéticos; I4 (Playwright).
+2. **Elizabeth:** I7 Fuente Viva e I8 Observatorio con datos sintéticos en `feat/panel-admin`
+   (prioridad). I1–I6 (GitHub, datos reales, QA, E2E, autenticación) quedan para después.
 3. **Camilo:** B1 (modelo de datos, incluyendo fuentes y eventos de revisión) y B2 (contratos).
 4. **Brayan:** fotografías con licencia, Espacio Pausa, Mi siguiente paso; apoyar al panel con
    los componentes que falten.
