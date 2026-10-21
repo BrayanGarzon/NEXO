@@ -9,31 +9,59 @@ La especificación OpenAPI generada automáticamente está en `http://localhost:
 
 | Sección | Estado |
 | ------- | ------ |
-| [1. Convenciones generales](#1-convenciones-generales) | Propuestas, salvo el prefijo |
-| [2. Endpoints implementados](#2-endpoints-implementados) | **Implementados y probados** |
-| [3. Catálogo público](#3-catálogo-público-propuesta) | Propuesta, no implementada |
+| [1. Convenciones generales](#1-convenciones-generales) | Acordadas para el catálogo v1; paneles pendientes |
+| [2. Endpoints técnicos](#2-endpoints-técnicos) | **Implementados y probados** |
+| [3. Catálogo público `/api/v1`](#3-catálogo-público-apiv1) | **Implementado y probado (solo lectura)** |
 | [4. Paneles institucionales](#4-paneles-institucionales-propuesta) | Propuesta, no implementada |
 
-> Solo la sección 2 describe una API que existe. Las secciones 3 y 4 son borradores para
-> discutir: **no implementar en el backend hasta aprobarlas**. El frontend puede trabajar contra
-> ellas con datos sintéticos.
+> Las secciones 2 y 3 describen una API que **existe y está probada** (`backend/tests/`, 48
+> pruebas). La sección 4 es un borrador: **no implementar en el backend hasta aprobarla**. El
+> frontend puede trabajar contra ella con datos sintéticos.
+>
+> **Tarea B2 (v1).** El catálogo de la sección 3 lo redactó Backend (Camilo) sobre el modelo de
+> datos ([`MODELO_DATOS.md`](MODELO_DATOS.md)) y queda **pendiente de aprobación de los tres**.
+> Hasta aprobarlo, el frontend trabaja con *mocks* que respeten este contrato (F5) y el backend
+> no cambia las firmas publicadas.
 
 ## 1. Convenciones generales
 
-| Tema | Propuesta | Estado |
-| ---- | --------- | ------ |
+| Tema | Acuerdo | Estado |
+| ---- | ------- | ------ |
 | Prefijo | Rutas de negocio bajo `/api/v1`; rutas técnicas (`/health`) en la raíz | Aprobado en Fase 00 |
 | Prefijo de paneles | `/api/v1/admin/…`, siempre autenticado | Pendiente |
-| Formato | JSON, UTF-8, campos en `snake_case` | Pendiente |
-| Fechas | ISO 8601 con zona horaria (`2026-10-20T15:00:00-05:00`); fechas sin hora como `YYYY-MM-DD` | Pendiente |
-| Identificadores | UUID como texto | Pendiente |
-| Paginación | `?page=1&page_size=20` → `{ "items": [], "total": 0, "page": 1, "page_size": 20 }` | Pendiente |
-| Errores | `{ "detail": "mensaje" }` (formato de FastAPI); validación devuelve 422 | Pendiente |
-| Autenticación | Por definir (decisión pendiente 3, tarea I5) | Pendiente |
+| Formato | JSON, UTF-8, campos en `snake_case` | v1 (implementado) |
+| Fechas | ISO 8601 con zona horaria (`2026-10-20T15:00:00-05:00`); fechas sin hora como `YYYY-MM-DD` | v1 (implementado) |
+| Identificadores | UUID como texto | v1 (implementado) |
+| Paginación | `?page=1&page_size=20` → envoltorio `{ items, total, page, page_size }` | v1 (implementado) |
+| Orden de paginación | `page` ≥ 1 (def. 1); `page_size` entre 1 y 100 (def. 20) | v1 (implementado) |
+| Búsqueda | `?q=texto` (coincidencia parcial, sin distinción de mayúsculas) donde se indique | v1 (implementado) |
+| Errores | `{ "detail": "mensaje" }`; validación 422; no encontrado 404; error interno 500 | v1 (implementado) |
+| Autenticación | No requerida para `/api/v1` (catálogo de solo lectura); paneles por definir (tarea I5) | Catálogo: v1 · Paneles: pendiente |
 
-## 2. Endpoints implementados
+### Envoltorio de paginación
 
-Verificados por `backend/tests/` (7 pruebas). Código: `backend/app/api/routes/health.py`.
+Toda ruta de listado responde:
+
+```json
+{
+  "items": [ /* objetos del recurso */ ],
+  "total": 128,
+  "page": 1,
+  "page_size": 20
+}
+```
+
+### Formato de error
+
+```json
+404 Not Found            422 Unprocessable Entity (validación)
+{ "detail": "Servicio   { "detail": [ { "loc": [...], "msg": "...", "type": "..." } ] }
+  no encontrado" }
+```
+
+## 2. Endpoints técnicos
+
+Verificados por `backend/tests/`. Código: `backend/app/api/routes/health.py`.
 
 ### `GET /health`
 
@@ -41,12 +69,7 @@ Comprobación de vida. No consulta la base de datos.
 
 ```json
 200 OK
-{
-  "status": "ok",
-  "service": "NEXO JOVEN 360 API",
-  "version": "0.1.0",
-  "environment": "development"
-}
+{ "status": "ok", "service": "NEXO JOVEN 360 API", "version": "0.1.0", "environment": "development" }
 ```
 
 Tipo en frontend: `HealthResponse` (`frontend/src/types/api.ts`), usado por
@@ -61,21 +84,115 @@ Comprobación de conectividad con PostgreSQL.
 { "status": "ok", "database": "up" }    { "status": "error", "database": "down" }
 ```
 
-## 3. Catálogo público (propuesta)
+## 3. Catálogo público `/api/v1`
 
-| Recurso | Endpoints tentativos | Responsable de la propuesta |
-| ------- | -------------------- | --------------------------- |
-| Servicios de apoyo | `GET /api/v1/services`, `GET /api/v1/services/{id}` | Backend |
-| Recursos de bienestar | `GET /api/v1/resources` | Backend |
-| Actividades juveniles | `GET /api/v1/activities` | Backend |
-| Canales institucionales | `GET /api/v1/channels` | Backend |
+Implementado y probado (`backend/app/api/routes/`, `backend/tests/`). Todos los endpoints son
+**solo lectura** (GET) en v1. Los campos de cada objeto corresponden a
+[`MODELO_DATOS.md`](MODELO_DATOS.md). Todos los objetos incluyen `id`, `created_at`, `updated_at`.
 
-El catálogo público solo debe devolver servicios en estado `publicado`.
+### Servicios de apoyo
 
-**Referencia para la discusión:** los campos que el frontend usa hoy con datos sintéticos están en
-`frontend/src/types/catalog.ts` (`DemoService`). Son un punto de partida, **no** un contrato: por
-ejemplo, `mapPosition` es una posición en el esquema provisional y deberá sustituirse por
-coordenadas reales cuando se decida el mapa.
+| Método | Ruta | Parámetros | Respuesta |
+| ------ | ---- | ---------- | --------- |
+| GET | `/api/v1/services` | `q`, `category`, `modality`, `is_free`, `entity_id`, `page`, `page_size` | `Page<Service>` |
+| GET | `/api/v1/services/{id}` | — | `Service` · 404 si no existe |
+
+```json
+// Service
+{
+  "id": "e8b0...-...", "title": "Orientación psicológica gratuita",
+  "slug": "orientacion-psicologica-gratuita", "summary": "Atención en salud mental para jóvenes.",
+  "description": "…", "category": "salud_mental", "modality": "presencial",
+  "is_free": true, "address": "Cra 00 #00-00", "latitude": 4.142, "longitude": -73.629,
+  "status": "activo", "entity_id": "a1c2...-...",
+  "created_at": "2026-10-21T10:00:00-05:00", "updated_at": "2026-10-21T10:00:00-05:00"
+}
+```
+
+### Recursos de bienestar
+
+| Método | Ruta | Parámetros | Respuesta |
+| ------ | ---- | ---------- | --------- |
+| GET | `/api/v1/resources` | `q`, `format`, `topic`, `page`, `page_size` | `Page<Resource>` |
+| GET | `/api/v1/resources/{id}` | — | `Resource` · 404 si no existe |
+
+```json
+// Resource
+{
+  "id": "…", "title": "Guía de autocuidado emocional", "slug": "guia-autocuidado-emocional",
+  "summary": "…", "format": "guia", "topic": "salud_mental", "url": "https://…",
+  "body": null, "source": "Secretaría de Salud", "published_at": "2026-09-01",
+  "created_at": "…", "updated_at": "…"
+}
+```
+
+### Actividades juveniles
+
+| Método | Ruta | Parámetros | Respuesta |
+| ------ | ---- | ---------- | --------- |
+| GET | `/api/v1/activities` | `q`, `category`, `entity_id`, `upcoming` (bool), `page`, `page_size` | `Page<Activity>` |
+| GET | `/api/v1/activities/{id}` | — | `Activity` · 404 si no existe |
+
+`upcoming=true` devuelve solo actividades con `start_at` ≥ ahora.
+
+```json
+// Activity
+{
+  "id": "…", "title": "Feria de empleo juvenil", "slug": "feria-empleo-juvenil",
+  "summary": "…", "description": "…", "category": "feria", "location": "Parque …",
+  "latitude": 4.15, "longitude": -73.63, "start_at": "2026-11-05T09:00:00-05:00",
+  "end_at": "2026-11-05T17:00:00-05:00", "is_free": true, "registration_url": "https://…",
+  "status": "programada", "entity_id": "…", "created_at": "…", "updated_at": "…"
+}
+```
+
+### Canales institucionales
+
+| Método | Ruta | Parámetros | Respuesta |
+| ------ | ---- | ---------- | --------- |
+| GET | `/api/v1/channels` | `entity_id`, `kind`, `is_emergency`, `page`, `page_size` | `Page<Channel>` |
+
+```json
+// Channel
+{
+  "id": "…", "entity_id": "…", "kind": "whatsapp", "label": "Línea de escucha",
+  "value": "+57 300 000 0000", "is_emergency": true, "created_at": "…", "updated_at": "…"
+}
+```
+
+### Entidades
+
+| Método | Ruta | Parámetros | Respuesta |
+| ------ | ---- | ---------- | --------- |
+| GET | `/api/v1/entities` | `q`, `kind`, `verified`, `page`, `page_size` | `Page<Entity>` |
+| GET | `/api/v1/entities/{id}` | — | `Entity` · 404 si no existe |
+
+```json
+// Entity
+{
+  "id": "…", "name": "Secretaría de Salud de Villavicencio", "slug": "secretaria-salud",
+  "kind": "publica", "description": "…", "website": "https://…", "verified": true,
+  "created_at": "…", "updated_at": "…"
+}
+```
+
+### Vocabularios
+
+Los valores permitidos de `category`, `modality`, `status`, `kind`, `format`, `topic` están en
+[`MODELO_DATOS.md` → Vocabularios controlados](MODELO_DATOS.md#vocabularios-controlados). El
+frontend puede tiparlos como uniones de literales en `src/types/api.ts`.
+
+> **Punto de coordinación con la sección 4:** el catálogo público expone `status`
+> `activo`/`inactivo`, mientras que el panel institucional (sección 4) propone estados
+> `borrador`/`en_revision`/`publicado`/`no_vigente`. Al aprobar el panel debe decidirse cómo se
+> proyecta el estado administrativo sobre el catálogo público (p. ej. que solo los servicios
+> `publicado` aparezcan como `activo`).
+
+### Pendiente (fuera del catálogo v1)
+
+- Escritura (POST/PUT/DELETE) y autenticación: ver sección 4.
+- Endpoint de taxonomías (`GET /api/v1/categories`) si el frontend lo necesita para filtros.
+- Ordenación configurable (`?sort=`).
 
 ## 4. Paneles institucionales (propuesta)
 
@@ -177,3 +294,5 @@ Regla propuesta: un servicio solo pasa a `publicado` si tiene al menos una fuent
 4. Plazos de vigencia y de antigüedad de fuentes (decisión pendiente 9).
 5. Si el Observatorio calcula los indicadores en cada petición o a partir de ejecuciones
    programadas.
+6. Proyección de estados administrativos (sección 4.1) sobre el `status` del catálogo público
+   (sección 3): qué estados se consideran visibles públicamente.
