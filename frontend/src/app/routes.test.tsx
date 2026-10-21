@@ -40,6 +40,14 @@ describe('routes', () => {
     expect(router.state.location.hash).toBe('#territorio')
   })
 
+  it('el panel institucional tiene su propia entrada fuera de la página pública', () => {
+    renderRoute('/panel')
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Panel institucional' }),
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('navigation', { name: 'Navegación principal' })).toBeNull()
+  })
+
   it('muestra la página 404 en rutas desconocidas', () => {
     renderRoute('/ruta-inexistente')
     expect(screen.getByRole('heading', { name: 'Página no encontrada' })).toBeInTheDocument()
