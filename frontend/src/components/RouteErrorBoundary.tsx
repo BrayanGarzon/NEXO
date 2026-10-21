@@ -7,7 +7,7 @@ export function RouteErrorBoundary() {
     : 'Ocurrió un error inesperado.'
 
   return (
-    <section className="status-page" role="alert">
+    <section className="status-page container" role="alert">
       <h1>Algo salió mal</h1>
       <p>{message}</p>
       <Link to="/">Volver al inicio</Link>

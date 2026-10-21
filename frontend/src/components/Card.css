@@ -1,0 +1,65 @@
+.card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  border: var(--border-width) solid transparent;
+}
+
+.card--surface {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.card--lila {
+  background: var(--module-brujula-bg);
+}
+
+.card--menta {
+  background: var(--module-territorio-bg);
+}
+
+.card--amarillo {
+  background: var(--module-pausa-bg);
+}
+
+.card--coral {
+  background: var(--module-paso-bg);
+}
+
+.card--petroleo {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.card--petroleo :is(h2, h3) {
+  color: var(--color-text-inverse);
+}
+
+.card--interactive {
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+.card--interactive:hover,
+.card--interactive:focus-within {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Enlace que cubre toda la tarjeta sin anidar elementos interactivos */
+.card__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.card__link:focus-visible {
+  box-shadow: none;
+}
+
+.card:has(.card__link:focus-visible) {
+  box-shadow: var(--focus-ring);
+}

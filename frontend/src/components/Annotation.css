@@ -1,0 +1,48 @@
+.annotation {
+  display: inline-block;
+  max-width: 12ch;
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-hand);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-hand);
+  line-height: 1;
+  text-align: center;
+  color: var(--brand-grafito);
+  border-radius: 18px 26px 16px 28px / 24px 16px 26px 18px;
+  box-shadow: var(--shadow-md);
+}
+
+.annotation--lg {
+  max-width: 11ch;
+  padding: var(--space-4) var(--space-5);
+  font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.6rem);
+  text-transform: uppercase;
+  line-height: 0.95;
+}
+
+.annotation--menta {
+  background: var(--brand-menta);
+  color: var(--brand-petroleo);
+}
+
+.annotation--lila {
+  background: var(--brand-lila-soft);
+  color: var(--color-accent-ink);
+  border: 2px solid var(--brand-lila);
+}
+
+.annotation--amarillo {
+  background: var(--brand-amarillo);
+}
+
+.annotation--coral {
+  background: var(--brand-coral);
+}
+
+.annotation--plain {
+  background: none;
+  box-shadow: none;
+  padding: 0;
+  max-width: none;
+  color: var(--color-accent-ink);
+}
