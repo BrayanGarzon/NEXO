@@ -1,0 +1,113 @@
+.illus__sky-top {
+  stop-color: var(--brand-amarillo-soft);
+}
+
+.illus__sky-bottom {
+  stop-color: var(--brand-coral-soft);
+}
+
+.illus__sun {
+  fill: var(--brand-amarillo);
+}
+
+.illus__palm,
+.illus__birds {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.illus__far {
+  fill: var(--brand-petroleo-500);
+  opacity: 0.55;
+}
+
+.illus__mid {
+  fill: var(--brand-menta-ink);
+}
+
+.illus__plain {
+  fill: var(--brand-menta);
+}
+
+.illus__river {
+  fill: var(--brand-lila);
+  opacity: 0.75;
+}
+
+.illus__palm {
+  stroke: var(--brand-petroleo);
+  stroke-width: 6;
+}
+
+.illus__palm--far {
+  stroke-width: 4;
+  opacity: 0.8;
+}
+
+.illus__birds {
+  stroke: var(--brand-grafito);
+  stroke-width: 3;
+}
+
+.service-thumb {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  flex: none;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+.service-thumb__shape {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.service-thumb__icon {
+  position: relative;
+}
+
+.service-thumb--lila {
+  background: var(--brand-lila-soft);
+  color: var(--brand-lila-ink);
+}
+
+.service-thumb--lila .service-thumb__shape {
+  fill: var(--brand-lila);
+  opacity: 0.35;
+}
+
+.service-thumb--menta {
+  background: var(--brand-menta);
+  color: var(--brand-menta-ink);
+}
+
+.service-thumb--menta .service-thumb__shape {
+  fill: var(--brand-menta-ink);
+  opacity: 0.25;
+}
+
+.service-thumb--amarillo {
+  background: var(--brand-amarillo-soft);
+  color: var(--brand-grafito);
+}
+
+.service-thumb--amarillo .service-thumb__shape {
+  fill: var(--brand-amarillo);
+  opacity: 0.8;
+}
+
+.service-thumb--coral {
+  background: var(--brand-coral-soft);
+  color: var(--brand-coral-ink);
+}
+
+.service-thumb--coral .service-thumb__shape {
+  fill: var(--brand-coral);
+  opacity: 0.45;
+}

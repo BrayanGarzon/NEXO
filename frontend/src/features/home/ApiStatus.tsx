@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getHealth } from '../../services/health'
+import './ApiStatus.css'
 
 type Status = 'loading' | 'ok' | 'error'
 

@@ -1,0 +1,52 @@
+.icon-badge {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  border-radius: var(--radius-pill);
+}
+
+.icon-badge--sm {
+  width: 2rem;
+  height: 2rem;
+}
+
+.icon-badge--md {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.icon-badge--lg {
+  width: 3.5rem;
+  height: 3.5rem;
+}
+
+.icon-badge--lila {
+  background: var(--brand-lila-strong);
+  color: var(--color-text-inverse);
+}
+
+.icon-badge--petroleo {
+  background: var(--brand-petroleo);
+  color: var(--color-text-inverse);
+}
+
+.icon-badge--amarillo {
+  background: var(--brand-amarillo);
+  color: var(--brand-grafito);
+}
+
+.icon-badge--coral {
+  background: var(--brand-coral);
+  color: var(--brand-grafito);
+}
+
+.icon-badge--menta {
+  background: var(--brand-menta);
+  color: var(--brand-menta-ink);
+}
+
+.icon-badge--surface {
+  background: var(--color-surface);
+  color: var(--color-heading);
+  box-shadow: var(--shadow-sm);
+}
