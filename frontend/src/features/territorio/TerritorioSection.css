@@ -1,5 +1,11 @@
 .territorio {
-  padding-block: var(--space-5) var(--space-6);
+  padding-block: var(--space-8);
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+}
+
+.territorio__heading h2 {
+  font-size: var(--font-size-2xl);
 }
 
 /* ---------- Barra de búsqueda y filtros ---------- */
@@ -13,10 +19,13 @@
 }
 
 .territorio__heading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-3);
+  display: grid;
+  justify-items: start;
+  gap: var(--space-2);
+}
+
+.territorio__heading .section-eyebrow {
+  margin-bottom: var(--space-1);
 }
 
 .territorio__search {
@@ -349,11 +358,11 @@
   font-size: var(--font-size-sm);
 }
 
-.service-detail__body h2 {
+.service-detail__body h3 {
   font-size: var(--font-size-lg);
 }
 
-.service-detail__body h2:focus {
+.service-detail__body h3:focus {
   outline: none;
 }
 

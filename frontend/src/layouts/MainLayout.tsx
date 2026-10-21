@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Link, NavLink, Outlet } from 'react-router'
-import { mainNav } from '../app/navigation'
+import { Link, Outlet } from 'react-router'
+import { mainNav, sectionHref, sectionIds } from '../app/navigation'
+import { useActiveSection, useScrollToHash } from '../app/useSectionNavigation'
 import { ButtonLink } from '../components/Button'
 import { Icon } from '../components/Icon'
 import { Logo } from '../components/Logo'
@@ -9,6 +10,8 @@ import './MainLayout.css'
 
 export function MainLayout() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const activeSection = useActiveSection(sectionIds)
+  useScrollToHash()
 
   return (
     <div className="layout">
@@ -17,7 +20,11 @@ export function MainLayout() {
       </a>
       <header className="site-header">
         <div className="site-header__inner container">
-          <Link to="/" className="site-header__brand" aria-label="NEXO JOVEN 360, inicio">
+          <Link
+            to={sectionHref('inicio')}
+            className="site-header__brand"
+            aria-label="NEXO JOVEN 360, inicio"
+          >
             <Logo />
           </Link>
 
@@ -28,25 +35,27 @@ export function MainLayout() {
           >
             <ul className="site-nav__list">
               {mainNav.map((item) => (
-                <li key={item.to}>
-                  <NavLink
-                    to={item.to}
-                    end={item.to === '/'}
-                    className="site-nav__link"
+                <li key={item.id}>
+                  <Link
+                    to={sectionHref(item.id)}
+                    className={
+                      activeSection === item.id ? 'site-nav__link active' : 'site-nav__link'
+                    }
+                    aria-current={activeSection === item.id ? 'location' : undefined}
                     onClick={() => setMenuOpen(false)}
                   >
                     {item.label}
-                  </NavLink>
+                  </Link>
                 </li>
               ))}
             </ul>
           </nav>
 
           <div className="site-header__actions">
-            <Link to="/territorio" className="site-header__icon-link">
+            <Link to={sectionHref('territorio')} className="site-header__icon-link">
               <Icon name="search" label="Buscar servicios" />
             </Link>
-            <ButtonLink to="/territorio" className="site-header__cta">
+            <ButtonLink to={sectionHref('territorio')} className="site-header__cta">
               Explorar
             </ButtonLink>
             <button
@@ -81,8 +90,8 @@ export function MainLayout() {
           <nav aria-label="Enlaces del pie de página">
             <ul className="site-footer__links">
               {mainNav.slice(1).map((item) => (
-                <li key={item.to}>
-                  <Link to={item.to}>{item.label}</Link>
+                <li key={item.id}>
+                  <Link to={sectionHref(item.id)}>{item.label}</Link>
                 </li>
               ))}
             </ul>

@@ -16,7 +16,7 @@ export function FeaturedServices() {
           <h2 id="featured-title">Servicios destacados en Villavicencio</h2>
           <DemoTag />
         </div>
-        <Link to="/territorio" className="featured__all">
+        <Link to="/#territorio" className="featured__all">
           Ver todos <Icon name="arrow-right" size={18} />
         </Link>
       </header>
@@ -28,7 +28,7 @@ export function FeaturedServices() {
               <ServiceThumb icon={category.icon} tone={category.tone} />
               <div className="service-card__body">
                 <h3 className="service-card__title">
-                  <Link to={`/territorio?servicio=${service.id}`} className="card__link">
+                  <Link to={`/?servicio=${service.id}#territorio`} className="card__link">
                     {service.name}
                   </Link>
                 </h3>

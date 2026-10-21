@@ -11,9 +11,9 @@ import { filterServices, isServiceCategory } from './filterServices'
 import { MapCanvas } from './MapCanvas'
 import { ServiceDetail } from './ServiceDetail'
 import { useDemoServices } from './useDemoServices'
-import './TerritorioPage.css'
+import './TerritorioSection.css'
 
-export function TerritorioPage() {
+export function TerritorioSection() {
   const [params, setParams] = useSearchParams()
   const query = params.get('q') ?? ''
   const rawCategory = params.get('categoria')
@@ -21,6 +21,13 @@ export function TerritorioPage() {
   const selectedId = params.get('servicio')
   const verifiedOnly = params.get('verificados') === '1'
   const [draft, setDraft] = useState(query)
+  const [syncedQuery, setSyncedQuery] = useState(query)
+
+  // Si la consulta cambia desde fuera (buscador del inicio), actualiza el campo.
+  if (query !== syncedQuery) {
+    setSyncedQuery(query)
+    setDraft(query)
+  }
 
   // En desarrollo, ?simular=error permite revisar el estado de error.
   const simulate = import.meta.env.DEV && params.get('simular') === 'error' ? 'error' : undefined
@@ -60,10 +67,13 @@ export function TerritorioPage() {
   const hasFilters = Boolean(query || category || verifiedOnly)
 
   return (
-    <div className="territorio">
+    <section id="territorio" className="territorio" aria-labelledby="territorio-title">
       <div className="territorio__toolbar container">
         <div className="territorio__heading">
-          <h1>Nexo Territorio</h1>
+          <p className="section-eyebrow">
+            <Icon name="map-pin" size={18} /> Nexo Territorio
+          </p>
+          <h2 id="territorio-title">Explora servicios en tu ciudad</h2>
           <DemoTag />
         </div>
         <div className="territorio__search">
@@ -101,11 +111,11 @@ export function TerritorioPage() {
 
       <div className="territorio__body container">
         <section className="territorio__results" aria-labelledby="resultados-title">
-          <h2 id="resultados-title" className="territorio__results-title">
+          <h3 id="resultados-title" className="territorio__results-title">
             {state.status === 'ready'
               ? `${results.length} ${results.length === 1 ? 'servicio' : 'servicios'}`
               : 'Servicios'}
-          </h2>
+          </h3>
 
           {state.status === 'loading' && (
             <StatusMessage kind="loading" title="Cargando servicios…" />
@@ -189,6 +199,6 @@ export function TerritorioPage() {
           )}
         </div>
       </div>
-    </div>
+    </section>
   )
 }

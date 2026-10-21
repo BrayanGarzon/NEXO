@@ -14,20 +14,27 @@ npm test
 npm run build
 ```
 
-## Rutas públicas
+## Página única
 
-| Ruta                 | Pantalla                                                       | Estado                    |
+La web pública es **una sola página** (`/`): el menú no cambia de pantalla, sino que desplaza la
+vista a cada sección y resalta la que está visible.
+
+| Ancla                | Sección                                                        | Estado                    |
 | -------------------- | -------------------------------------------------------------- | ------------------------- |
-| `/`                  | Inicio                                                         | Alta fidelidad            |
-| `/brujula`           | Brújula: orientación informativa en 3 pasos                    | Primera versión navegable |
-| `/territorio`        | Nexo Territorio: búsqueda, filtros, mapa provisional y detalle | Layout y estados          |
-| `/pausa`             | Espacio Pausa                                                  | Página "próximamente"     |
-| `/mi-siguiente-paso` | Mi siguiente paso                                              | Página "próximamente"     |
-| `/informacion`       | Información                                                    | Página "próximamente"     |
-| `*`                  | 404                                                            | Lista                     |
+| `#inicio`            | Hero, accesos principales y servicios destacados               | Alta fidelidad            |
+| `#brujula`           | Brújula: orientación informativa en 3 pasos                    | Primera versión navegable |
+| `#territorio`        | Nexo Territorio: búsqueda, filtros, mapa provisional y detalle | Layout y estados          |
+| `#pausa`             | Espacio Pausa                                                  | Próximamente              |
+| `#mi-siguiente-paso` | Mi siguiente paso                                              | Próximamente              |
+| `#informacion`       | Qué es NEXO JOVEN 360                                          | Lista                     |
 
-`/territorio` acepta `?q=`, `?categoria=`, `?servicio=` y `?verificados=1`, que usan Inicio y Brújula
-para abrir resultados concretos. En desarrollo, `?simular=error` muestra el estado de error.
+- Las rutas antiguas (`/brujula`, `/territorio`, …) redirigen a su sección y conservan los parámetros.
+- Nexo Territorio lee `?q=`, `?categoria=`, `?servicio=` y `?verificados=1` en `/`
+  (p. ej. `/?servicio=demo-liga-futbol#territorio`). En desarrollo, `?simular=error` muestra el
+  estado de error.
+- Cualquier otra ruta muestra la página 404.
+- Navegación: `app/navigation.ts` (secciones) y `app/useSectionNavigation.ts` (scroll al ancla
+  respetando `prefers-reduced-motion` y sección activa con `IntersectionObserver`).
 
 ## Organización
 
@@ -36,7 +43,7 @@ src/
 ├── app/            # router, rutas y navegación principal
 ├── components/     # sistema visual compartido (Button, Card, Tag, Chip, SearchField, …)
 ├── content/        # contenido estático de interfaz (categorías)
-├── features/       # home, brujula, territorio, coming-soon, not-found
+├── features/       # home (página única), brujula, territorio, upcoming, informacion, not-found
 ├── layouts/        # MainLayout: encabezado, menú móvil y pie
 ├── mocks/          # DATOS DE DEMOSTRACIÓN (sintéticos)
 ├── services/       # cliente HTTP y acceso a datos (catalog.ts aún usa mocks)

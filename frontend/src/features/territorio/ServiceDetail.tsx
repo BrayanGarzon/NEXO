@@ -16,7 +16,10 @@ export function ServiceDetail({ service, onClose }: ServiceDetailProps) {
   const titleRef = useRef<HTMLHeadingElement>(null)
 
   useEffect(() => {
-    titleRef.current?.focus()
+    // Enfoca el título sin saltos bruscos y acerca el panel si quedó fuera de la vista.
+    const title = titleRef.current
+    title?.focus({ preventScroll: true })
+    title?.closest('aside')?.scrollIntoView?.({ block: 'nearest', behavior: 'smooth' })
   }, [service.id])
 
   return (
@@ -28,9 +31,9 @@ export function ServiceDetail({ service, onClose }: ServiceDetailProps) {
         </button>
       </div>
       <div className="service-detail__body">
-        <h2 id="detalle-servicio" ref={titleRef} tabIndex={-1}>
+        <h3 id="detalle-servicio" ref={titleRef} tabIndex={-1}>
           {service.name}
-        </h2>
+        </h3>
         <div className="service-detail__tags">
           <Tag tone="accent">{category.label}</Tag>
           {service.verified ? (

@@ -5,7 +5,7 @@ import * as catalog from '../../services/catalog'
 import { renderRoute } from '../../test/renderRoute'
 import { demoServices } from '../../mocks/demoServices'
 
-describe('TerritorioPage', () => {
+describe('TerritorioSection', () => {
   beforeEach(() => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('sin red')))
   })
@@ -16,7 +16,7 @@ describe('TerritorioPage', () => {
   })
 
   it('muestra la carga y luego los servicios', async () => {
-    renderRoute('/territorio')
+    renderRoute('/')
     expect(screen.getByText('Cargando servicios…')).toBeInTheDocument()
     expect(
       await screen.findByRole('heading', { name: `${demoServices.length} servicios` }),
@@ -25,7 +25,7 @@ describe('TerritorioPage', () => {
 
   it('filtra por categoría y muestra el detalle al seleccionar', async () => {
     const user = userEvent.setup()
-    renderRoute('/territorio')
+    renderRoute('/')
     await screen.findByRole('heading', { name: /servicios$/ })
 
     const filters = screen.getByRole('group', { name: 'Filtrar por categoría' })
@@ -48,7 +48,7 @@ describe('TerritorioPage', () => {
   })
 
   it('abre el detalle indicado en la URL', async () => {
-    renderRoute('/territorio?servicio=demo-liga-futbol')
+    renderRoute('/?servicio=demo-liga-futbol#territorio')
     expect(
       await screen.findByRole('complementary', { name: 'Liga Juvenil de Fútbol' }),
     ).toBeInTheDocument()
@@ -56,7 +56,7 @@ describe('TerritorioPage', () => {
 
   it('muestra el estado vacío y permite quitar filtros', async () => {
     const user = userEvent.setup()
-    renderRoute('/territorio?q=zzzz')
+    renderRoute('/?q=zzzz#territorio')
     expect(await screen.findByText('No encontramos servicios')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Quitar filtros' }))
     expect(
@@ -71,7 +71,7 @@ describe('TerritorioPage', () => {
       .mockRejectedValueOnce(new Error('fallo'))
       .mockResolvedValue(demoServices)
 
-    renderRoute('/territorio')
+    renderRoute('/')
     expect(await screen.findByRole('alert')).toHaveTextContent('No pudimos cargar los servicios')
 
     await user.click(screen.getByRole('button', { name: 'Reintentar' }))

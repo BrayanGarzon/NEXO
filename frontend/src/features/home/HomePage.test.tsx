@@ -1,7 +1,7 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { renderRoute } from '../../test/renderRoute'
+import { renderRoute, withinSection } from '../../test/renderRoute'
 
 describe('HomePage', () => {
   beforeEach(() => {
@@ -12,11 +12,17 @@ describe('HomePage', () => {
     vi.unstubAllGlobals()
   })
 
-  it('muestra los cuatro accesos principales', () => {
+  it('los accesos principales apuntan a secciones de la misma página', () => {
     renderRoute('/')
     const modules = screen.getByRole('region', { name: 'Explora NEXO JOVEN 360' })
-    for (const name of ['Brújula', 'Nexo Territorio', 'Espacio Pausa', 'Mi siguiente paso']) {
-      expect(within(modules).getByRole('link', { name })).toBeInTheDocument()
+    const expected = {
+      Brújula: '/#brujula',
+      'Nexo Territorio': '/#territorio',
+      'Espacio Pausa': '/#pausa',
+      'Mi siguiente paso': '/#mi-siguiente-paso',
+    }
+    for (const [name, href] of Object.entries(expected)) {
+      expect(within(modules).getByRole('link', { name })).toHaveAttribute('href', href)
     }
   })
 
@@ -27,11 +33,17 @@ describe('HomePage', () => {
     expect(within(featured).getAllByRole('listitem')).toHaveLength(3)
   })
 
-  it('la búsqueda lleva a Nexo Territorio con la consulta', async () => {
+  it('la búsqueda del inicio filtra Nexo Territorio sin salir de la página', async () => {
     const user = userEvent.setup()
     const { router } = renderRoute('/')
-    await user.type(screen.getByRole('searchbox'), 'fútbol{Enter}')
-    expect(router.state.location.pathname).toBe('/territorio')
+    await user.type(withinSection('inicio').getByRole('searchbox'), 'fútbol{Enter}')
+
+    expect(router.state.location.pathname).toBe('/')
     expect(router.state.location.search).toBe('?q=f%C3%BAtbol')
+    expect(router.state.location.hash).toBe('#territorio')
+
+    const territorio = withinSection('territorio')
+    expect(territorio.getByRole('searchbox')).toHaveValue('fútbol')
+    expect(await territorio.findByRole('heading', { name: '1 servicio' })).toBeInTheDocument()
   })
 })

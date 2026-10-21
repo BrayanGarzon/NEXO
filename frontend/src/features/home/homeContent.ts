@@ -19,7 +19,7 @@ export const homeModules: HomeModule[] = [
     id: 'brujula',
     title: 'Brújula',
     description: 'Encuentra rutas según lo que necesitas',
-    to: '/brujula',
+    to: '/#brujula',
     icon: 'compass',
     tone: 'lila',
     doodle: 'sparkle',
@@ -29,7 +29,7 @@ export const homeModules: HomeModule[] = [
     id: 'territorio',
     title: 'Nexo Territorio',
     description: 'Explora servicios en un mapa de tu ciudad',
-    to: '/territorio',
+    to: '/#territorio',
     icon: 'leaf',
     tone: 'menta',
     doodle: 'squiggle',
@@ -39,7 +39,7 @@ export const homeModules: HomeModule[] = [
     id: 'pausa',
     title: 'Espacio Pausa',
     description: 'Un momento para ti',
-    to: '/pausa',
+    to: '/#pausa',
     icon: 'feather',
     tone: 'amarillo',
     doodle: 'leaf',
@@ -49,7 +49,7 @@ export const homeModules: HomeModule[] = [
     id: 'paso',
     title: 'Mi siguiente paso',
     description: 'Organiza tus opciones',
-    to: '/mi-siguiente-paso',
+    to: '/#mi-siguiente-paso',
     icon: 'steps',
     tone: 'coral',
     doodle: 'arrow',
@@ -63,8 +63,8 @@ export interface QuickLink {
 }
 
 export const quickLinks: QuickLink[] = [
-  { label: 'Servicios', to: '/territorio' },
-  { label: 'Actividades', to: '/territorio?categoria=recreacion' },
-  { label: 'Orientación', to: '/brujula' },
-  { label: 'Espacios juveniles', to: '/territorio?categoria=cultura' },
+  { label: 'Servicios', to: '/#territorio' },
+  { label: 'Actividades', to: '/?categoria=recreacion#territorio' },
+  { label: 'Orientación', to: '/#brujula' },
+  { label: 'Espacios juveniles', to: '/?categoria=cultura#territorio' },
 ]

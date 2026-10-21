@@ -1,5 +1,5 @@
 .brujula {
-  padding-block: var(--space-6) var(--space-7);
+  padding-block: var(--space-8);
 }
 
 /* ---------- Pasos ---------- */
@@ -210,7 +210,7 @@
   color: var(--brand-coral-ink);
 }
 
-.results__urgent h2 {
+.results__urgent h3 {
   font-size: var(--font-size-lg);
   margin-bottom: var(--space-1);
 }

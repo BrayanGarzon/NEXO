@@ -1,6 +1,7 @@
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { renderRoute } from '../test/renderRoute'
+import { sectionIds } from './navigation'
 
 describe('routes', () => {
   beforeEach(() => {
@@ -11,29 +12,32 @@ describe('routes', () => {
     vi.unstubAllGlobals()
   })
 
-  it('muestra la página de inicio en /', async () => {
+  it('muestra la página única con todas las secciones en /', async () => {
     renderRoute('/')
     expect(
       screen.getByRole('heading', { level: 1, name: /Tu bienestar también construye/ }),
     ).toBeInTheDocument()
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
+    for (const id of sectionIds) {
+      expect(document.getElementById(id)).toBeInTheDocument()
+    }
     expect(await screen.findByText('API no disponible')).toBeInTheDocument()
   })
 
-  it.each([
-    ['/brujula', /Cuéntanos, ¿qué estás buscando hoy\?/],
-    ['/territorio', 'Nexo Territorio'],
-    ['/pausa', 'Un momento para ti'],
-    ['/mi-siguiente-paso', 'Mi siguiente paso'],
-    ['/informacion', 'Información'],
-  ])('muestra la página de %s', (path, title) => {
-    renderRoute(path)
-    expect(screen.getByRole('heading', { level: 1, name: title })).toBeInTheDocument()
-  })
+  it.each(sectionIds.filter((id) => id !== 'inicio'))(
+    'redirige /%s a su sección de la página única',
+    async (id) => {
+      const { router } = renderRoute(`/${id}`)
+      await waitFor(() => expect(router.state.location.pathname).toBe('/'))
+      expect(router.state.location.hash).toBe(`#${id}`)
+    },
+  )
 
-  it('marca el enlace activo de la navegación principal', () => {
-    renderRoute('/brujula')
-    const nav = screen.getByRole('navigation', { name: 'Navegación principal' })
-    expect(nav.querySelector('a.active')).toHaveTextContent('Brújula')
+  it('conserva los parámetros al redirigir rutas antiguas', async () => {
+    const { router } = renderRoute('/territorio?servicio=demo-liga-futbol')
+    await waitFor(() => expect(router.state.location.pathname).toBe('/'))
+    expect(router.state.location.search).toBe('?servicio=demo-liga-futbol')
+    expect(router.state.location.hash).toBe('#territorio')
   })
 
   it('muestra la página 404 en rutas desconocidas', () => {
