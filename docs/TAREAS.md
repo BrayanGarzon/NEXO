@@ -1,5 +1,10 @@
 # Asignación de tareas — Fase 01
 
+> **Actualización 2026-10-21:** la prioridad de Elizabeth pasa a ser el **panel institucional**
+> (I7 Fuente Viva e I8 Observatorio, rama `feat/panel-admin`). Sus tareas originales I1–I6
+> (configuración de GitHub, datos reales, QA y pruebas E2E) quedan **postergadas** hasta terminar
+> el panel.
+
 Reparto de trabajo entre los tres integrantes después de la Fase 00 (fundación).
 El objetivo es que **nadie edite los mismos archivos que otra persona al mismo tiempo**:
 cada archivo o carpeta tiene un único responsable, y lo que se comparte se hace mediante
@@ -7,11 +12,14 @@ entregables (documentos, contratos, datos) que el resto solo lee.
 
 ## Equipo
 
-| Rol | Integrante | Rama base |
-| --- | ---------- | --------- |
-| Persona 1 — Frontend | **Brayan Garzón** | `feat/frontend-foundation` |
-| Persona 2 — Backend | **Camilo Clavijo** | `feat/backend-foundation` |
-| Persona 3 — Integración y panel institucional | **Elizabeth** | `chore/repository-foundation` |
+| Rol | Integrante | Rama de trabajo actual |
+| --- | ---------- | ---------------------- |
+| Persona 1 — Frontend público | **Brayan Garzón** | `feat/frontend-identidad-inicio` (en PR) |
+| Persona 2 — Backend | **Camilo Clavijo** | una rama por tarea desde `main` |
+| Persona 3 — Panel institucional e integración | **Elizabeth** | `feat/panel-admin` |
+
+Todas las ramas salen de `main`. Las ramas de la Fase 00 (`feat/frontend-foundation`,
+`feat/backend-foundation`, `chore/repository-foundation`) ya no se usan.
 
 ## Propiedad de archivos
 
@@ -20,7 +28,8 @@ issue o lo pide en el PR del responsable; no lo edita directamente.
 
 | Archivos / carpetas | Responsable |
 | ------------------- | ----------- |
-| `frontend/**` | Brayan |
+| `frontend/**` (excepto `frontend/src/features/panel/**`) | Brayan |
+| `frontend/src/features/panel/**` (Fuente Viva, Observatorio, layout, datos y tipos del panel) | Elizabeth |
 | `docs/DISENO_VISUAL.md`, `docs/diseno/**` | Brayan |
 | `backend/**` | Camilo |
 | `docs/API_CONTRACTS.md`, `docs/MODELO_DATOS.md` | Camilo (redacta; aprueban los tres) |
@@ -28,6 +37,12 @@ issue o lo pide en el PR del responsable; no lo edita directamente.
 | `e2e/**` (pruebas de extremo a extremo) | Elizabeth |
 | `docs/contenido/**` (datos reales de servicios) | Elizabeth |
 | `README.md`, `CONTRIBUTING.md`, `docs/ARQUITECTURA.md`, `docs/GIT_WORKFLOW.md`, `docs/PLAN_PRUEBAS.md`, `docs/PANEL_INSTITUCIONAL.md`, `docs/TAREAS.md` | Elizabeth |
+
+> **Panel sin interferencias:** `frontend/src/app/routes.tsx` (de Brayan) ya importa
+> `panelRoutes` desde `frontend/src/features/panel/panelRoutes.tsx`. Elizabeth define ahí sus
+> rutas `/panel/…` y su layout sin editar ningún archivo fuera de `features/panel/`. Los
+> componentes de `frontend/src/components/` y los tokens se **usan**, no se modifican: si hace
+> falta un cambio, se pide a Brayan con un issue.
 
 > Variables de entorno nuevas: quien las necesite las pide en un issue, y Elizabeth las
 > añade a `.env.example` y `compose.yaml`. Así esos archivos nunca se editan desde dos ramas.
@@ -60,7 +75,17 @@ de los issues y de los PR.
 | B5 | Script de datos semilla para desarrollo que carga los datos de `docs/contenido/` | `backend/app/db/seed.py` | B3, I3 |
 | B6 | Manejo de errores uniforme y validación según el contrato | `backend/app/core/`, `backend/app/main.py` | B2 aprobado |
 
-### Elizabeth — Integración y panel institucional
+### Elizabeth — Panel institucional (prioridad actual)
+
+Rama: **`feat/panel-admin`**. Datos **sintéticos**; sin backend ni autenticación por ahora.
+Alcance y reglas en [`PLAN_PERSONA_3.md`](PLAN_PERSONA_3.md).
+
+| ID | Tarea | Archivos | Depende de |
+| -- | ----- | -------- | ---------- |
+| I7 | **Fuente Viva**: layout del panel (barra lateral y encabezado del moodboard), listado de servicios con búsqueda y filtros por estado, detalle con fuentes y fecha de consulta, cambio de estado (borrador → en revisión → publicado → no vigente) e historial | `frontend/src/features/panel/**` | — |
+| I8 | **Observatorio**: resumen (totales por estado), calidad de la información, servicios por categoría, vigencia, cobertura de fuentes, incidencias y actividad reciente, calculados sobre los mismos datos sintéticos de I7 | `frontend/src/features/panel/**` | I7 (layout y datos) |
+
+### Elizabeth — Tareas originales (postergadas hasta terminar I7 e I8)
 
 | ID | Tarea | Archivos | Depende de |
 | -- | ----- | -------- | ---------- |
@@ -74,6 +99,15 @@ de los issues y de los PR.
 ## Orden sugerido
 
 ```text
+Ahora (en paralelo, sin tocar los mismos archivos)
+  Brayan: fusionar F1–F4 (PR feat/frontend-identidad-inicio)
+  Elizabeth: I7 Fuente Viva → I8 Observatorio (feat/panel-admin)
+  Camilo: B1 con datos sintéticos (I3 está postergada) y B2, incluyendo los recursos del panel
+
+Después del panel
+  Elizabeth: I5 (autenticación y roles), I1, I2, I3, I4, I6
+
+Plan original de referencia:
 Etapa 1 (en paralelo, sin dependencias)
   Brayan: F1 → F2, F3      Camilo: espera I3 y avanza B1      Elizabeth: I1, I2, I3, I4, I5
 
@@ -92,7 +126,9 @@ Etapa 4 (integración)
 
 - **Contrato de API (B2):** es el único punto en el que deben estar de acuerdo los tres. Hasta
   que se apruebe, el frontend trabaja con *mocks* y el backend no crea endpoints de negocio.
-- **Datos reales (I3 → B1, B5):** Elizabeth entrega los datos y Camilo solo los lee; si falta un
+- **Panel (I7, I8):** Elizabeth trabaja solo en `frontend/src/features/panel/`. Los tipos del
+  panel son provisionales hasta aprobar `API_CONTRACTS.md` §4, que Camilo usa como base para B1/B2.
+- **Datos reales (I3 → B1, B5):** mientras I3 esté postergada, B1 se diseña con datos sintéticos. Elizabeth entrega los datos y Camilo solo los lee; si falta un
   campo, Camilo abre un issue en lugar de editar `docs/contenido/`.
 - **Cambios en archivos ajenos:** se piden con un issue que mencione al responsable.
 - **Revisión de PR:** cada PR lo revisa al menos una persona distinta del autor; los PR que

@@ -1,12 +1,7 @@
-import { render, screen } from '@testing-library/react'
-import { createMemoryRouter, RouterProvider } from 'react-router'
+import { screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { routes } from './routes'
-
-function renderAt(path: string) {
-  const router = createMemoryRouter(routes, { initialEntries: [path] })
-  return render(<RouterProvider router={router} />)
-}
+import { renderRoute } from '../test/renderRoute'
+import { sectionIds } from './navigation'
 
 describe('routes', () => {
   beforeEach(() => {
@@ -17,15 +12,44 @@ describe('routes', () => {
     vi.unstubAllGlobals()
   })
 
-  it('muestra la página base en /', async () => {
-    renderAt('/')
-    expect(screen.getByRole('heading', { level: 1, name: 'NEXO JOVEN 360' })).toBeInTheDocument()
-    expect(screen.getByText(/Estructura base/)).toBeInTheDocument()
+  it('muestra la página única con todas las secciones en /', async () => {
+    renderRoute('/')
+    expect(
+      screen.getByRole('heading', { level: 1, name: /Tu bienestar también construye/ }),
+    ).toBeInTheDocument()
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
+    for (const id of sectionIds) {
+      expect(document.getElementById(id)).toBeInTheDocument()
+    }
     expect(await screen.findByText('API no disponible')).toBeInTheDocument()
   })
 
+  it.each(sectionIds.filter((id) => id !== 'inicio'))(
+    'redirige /%s a su sección de la página única',
+    async (id) => {
+      const { router } = renderRoute(`/${id}`)
+      await waitFor(() => expect(router.state.location.pathname).toBe('/'))
+      expect(router.state.location.hash).toBe(`#${id}`)
+    },
+  )
+
+  it('conserva los parámetros al redirigir rutas antiguas', async () => {
+    const { router } = renderRoute('/territorio?servicio=demo-liga-futbol')
+    await waitFor(() => expect(router.state.location.pathname).toBe('/'))
+    expect(router.state.location.search).toBe('?servicio=demo-liga-futbol')
+    expect(router.state.location.hash).toBe('#territorio')
+  })
+
+  it('el panel institucional tiene su propia entrada fuera de la página pública', () => {
+    renderRoute('/panel')
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Panel institucional' }),
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('navigation', { name: 'Navegación principal' })).toBeNull()
+  })
+
   it('muestra la página 404 en rutas desconocidas', () => {
-    renderAt('/ruta-inexistente')
+    renderRoute('/ruta-inexistente')
     expect(screen.getByRole('heading', { name: 'Página no encontrada' })).toBeInTheDocument()
   })
 })
