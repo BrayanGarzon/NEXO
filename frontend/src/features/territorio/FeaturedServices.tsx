@@ -58,13 +58,18 @@ export function FeaturedServices() {
                 </h4>
                 <p className="service-card__summary">{service.summary}</p>
                 <p className="service-card__meta">
-                  <span>
-                    <Icon name="map-pin" size={16} /> Comuna {service.comuna}
-                  </span>
-                  <span>
-                    <Icon name="navigation" size={16} />{' '}
-                    {service.distanceKm.toLocaleString('es-CO')} km
-                  </span>
+                  {/* La API puede no traer comuna ni distancia (valen 0): no se muestran. */}
+                  {service.comuna > 0 && (
+                    <span>
+                      <Icon name="map-pin" size={16} /> Comuna {service.comuna}
+                    </span>
+                  )}
+                  {service.distanceKm > 0 && (
+                    <span>
+                      <Icon name="navigation" size={16} />{' '}
+                      {service.distanceKm.toLocaleString('es-CO')} km
+                    </span>
+                  )}
                 </p>
               </div>
               <div className="service-card__footer">

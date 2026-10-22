@@ -62,8 +62,8 @@ export function ServiceDetail({ service, onClose, onShowRoute }: ServiceDetailPr
               <Icon name="map-pin" size={18} /> Ubicación
             </dt>
             <dd>
-              {service.address} · Comuna {service.comuna} ·{' '}
-              {service.distanceKm.toLocaleString('es-CO')} km
+              {service.address}
+              {service.comuna > 0 && ` · Comuna ${service.comuna}`}
             </dd>
           </div>
           <div>

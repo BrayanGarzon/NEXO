@@ -17,6 +17,7 @@ def list_services(
     category: str | None = None,
     modality: str | None = None,
     is_free: bool | None = None,
+    verified: bool | None = None,
     entity_id: str | None = None,
 ) -> tuple[Sequence[Service], int]:
     """Lista servicios de apoyo con filtros opcionales y paginación."""
@@ -29,6 +30,8 @@ def list_services(
         stmt = stmt.where(Service.modality == modality)
     if is_free is not None:
         stmt = stmt.where(Service.is_free == is_free)
+    if verified is not None:
+        stmt = stmt.where(Service.verified == verified)
     if entity_id is not None:
         stmt = stmt.where(Service.entity_id == entity_id)
     return paginate(db, stmt, params)
