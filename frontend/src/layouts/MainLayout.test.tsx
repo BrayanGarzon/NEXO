@@ -37,6 +37,31 @@ describe('MainLayout', () => {
     expect(router.state.location.hash).toBe('#territorio')
   })
 
+  it('la lupa encuentra palabras del texto de la página', async () => {
+    const user = userEvent.setup()
+    renderRoute('/')
+    await user.click(screen.getByRole('button', { name: 'Buscar en la página' }))
+    const dialog = screen.getByRole('dialog')
+    await user.type(within(dialog).getByRole('searchbox'), 'autocuidado')
+
+    const enPagina = within(dialog).getByRole('region', { name: 'En la página' })
+    await user.click(within(enPagina).getByRole('button', { name: /Espacio Pausa/ }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    await waitFor(() =>
+      expect(screen.getByText(/herramientas educativas de autocuidado/)).toHaveClass(
+        'site-search-hit',
+      ),
+    )
+  })
+
+  it('Escape cierra la búsqueda aunque haya texto escrito', async () => {
+    const user = userEvent.setup()
+    renderRoute('/')
+    await user.click(screen.getByRole('button', { name: 'Buscar en la página' }))
+    await user.type(within(screen.getByRole('dialog')).getByRole('searchbox'), 'hola{Escape}')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
   it('la búsqueda avisa cuando no hay resultados', async () => {
     const user = userEvent.setup()
     renderRoute('/')
