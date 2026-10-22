@@ -8,7 +8,7 @@ WORKDIR /app
 
 COPY pyproject.toml README.md ./
 COPY app ./app
-RUN pip install -e ".[dev]"
+RUN pip install --upgrade pip && pip install -e ".[dev]"
 
 COPY . .
 

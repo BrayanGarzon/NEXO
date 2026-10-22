@@ -40,6 +40,8 @@ services:
     restart: unless-stopped
     environment:
       VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000}
+      # Detecta cambios por sondeo: necesario para la recarga en caliente en Windows/macOS.
+      VITE_WATCH_POLLING: ${VITE_WATCH_POLLING:-true}
     ports:
       - "${FRONTEND_PORT:-5173}:5173"
     volumes:
