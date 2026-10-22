@@ -17,6 +17,7 @@ interface TerritorioMapProps {
   /** Catálogo completo cargado (fija la distribución de la ciudad 3D). */
   allServices: DemoService[]
   selectedId: string | null
+  routeService: DemoService | null
   onSelect: (id: string) => void
 }
 
@@ -27,7 +28,13 @@ type View = '3d' | '2d'
  * Ambas vistas reciben los mismos datos; la lógica de filtros y selección vive en
  * TerritorioSection.
  */
-export function TerritorioMap({ services, allServices, selectedId, onSelect }: TerritorioMapProps) {
+export function TerritorioMap({
+  services,
+  allServices,
+  selectedId,
+  routeService,
+  onSelect,
+}: TerritorioMapProps) {
   const [supports3d] = useState(isWebGLAvailable)
   const [view, setView] = useState<View>(supports3d ? '3d' : '2d')
   const [failed, setFailed] = useState(false)
@@ -35,7 +42,7 @@ export function TerritorioMap({ services, allServices, selectedId, onSelect }: T
   const [containerRef, nearViewport] = useRevealOnView<HTMLDivElement>('400px 0px')
 
   const can3d = supports3d && !failed
-  const show3d = can3d && view === '3d'
+  const show3d = can3d && (view === '3d' || routeService !== null)
   const empty = allServices.length > 0 && services.length === 0
 
   function fail() {
@@ -53,6 +60,7 @@ export function TerritorioMap({ services, allServices, selectedId, onSelect }: T
                 services={services}
                 allServices={allServices}
                 selectedId={selectedId}
+                routeService={routeService}
                 onSelect={onSelect}
                 apiRef={apiRef}
                 onContextLost={fail}
@@ -63,7 +71,12 @@ export function TerritorioMap({ services, allServices, selectedId, onSelect }: T
           </Suspense>
         </MapErrorBoundary>
       ) : (
-        <MapCanvas services={services} selectedId={selectedId} onSelect={onSelect} />
+        <MapCanvas
+          services={services}
+          selectedId={selectedId}
+          routeService={routeService}
+          onSelect={onSelect}
+        />
       )}
 
       <div className="map-toolbar" role="toolbar" aria-label="Controles del mapa">
@@ -92,7 +105,7 @@ export function TerritorioMap({ services, allServices, selectedId, onSelect }: T
             </button>
           </>
         )}
-        {can3d && (
+        {can3d && !routeService && (
           <button
             type="button"
             className="map-toolbar__button map-toolbar__button--text"
@@ -122,6 +135,12 @@ export function TerritorioMap({ services, allServices, selectedId, onSelect }: T
       {empty && (
         <p className="map-canvas__notice map-canvas__notice--center" role="status">
           Ningún servicio coincide con estos filtros.
+        </p>
+      )}
+      {routeService && (
+        <p id="detalle-acciones-nota" className="map-canvas__route-notice" role="status">
+          Ruta esquemática: desde el punto de inicio referencial hasta {routeService.name}. Sigue la
+          línea destacada; no representa calles ni distancias reales.
         </p>
       )}
 

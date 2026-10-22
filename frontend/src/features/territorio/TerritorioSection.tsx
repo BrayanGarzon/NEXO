@@ -25,6 +25,7 @@ export function TerritorioSection() {
   const verifiedOnly = params.get('verificados') === '1'
   const [draft, setDraft] = useState(query)
   const [syncedQuery, setSyncedQuery] = useState(query)
+  const [routeId, setRouteId] = useState<string | null>(null)
 
   // Si la consulta cambia desde fuera (buscador del inicio), actualiza el campo.
   if (query !== syncedQuery) {
@@ -37,6 +38,7 @@ export function TerritorioSection() {
   const { state, retry } = useDemoServices(simulate)
 
   function update(changes: Record<string, string | null>) {
+    if ('servicio' in changes && changes.servicio !== routeId) setRouteId(null)
     setParams(
       (current) => {
         const next = new URLSearchParams(current)
@@ -67,6 +69,10 @@ export function TerritorioSection() {
     state.status === 'ready'
       ? state.services.find((service) => service.id === selectedId)
       : undefined
+  const routeService =
+    selected && selected.id === routeId
+      ? selected
+      : null
   const hasFilters = Boolean(query || category || verifiedOnly)
 
   return (
@@ -206,10 +212,15 @@ export function TerritorioSection() {
             services={results}
             allServices={state.status === 'ready' ? state.services : NO_SERVICES}
             selectedId={selectedId}
+            routeService={routeService}
             onSelect={(id) => update({ servicio: id })}
           />
           {selected && (
-            <ServiceDetail service={selected} onClose={() => update({ servicio: null })} />
+            <ServiceDetail
+              service={selected}
+              onClose={() => update({ servicio: null })}
+              onShowRoute={() => setRouteId(selected.id)}
+            />
           )}
         </div>
       </div>

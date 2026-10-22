@@ -106,6 +106,28 @@ describe('TerritorioSection', () => {
     ).toBeInTheDocument()
   })
 
+  it('muestra la ruta esquemática en el mapa del proyecto', async () => {
+    const user = userEvent.setup()
+    renderRoute('/?servicio=demo-liga-futbol#territorio')
+    const detail = await screen.findByRole('complementary', { name: 'Liga Juvenil de Fútbol' })
+    await user.click(within(detail).getByRole('button', { name: 'Cómo llegar' }))
+
+    expect(
+      await screen.findByText(/Ruta esquemática: desde el punto de inicio referencial/),
+    ).toHaveTextContent('hasta Liga Juvenil de Fútbol')
+    expect(
+      screen.getByText(/la línea destacada; no representa calles ni distancias reales/),
+    ).toHaveAttribute('id', 'detalle-acciones-nota')
+    expect(within(detail).getByRole('button', { name: 'Cómo llegar' })).toHaveAttribute(
+      'aria-describedby',
+      'detalle-acciones-nota',
+    )
+    expect(screen.queryByRole('link', { name: 'Cómo llegar' })).not.toBeInTheDocument()
+    expect(
+      document.querySelector('a[href*="google.com/maps"]'),
+    ).not.toBeInTheDocument()
+  })
+
   it('muestra el estado vacío y permite quitar filtros', async () => {
     const user = userEvent.setup()
     renderRoute('/?q=zzzz#territorio')

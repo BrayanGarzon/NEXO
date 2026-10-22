@@ -11,9 +11,10 @@ import { useSavedServices } from '../paso/useSavedServices'
 interface ServiceDetailProps {
   service: DemoService
   onClose: () => void
+  onShowRoute: () => void
 }
 
-export function ServiceDetail({ service, onClose }: ServiceDetailProps) {
+export function ServiceDetail({ service, onClose, onShowRoute }: ServiceDetailProps) {
   const category = categories[service.category]
   const titleRef = useRef<HTMLHeadingElement>(null)
   const { isSaved, save, remove } = useSavedServices()
@@ -79,7 +80,7 @@ export function ServiceDetail({ service, onClose }: ServiceDetailProps) {
           </div>
         </dl>
         <div className="service-detail__actions">
-          <Button iconStart="navigation" disabled aria-describedby="detalle-acciones-nota">
+          <Button iconStart="navigation" onClick={onShowRoute} aria-describedby="detalle-acciones-nota">
             Cómo llegar
           </Button>
           <Button
@@ -98,9 +99,6 @@ export function ServiceDetail({ service, onClose }: ServiceDetailProps) {
               Está en <Link to="/#mi-siguiente-paso">Mi siguiente paso</Link>.{' '}
             </>
           )}
-        </p>
-        <p id="detalle-acciones-nota" className="service-detail__note">
-          "Cómo llegar" se activará cuando el catálogo tenga direcciones reales.
         </p>
       </div>
     </aside>
