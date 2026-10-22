@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { categories } from '../../content/categories'
 import { Icon } from '../../components/Icon'
 import type { DemoService } from '../../types/catalog'
@@ -8,13 +9,19 @@ interface MapCanvasProps {
   onSelect: (id: string) => void
 }
 
+/*
+ * Posiciones de las etiquetas (en %), calculadas para no solaparse con los marcadores:
+ * `desktop` para el mapa ancho y `mobile` para el mapa de 22rem de alto (< 56rem).
+ * Cada etiqueta queda junto a un marcador de su comuna. Si cambian los marcadores
+ * (mocks/demoServices.ts), hay que revisarlas.
+ */
 const comunaLabels = [
-  { label: 'Comuna 1', x: 12, y: 46 },
-  { label: 'Comuna 2', x: 50, y: 14 },
-  { label: 'Comuna 3', x: 60, y: 54 },
-  { label: 'Comuna 4', x: 70, y: 80 },
-  { label: 'Comuna 5', x: 22, y: 20 },
-  { label: 'Comuna 7', x: 80, y: 26 },
+  { label: 'Comuna 1', desktop: { x: 22, y: 62 }, mobile: { x: 22, y: 64 } },
+  { label: 'Comuna 2', desktop: { x: 51, y: 26 }, mobile: { x: 54, y: 28 } },
+  { label: 'Comuna 3', desktop: { x: 58, y: 48 }, mobile: { x: 58, y: 50 } },
+  { label: 'Comuna 4', desktop: { x: 66, y: 74 }, mobile: { x: 66, y: 76 } },
+  { label: 'Comuna 5', desktop: { x: 34, y: 34 }, mobile: { x: 42, y: 72 } },
+  { label: 'Comuna 7', desktop: { x: 76, y: 38 }, mobile: { x: 78, y: 40 } },
 ]
 
 /*
@@ -46,7 +53,14 @@ export function MapCanvas({ services, selectedId, onSelect }: MapCanvasProps) {
         <span
           key={comuna.label}
           className="map-canvas__label"
-          style={{ left: `${comuna.x}%`, top: `${comuna.y}%` }}
+          style={
+            {
+              '--label-x': `${comuna.desktop.x}%`,
+              '--label-y': `${comuna.desktop.y}%`,
+              '--label-x-mobile': `${comuna.mobile.x}%`,
+              '--label-y-mobile': `${comuna.mobile.y}%`,
+            } as CSSProperties
+          }
           aria-hidden="true"
         >
           {comuna.label}
@@ -71,7 +85,7 @@ export function MapCanvas({ services, selectedId, onSelect }: MapCanvasProps) {
                 aria-pressed={selected}
                 onClick={() => onSelect(service.id)}
               >
-                <Icon name={category.icon} size={selected ? 22 : 18} />
+                <Icon name={category.icon} size={18} />
                 <span className="visually-hidden">{service.name}</span>
               </button>
             </li>

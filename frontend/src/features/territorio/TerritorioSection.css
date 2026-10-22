@@ -211,6 +211,8 @@
 
 .map-canvas__label {
   position: absolute;
+  left: var(--label-x);
+  top: var(--label-y);
   translate: -50% -50%;
   padding: 2px var(--space-2);
   border-radius: var(--radius-sm);
@@ -260,12 +262,12 @@
   border-radius: 50% 50% 50% 0;
 }
 
+/* La selección se marca con un anillo, sin cambiar el tamaño (no tapa etiquetas). */
 .map-pin--selected {
-  width: 3.25rem;
-  height: 3.25rem;
   box-shadow:
     var(--shadow-lg),
-    0 0 0 6px rgb(255 255 255 / 0.6);
+    0 0 0 4px var(--color-surface),
+    0 0 0 7px var(--color-focus);
 }
 
 .map-pin--lila {
@@ -403,9 +405,61 @@
   background: var(--color-success-bg);
   color: var(--color-success);
 }
+
 .service-detail__note {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
+}
+
+@media (max-width: 56rem) {
+  /* Mapa móvil (22rem de alto): marcadores y etiquetas más compactos para que no se solapen. */
+  .map-canvas__label {
+    left: var(--label-x-mobile);
+    top: var(--label-y-mobile);
+    padding: 1px var(--space-1);
+    font-size: 0.6875rem;
+    line-height: 1.3;
+  }
+
+  .map-pin {
+    width: 2rem;
+    height: 2rem;
+    border-width: 2px;
+  }
+
+  .map-pin .icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/*
+ * Escritorio estrecho: con el detalle superpuesto, el mapa quedaría casi oculto.
+ * Entre 56rem y 80rem el detalle se muestra debajo del mapa.
+ */
+@media (min-width: 56.01rem) and (max-width: 80rem) {
+  .territorio__map {
+    display: grid;
+    gap: var(--space-4);
+    min-height: 0;
+    overflow: visible;
+    box-shadow: none;
+  }
+
+  .map-canvas,
+  .territorio__map--detail .map-canvas {
+    position: relative;
+    inset: auto;
+    height: 40rem;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+  }
+
+  .service-detail {
+    position: static;
+    width: auto;
+  }
 }
 
 @media (max-width: 56rem) {
@@ -449,5 +503,91 @@
 
   .territorio__results {
     max-height: none;
+  }
+}
+
+/* ---------- Servicios destacados (entre los filtros y el listado) ---------- */
+
+.featured {
+  margin-bottom: var(--space-6);
+}
+
+.featured__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.featured__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.featured__all {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+  color: var(--color-heading);
+  text-decoration: none;
+}
+
+.featured__all:hover {
+  text-decoration: underline;
+}
+
+.featured__list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.service-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+
+.service-card__body {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-1);
+  min-width: 0;
+  flex: 1;
+}
+
+.service-card__title {
+  font-size: var(--font-size-md);
+}
+
+.service-card__title a {
+  color: var(--color-heading);
+  text-decoration: none;
+}
+
+.service-card__meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.service-card__chevron {
+  flex: none;
+  color: var(--color-heading);
+}
+
+@media (max-width: 64rem) {
+  .featured__list {
+    grid-template-columns: 1fr;
   }
 }

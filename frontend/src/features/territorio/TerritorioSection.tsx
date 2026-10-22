@@ -7,6 +7,7 @@ import { StatusMessage } from '../../components/StatusMessage'
 import { Chip, DemoTag } from '../../components/Tag'
 import { categories, categoryOrder } from '../../content/categories'
 import type { ServiceCategory } from '../../types/catalog'
+import { FeaturedServices, territorioExplorarId } from './FeaturedServices'
 import { filterServices, isServiceCategory } from './filterServices'
 import { MapCanvas } from './MapCanvas'
 import { ServiceDetail } from './ServiceDetail'
@@ -109,7 +110,9 @@ export function TerritorioSection() {
         </div>
       </div>
 
-      <div className="territorio__body container">
+      <FeaturedServices />
+
+      <div id={territorioExplorarId} className="territorio__body container">
         <section className="territorio__results" aria-labelledby="resultados-title">
           <h3 id="resultados-title" className="territorio__results-title">
             {state.status === 'ready'

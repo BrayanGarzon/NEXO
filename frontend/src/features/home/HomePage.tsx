@@ -10,7 +10,6 @@ import { InformacionSection } from '../informacion/InformacionSection'
 import { TerritorioSection } from '../territorio/TerritorioSection'
 import { PasoSection } from '../paso/PasoSection'
 import { PausaSection } from '../pausa/PausaSection'
-import { FeaturedServices } from './FeaturedServices'
 import { quickLinks } from './homeContent'
 import { ModuleCards } from './ModuleCards'
 import './HomePage.css'
@@ -80,10 +79,9 @@ export function HomePage() {
             <Doodle name="sparkle" tone="coral" filled className="hero__sparkle" />
           </div>
         </div>
-      </section>
 
-      <ModuleCards />
-      <FeaturedServices />
+        <ModuleCards />
+      </section>
 
       <BrujulaSection />
       <TerritorioSection />

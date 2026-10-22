@@ -43,6 +43,34 @@ describe('MainLayout', () => {
     expect(scrollIntoView.mock.contexts.at(-1)).toBe(document.getElementById('pausa'))
   })
 
+  it('Escape cierra el menú móvil, actualiza aria-expanded y devuelve el foco', async () => {
+    const user = userEvent.setup()
+    renderRoute('/')
+    await user.click(screen.getByRole('button', { name: 'Abrir menú' }))
+    expect(screen.getByRole('button', { name: 'Cerrar menú' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    )
+
+    await user.keyboard('{Escape}')
+
+    const toggle = screen.getByRole('button', { name: 'Abrir menú' })
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    expect(toggle).toHaveFocus()
+    expect(screen.getByRole('navigation', { name: 'Navegación principal' })).not.toHaveClass(
+      'site-nav--open',
+    )
+  })
+
+  it('Escape no hace nada si el menú está cerrado', async () => {
+    const user = userEvent.setup()
+    renderRoute('/')
+    const search = within(document.getElementById('inicio')!).getByRole('searchbox')
+    await user.click(search)
+    await user.keyboard('{Escape}')
+    expect(search).toHaveFocus()
+  })
+
   it('marca Inicio como sección activa al cargar', () => {
     renderRoute('/')
     const nav = screen.getByRole('navigation', { name: 'Navegación principal' })

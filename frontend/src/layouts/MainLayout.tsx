@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, Outlet } from 'react-router'
 import { mainNav, sectionHref, sectionIds } from '../app/navigation'
 import { useActiveSection, useScrollToHash } from '../app/useSectionNavigation'
@@ -10,8 +10,21 @@ import './MainLayout.css'
 
 export function MainLayout() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
   const activeSection = useActiveSection(sectionIds)
   useScrollToHash()
+
+  // Escape cierra el menú móvil y devuelve el foco al botón que lo abrió.
+  useEffect(() => {
+    if (!menuOpen) return
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key !== 'Escape') return
+      setMenuOpen(false)
+      menuButtonRef.current?.focus()
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [menuOpen])
 
   return (
     <div className="layout">
@@ -59,6 +72,7 @@ export function MainLayout() {
               Explorar
             </ButtonLink>
             <button
+              ref={menuButtonRef}
               type="button"
               className="site-header__menu"
               aria-expanded={menuOpen}
