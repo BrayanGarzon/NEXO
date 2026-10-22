@@ -1,3 +1,4 @@
+import json
 from functools import lru_cache
 
 from pydantic import Field, field_validator
@@ -30,6 +31,19 @@ class Settings(BaseSettings):
         for prefix in ("postgresql://", "postgres://"):
             if value.startswith(prefix):
                 return "postgresql+psycopg://" + value.removeprefix(prefix)
+        return value
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def split_cors_origins(cls, value: object) -> object:
+        """Acepta una lista JSON o una cadena separada por comas (más cómoda en paneles)."""
+        if isinstance(value, str):
+            stripped = value.strip()
+            if not stripped:
+                return value
+            if stripped.startswith("["):
+                return json.loads(stripped)
+            return [origin.strip() for origin in stripped.split(",") if origin.strip()]
         return value
 
 
