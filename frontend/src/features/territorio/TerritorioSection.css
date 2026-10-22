@@ -170,12 +170,93 @@
   right: calc(min(22rem, 100% - 2 * var(--space-4)) + var(--space-4));
 }
 
-/* ---------- Mapa provisional ---------- */
+/* ---------- Mapa ilustrado en 3D ---------- */
+
+/* Ángulos y desplazamientos registrados para que la cámara y los marcadores se animen juntos */
+@property --tilt {
+  syntax: '<angle>';
+  inherits: true;
+  initial-value: 0deg;
+}
+
+@property --rot {
+  syntax: '<angle>';
+  inherits: true;
+  initial-value: 0deg;
+}
+
+@property --zoom {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --cx {
+  syntax: '<length-percentage>';
+  inherits: true;
+  initial-value: 0%;
+}
+
+@property --cy {
+  syntax: '<length-percentage>';
+  inherits: true;
+  initial-value: 0%;
+}
+
+/* Altura relativa de los edificios: 1 en 3D, casi planos en la vista 2D */
+@property --alto {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --lift {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
 
 .map-canvas {
   position: absolute;
   inset: 0;
-  background: var(--brand-menta);
+  overflow: hidden;
+  perspective: 1400px;
+  perspective-origin: 50% 30%;
+  background: linear-gradient(180deg, #e9f4ef 0%, var(--brand-menta) 55%);
+}
+
+.map-canvas__camera {
+  /* Vista 2D: edificios casi planos y marcadores sobre el suelo */
+  --lift: 6px;
+  --alto: 0.08;
+  position: absolute;
+  inset: 6% 8%;
+  transform-style: preserve-3d;
+  transform: scale(var(--zoom)) rotateX(var(--tilt)) rotateZ(var(--rot))
+    translate(var(--cx), var(--cy));
+  transition:
+    --tilt 0.7s var(--ease-out),
+    --rot 0.7s var(--ease-out),
+    --zoom 0.5s var(--ease-out),
+    --cx 0.6s var(--ease-out),
+    --cy 0.6s var(--ease-out),
+    --lift 0.7s var(--ease-out),
+    --alto 0.7s var(--ease-out);
+}
+
+.map-canvas__camera--3d {
+  --lift: 56px;
+  --alto: 1;
+}
+
+/* Suelo más grande que el esquema para que no se vean bordes al girar */
+.map-canvas__ground {
+  position: absolute;
+  inset: -60%;
+  background:
+    radial-gradient(circle at 50% 50%, transparent 0 38%, rgb(30 107 79 / 0.06) 60%),
+    var(--brand-menta);
+  transform: translateZ(-1px);
 }
 
 .map-canvas__art {
@@ -183,35 +264,169 @@
   inset: 0;
   width: 100%;
   height: 100%;
-}
-
-.map-canvas__block {
-  fill: var(--brand-marfil);
-  opacity: 0.75;
+  overflow: visible;
 }
 
 .map-canvas__road {
   fill: none;
   stroke: var(--color-surface);
-  stroke-width: 1.6;
+  stroke-width: 2.4;
 }
 
 .map-canvas__river {
   fill: none;
   stroke: var(--brand-lila);
-  stroke-width: 3.5;
+  stroke-width: 4.5;
   stroke-linecap: round;
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
 .map-canvas__park {
   fill: var(--brand-menta-ink);
-  opacity: 0.35;
+  opacity: 0.3;
+}
+
+/* Edificios: caja con techo y cuatro fachadas */
+.map-building {
+  --altura: calc(var(--h) * var(--alto));
+  --techo: var(--brand-marfil);
+  --fachada: var(--brand-arena-300);
+  position: absolute;
+  transform-style: preserve-3d;
+}
+
+.map-building--marfil {
+  --techo: #fffdf8;
+  --fachada: #efe9dc;
+}
+
+.map-building--lila {
+  --techo: var(--brand-lila-soft);
+  --fachada: #d9d1fb;
+}
+
+.map-building--menta {
+  --techo: #e9f6f0;
+  --fachada: #c3e3d6;
+}
+
+.map-building--coral {
+  --techo: var(--brand-coral-soft);
+  --fachada: #f9cdbb;
+}
+
+.map-building__roof,
+.map-building__face {
+  position: absolute;
+  backface-visibility: visible;
+}
+
+.map-building__roof {
+  inset: 0;
+  background: var(--techo);
+  box-shadow: inset 0 0 0 1px rgb(37 50 56 / 0.08);
+  transform: translateZ(var(--altura));
+}
+
+/* Ventanas: franjas repetidas sobre la fachada */
+.map-building__face {
+  background:
+    repeating-linear-gradient(0deg, transparent 0 5px, rgb(22 59 58 / 0.14) 5px 8px), var(--fachada);
+}
+
+.map-building__face--s {
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: var(--altura);
+  transform-origin: top;
+  transform: rotateX(90deg);
+  filter: brightness(0.94);
+}
+
+.map-building__face--n {
+  bottom: 100%;
+  left: 0;
+  width: 100%;
+  height: var(--altura);
+  transform-origin: bottom;
+  transform: rotateX(-90deg);
+  filter: brightness(0.9);
+}
+
+.map-building__face--e {
+  top: 0;
+  left: 100%;
+  width: var(--altura);
+  height: 100%;
+  transform-origin: left;
+  transform: rotateY(-90deg);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 5px, rgb(22 59 58 / 0.14) 5px 8px),
+    var(--fachada);
+  filter: brightness(0.82);
+}
+
+.map-building__face--o {
+  top: 0;
+  right: 100%;
+  width: var(--altura);
+  height: 100%;
+  transform-origin: right;
+  transform: rotateY(90deg);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 5px, rgb(22 59 58 / 0.14) 5px 8px),
+    var(--fachada);
+  filter: brightness(0.88);
+}
+
+/* Punto del suelo del que «cuelgan» árboles, etiquetas y marcadores */
+.map-anchor {
+  position: absolute;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+}
+
+.map-anchor--alto {
+  transform: translateZ(calc(var(--lift) * 1.3));
+}
+
+.map-anchor--pin {
+  transform: translateZ(var(--lift));
+}
+
+/* Siempre de frente a la cámara: deshace el giro y la inclinación */
+.map-billboard {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  transform-origin: 0 100%;
+  transform: rotateZ(calc(var(--rot) * -1)) rotateX(calc(var(--tilt) * -1)) translateX(-50%);
+}
+
+.map-tree {
+  width: 1.1rem;
+  height: 1.6rem;
+  background:
+    linear-gradient(var(--brand-grafito), var(--brand-grafito)) 50% 100% / 2px 0.45rem no-repeat,
+    radial-gradient(circle at 50% 38%, #2f8a66 0 0.5rem, transparent 0.52rem);
+  pointer-events: none;
+}
+
+/* Poste del marcador hasta el suelo, de frente a la cámara */
+.map-pole {
+  position: absolute;
+  left: -1px;
+  top: 0;
+  width: 2px;
+  height: var(--lift);
+  background: rgb(22 59 58 / 0.45);
+  transform-origin: top;
+  transform: rotateZ(calc(var(--rot) * -1)) rotateX(-90deg);
 }
 
 .map-canvas__label {
-  position: absolute;
-  translate: -50% -50%;
   padding: 2px var(--space-2);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
@@ -224,14 +439,18 @@
 }
 
 .map-canvas__pins {
+  position: absolute;
+  inset: 0;
   margin: 0;
   padding: 0;
   list-style: none;
+  transform-style: preserve-3d;
+  pointer-events: none;
 }
 
-.map-canvas__pin-item {
-  position: absolute;
-  translate: -50% -100%;
+.map-billboard--pin {
+  pointer-events: auto;
+  padding-bottom: 4px;
 }
 
 .map-pin {
@@ -288,6 +507,53 @@
   color: var(--brand-grafito);
 }
 
+/* Controles: recentrar, 3D, girar, acercar y alejar */
+.map-controls {
+  position: absolute;
+  left: var(--space-4);
+  bottom: calc(var(--space-4) + 2.75rem);
+  display: grid;
+  gap: var(--space-2);
+}
+
+.map-controls__btn {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-heading);
+  box-shadow: var(--shadow-sm);
+}
+
+.map-controls__btn:hover:not(:disabled) {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-md);
+}
+
+.map-controls__btn:focus-visible {
+  border-radius: var(--radius-pill);
+}
+
+.map-controls__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.map-controls__btn--text {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.map-controls__btn--text[aria-pressed='true'] {
+  border-color: var(--brand-petroleo);
+  background: var(--brand-petroleo);
+  color: var(--color-text-inverse);
+}
+
 .map-canvas__badge {
   position: absolute;
   left: var(--space-4);
@@ -302,6 +568,42 @@
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 56rem) {
+  .map-controls {
+    left: auto;
+    right: var(--space-3);
+    top: var(--space-3);
+    bottom: auto;
+    gap: var(--space-1);
+  }
+
+  .map-controls__btn {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  /* Menos espacio: marcadores más bajos y escena algo más abajo */
+  .map-canvas__camera {
+    inset: 14% 10% 2%;
+  }
+
+  .map-canvas__camera--3d {
+    --lift: 30px;
+    --alto: 0.75;
+  }
+
+  .map-canvas__badge {
+    left: var(--space-3);
+    bottom: var(--space-3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-canvas__camera {
+    transition: none;
+  }
 }
 
 /* ---------- Detalle ---------- */
@@ -418,7 +720,7 @@
 
   .territorio__map {
     order: -1;
-    min-height: 22rem;
+    min-height: 26rem;
     overflow: visible;
     display: grid;
     gap: var(--space-4);
@@ -431,7 +733,7 @@
 
   .map-canvas {
     position: relative;
-    height: 22rem;
+    height: 26rem;
     border-radius: var(--radius-xl);
     overflow: hidden;
     box-shadow: var(--shadow-md);
