@@ -55,7 +55,7 @@ describe('TerritorioSection', () => {
     const order = [
       territorio.getByRole('heading', { level: 2, name: 'Explora servicios en tu ciudad' }),
       territorio.getByRole('searchbox'),
-      territorio.getByRole('region', { name: 'Servicios destacados en Villavicencio' }),
+      territorio.getByRole('region', { name: 'Servicios destacados' }),
       territorio.getByRole('group', { name: 'Filtrar por categoría' }),
       await territorio.findByRole('region', { name: /\d+ servicios$/ }),
     ]
@@ -68,7 +68,7 @@ describe('TerritorioSection', () => {
 
   it('las tarjetas destacadas muestran el resumen del catálogo', () => {
     renderRoute('/')
-    const featured = screen.getByRole('region', { name: 'Servicios destacados en Villavicencio' })
+    const featured = screen.getByRole('region', { name: 'Servicios destacados' })
     const first = demoServices.find((service) => service.id === 'demo-orientacion-juvenil')!
     expect(within(featured).getByText(first.summary)).toBeInTheDocument()
   })
@@ -76,19 +76,17 @@ describe('TerritorioSection', () => {
   it('incluye los servicios destacados como datos de demostración', () => {
     renderRoute('/')
     const featured = withinSection('territorio').getByRole('region', {
-      name: 'Servicios destacados en Villavicencio',
+      name: 'Servicios destacados',
     })
     expect(within(featured).getByText('Datos de demostración')).toBeInTheDocument()
     expect(within(featured).getAllByRole('listitem')).toHaveLength(3)
-    expect(
-      screen.getAllByRole('region', { name: 'Servicios destacados en Villavicencio' }),
-    ).toHaveLength(1)
+    expect(screen.getAllByRole('region', { name: 'Servicios destacados' })).toHaveLength(1)
   })
 
   it('«Ver todos» muestra el listado completo y cada destacado abre su detalle', async () => {
     const user = userEvent.setup()
     const { router } = renderRoute('/?categoria=cultura#territorio')
-    const featured = screen.getByRole('region', { name: 'Servicios destacados en Villavicencio' })
+    const featured = screen.getByRole('region', { name: 'Servicios destacados' })
     expect(
       within(featured).getByRole('link', { name: 'Centro de Orientación Juvenil' }),
     ).toHaveAttribute('href', '/?servicio=demo-orientacion-juvenil#territorio-explorar')

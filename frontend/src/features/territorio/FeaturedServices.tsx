@@ -19,7 +19,7 @@ export function FeaturedServices() {
             <Icon name="sparkle" size={18} />
           </span>
           <h3 id="featured-title" className="featured__title">
-            Servicios destacados en Villavicencio
+            Servicios destacados
           </h3>
           <DemoTag />
         </div>

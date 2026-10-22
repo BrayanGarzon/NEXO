@@ -96,4 +96,4 @@ export const preferenceOptions: PreferenceOption[] = [
   },
 ]
 
-export const steps = ['¿Qué buscas?', 'Cómo empezar', 'Tu ruta'] as const
+export const steps = ['¿Qué buscas?', 'Cómo empezar', 'Elige'] as const

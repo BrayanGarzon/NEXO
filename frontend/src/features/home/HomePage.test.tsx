@@ -34,9 +34,7 @@ describe('HomePage', () => {
     renderRoute('/')
     const inicio = withinSection('inicio')
     expect(inicio.getByRole('region', { name: 'Explora NEXO JOVEN 360' })).toBeInTheDocument()
-    expect(
-      inicio.queryByRole('region', { name: 'Servicios destacados en Villavicencio' }),
-    ).toBeNull()
+    expect(inicio.queryByRole('region', { name: 'Servicios destacados' })).toBeNull()
   })
 
   it('la búsqueda del inicio filtra Nexo Territorio sin salir de la página', async () => {
