@@ -168,6 +168,30 @@ button.panel-nav__item:hover {
   position: relative;
 }
 
+/* Botón con casa para volver a la página principal, del mismo alto que «Admin» */
+.panel-home {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-heading);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.panel-home:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+.panel-home:focus-visible {
+  border-radius: var(--radius-pill);
+}
+
 .panel-user {
   display: inline-flex;
   align-items: center;
@@ -1200,6 +1224,11 @@ button.panel-nav__item:hover {
   .panel-user,
   .panel-header__user .tag {
     min-height: 3rem;
+  }
+
+  /* En celular no cabe junto a «Admin»: la casa está en la barra superior */
+  .panel-home {
+    display: none;
   }
 
   .panel-header__user {

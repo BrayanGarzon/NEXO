@@ -96,7 +96,7 @@ export function PanelLayout() {
           Información confiable para más oportunidades
         </Annotation>
         <Link to="/" className="panel-sidebar__exit">
-          <Icon name="arrow-left" size={16} />
+          <PanelIcon name="home" size={16} />
           Ir a la web pública
         </Link>
       </aside>

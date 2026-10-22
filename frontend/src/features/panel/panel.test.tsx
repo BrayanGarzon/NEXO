@@ -17,6 +17,13 @@ describe('panel institucional', () => {
     expect(screen.getByRole('heading', { name: 'Actividad reciente' })).toBeInTheDocument()
   })
 
+  it('la casa del encabezado lleva a la página principal', async () => {
+    const user = userEvent.setup()
+    const { router } = renderRoute('/panel/observatorio')
+    await user.click(await screen.findByRole('link', { name: 'Ir a la página principal' }))
+    expect(router.state.location.pathname).toBe('/')
+  })
+
   it('el botón Admin abre el perfil y permite cerrar sesión', async () => {
     const user = userEvent.setup()
     const { router } = renderRoute('/panel/observatorio')

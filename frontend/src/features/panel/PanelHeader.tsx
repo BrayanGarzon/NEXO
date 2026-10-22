@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react'
+import { Link } from 'react-router'
 import { DemoTag } from '../../components/Tag'
+import { PanelIcon } from './PanelIcon'
 import { PanelPerfil } from './PanelPerfil'
 
 interface PanelHeaderProps {
@@ -23,6 +25,14 @@ export function PanelHeader({ titulo, subtitulo, antes, children }: PanelHeaderP
       </div>
       <div className="panel-header__user">
         <DemoTag />
+        <Link
+          to="/"
+          className="panel-home"
+          aria-label="Ir a la página principal"
+          title="Página principal"
+        >
+          <PanelIcon name="home" size={22} />
+        </Link>
         <PanelPerfil />
       </div>
     </header>
