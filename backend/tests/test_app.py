@@ -33,3 +33,15 @@ def test_settings_read_environment(monkeypatch: pytest.MonkeyPatch) -> None:
     assert settings.environment == "test"
     assert settings.database_url == "postgresql+psycopg://u:p@db:5432/x"
     assert settings.cors_origins == ["https://nexo.example"]
+
+
+@pytest.mark.parametrize(
+    "url",
+    ["postgresql://u:p@host:5432/x", "postgres://u:p@host:5432/x"],
+)
+def test_settings_use_psycopg_driver(monkeypatch: pytest.MonkeyPatch, url: str) -> None:
+    monkeypatch.setenv("DATABASE_URL", url)
+
+    settings = Settings(_env_file=None)
+
+    assert settings.database_url == "postgresql+psycopg://u:p@host:5432/x"
