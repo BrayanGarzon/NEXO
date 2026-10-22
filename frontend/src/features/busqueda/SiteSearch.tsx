@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { Icon } from '../../components/Icon'
 import { revealMatch, searchPage, type PageMatch } from './pageText'
+import { normalize } from '../territorio/filterServices'
 import { searchSite } from './searchIndex'
 import './SiteSearch.css'
 
@@ -18,7 +19,17 @@ export function SiteSearch() {
 
   function handleQuery(value: string) {
     setQuery(value)
-    setPageMatches(searchPage(value))
+    // Una tarjeta que ya sale en otro grupo (empieza por el título de un servicio o de una
+    // opción de Brújula) no se repite en «En la página».
+    const titles = searchSite(value).flatMap(({ entries }) =>
+      entries.map((item) => normalize(item.title)),
+    )
+    setPageMatches(
+      searchPage(value).filter((match) => {
+        const text = normalize(match.text)
+        return !titles.some((title) => text.startsWith(title))
+      }),
+    )
   }
 
   function goToMatch(match: PageMatch) {
@@ -60,20 +71,20 @@ export function SiteSearch() {
           aria-labelledby={titleId}
           onClose={close}
           onClick={(event) => {
-            // Un clic en el fondo (fuera del panel) cierra la búsqueda.
-            if (event.target === event.currentTarget) close()
+            // Un clic fuera de la barra y de los resultados cierra la búsqueda.
+            const target = event.target as Element
+            if (!target.closest('.site-search__bar, .site-search__body')) close()
           }}
         >
           <div className="site-search__panel">
             <div className="site-search__bar">
-              <Icon name="search" size={20} />
               <h2 id={titleId} className="visually-hidden">
                 Buscar en NEXO JOVEN 360
               </h2>
               <input
                 type="search"
                 className="site-search__input"
-                placeholder="Busca servicios, ejercicios, secciones…"
+                placeholder="Buscar en toda la página…"
                 aria-label="Buscar en la página"
                 value={query}
                 onChange={(event) => handleQuery(event.target.value)}
@@ -87,17 +98,13 @@ export function SiteSearch() {
                 autoComplete="off"
                 autoFocus
               />
-              <button type="button" className="site-search__close" onClick={close}>
-                <Icon name="close" size={20} label="Cerrar búsqueda" />
-              </button>
+              <span className="site-search__icon">
+                <Icon name="search" size={20} />
+              </span>
             </div>
 
-            <div className="site-search__body" aria-live="polite">
-              {!trimmed && (
-                <p className="site-search__hint">
-                  Escribe lo que buscas: un servicio, un barrio, «respiración», «empleo»…
-                </p>
-              )}
+            {/* Los resultados solo aparecen al escribir; Escape o un clic fuera cierran. */}
+            <div className="site-search__body" aria-live="polite" hidden={!trimmed}>
               {trimmed && empty && (
                 <p className="site-search__hint">
                   No encontramos resultados para «{trimmed}». Prueba con otra palabra.

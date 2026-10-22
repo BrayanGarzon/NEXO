@@ -1,14 +1,13 @@
+/* La ventana es solo un contenedor: se ven la barra y, al escribir, la tarjeta de resultados. */
 .site-search {
   width: min(40rem, 100% - 2 * var(--space-4));
-  max-height: min(36rem, 100% - 2 * var(--space-7));
+  max-height: calc(100% - 2 * var(--space-7));
   margin: var(--space-8) auto auto;
   padding: 0;
   border: 0;
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
+  background: transparent;
   color: var(--color-text);
-  box-shadow: var(--shadow-lg);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .site-search::backdrop {
@@ -19,16 +18,27 @@
 .site-search__panel {
   display: flex;
   flex-direction: column;
+  gap: var(--space-2);
   max-height: inherit;
 }
 
+/* Misma barra que el buscador de Territorio (components/SearchField.css). */
 .site-search__bar {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-5);
-  border-bottom: 1px solid var(--color-border);
-  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-md);
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.site-search__bar:focus-within {
+  border-color: var(--color-focus);
+  box-shadow:
+    var(--shadow-md),
+    0 0 0 4px var(--brand-lila-soft);
 }
 
 .site-search__input {
@@ -36,51 +46,52 @@
   min-width: 0;
   border: 0;
   background: transparent;
-  padding-block: var(--space-2);
-  font-size: var(--font-size-md);
+  padding: var(--space-3) var(--space-5);
+  font-size: var(--font-size-sm);
   color: var(--color-text);
   outline: none;
 }
 
-/* El botón de cerrar ya cumple esa función: sin la X propia del navegador. */
-.site-search__input::-webkit-search-cancel-button {
-  appearance: none;
+.site-search__input::placeholder {
+  color: var(--color-text-muted);
 }
 
-/* El foco ya es evidente por el cursor en el campo: sin anillo extra. */
+.site-search__input::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+
+/* El anillo lo dibuja la barra. */
 .site-search__input:focus-visible {
   box-shadow: none;
 }
 
-.site-search__close {
+.site-search__icon {
   display: grid;
+  flex-shrink: 0;
   place-items: center;
   width: 2.5rem;
   height: 2.5rem;
-  border: 0;
-  border-radius: var(--radius-pill);
-  background: transparent;
+  margin-right: var(--space-2);
   color: var(--color-heading);
-  cursor: pointer;
-}
-
-.site-search__close:hover {
-  background: var(--brand-lila-soft);
-}
-
-.site-search__close:focus-visible {
-  border-radius: var(--radius-pill);
-  box-shadow: inset 0 0 0 2px var(--color-focus);
 }
 
 .site-search__body {
+  max-height: calc(100vh - 12rem);
+  max-height: calc(100dvh - 12rem);
   overflow-y: auto;
   padding: var(--space-3) var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+}
+
+.site-search__body[hidden] {
+  display: none;
 }
 
 .site-search__hint {
   margin: 0;
-  padding: var(--space-4) var(--space-3);
+  padding: var(--space-3);
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
 }

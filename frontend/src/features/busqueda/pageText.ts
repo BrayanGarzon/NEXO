@@ -9,6 +9,8 @@ import { normalize } from '../territorio/filterServices'
 export interface PageMatch {
   element: Element
   section: string
+  /** Texto completo del bloque. */
+  text: string
   /** Fragmento alrededor de la coincidencia, partido para resaltar la palabra. */
   before: string
   match: string
@@ -55,7 +57,9 @@ export function searchPage(query: string, root: ParentNode = document): PageMatc
     // enlace o botón dentro de un párrafo forma parte de ese párrafo.
     if (element.querySelector(STRUCTURAL)) continue
     if (element.matches(INLINE) && element.parentElement?.closest(STRUCTURAL)) continue
-    const text = element.textContent?.replace(/\s+/g, ' ').trim() ?? ''
+    // innerText separa las partes de una tarjeta como se ven; jsdom (pruebas) no lo tiene.
+    const raw = (element as HTMLElement).innerText ?? element.textContent ?? ''
+    const text = raw.replace(/\s+/g, ' ').trim()
     if (!text || seen.has(text)) continue
     const { normalized, positions } = normalizeWithMap(text)
     if (!words.every((word) => normalized.includes(word))) continue
@@ -71,6 +75,7 @@ export function searchPage(query: string, root: ParentNode = document): PageMatc
     matches.push({
       element,
       section: sectionLabels.get(sectionId) ?? 'Página',
+      text,
       before: (from > 0 ? '…' : '') + text.slice(from, start),
       match: text.slice(start, end),
       after: text.slice(end, to) + (to < text.length ? '…' : ''),
