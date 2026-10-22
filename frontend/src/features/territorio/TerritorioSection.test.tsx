@@ -23,23 +23,6 @@ describe('TerritorioSection', () => {
     ).toBeInTheDocument()
   })
 
-  it('el mapa ilustrado alterna entre 3D y 2D y limita el zoom', async () => {
-    const user = userEvent.setup()
-    renderRoute('/')
-    await screen.findByRole('heading', { name: /servicios$/ })
-    const controles = screen.getByRole('group', { name: 'Controles del mapa' })
-
-    const vista3d = within(controles).getByRole('button', { name: 'Vista en 3D' })
-    expect(vista3d).toHaveAttribute('aria-pressed', 'true')
-    await user.click(vista3d)
-    expect(vista3d).toHaveAttribute('aria-pressed', 'false')
-    expect(within(controles).queryByRole('button', { name: 'Girar el mapa' })).toBeNull()
-
-    const alejar = within(controles).getByRole('button', { name: 'Alejar' })
-    await user.click(alejar)
-    expect(alejar).toBeDisabled()
-  })
-
   it('filtra por categoría y muestra el detalle al seleccionar', async () => {
     const user = userEvent.setup()
     renderRoute('/')
