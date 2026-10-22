@@ -155,6 +155,7 @@ Deben aprobarse por los tres integrantes (issue con la plantilla *Decisión pend
 1. **Contratos de API del producto**: catálogo público y paneles (ver `API_CONTRACTS.md`).
 2. **Modelo de datos** de servicios, fuentes, instituciones, actividades y eventos de revisión.
 3. **Autenticación y roles** del panel institucional (proveedor, sesiones vs. JWT, roles).
+   Propuesta en [`PANEL_INSTITUCIONAL.md`](PANEL_INSTITUCIONAL.md) (tarea I5).
 4. **Fotografías con licencia** para reemplazar las ilustraciones provisionales
    (la referencia gráfica ya está en `docs/diseno/`).
 5. **Herramienta de pruebas E2E** (propuesta: Playwright) y su ubicación.
