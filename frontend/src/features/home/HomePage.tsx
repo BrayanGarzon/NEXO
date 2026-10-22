@@ -33,9 +33,9 @@ export function HomePage() {
         <div className="hero__inner container">
           <div className="hero__copy">
             <h1 id="hero-title" className="hero__title hand">
-              Tu bienestar <span className="marker">también construye</span> una mejor{' '}
+              Tu bienestar mental <span className="marker">también construye</span> una mejor{' '}
               <span className="hero__title-end">
-                Villavicencio
+                versión
                 <Doodle name="heart" tone="lila" className="hero__heart" />
               </span>
             </h1>

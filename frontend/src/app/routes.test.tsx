@@ -15,7 +15,7 @@ describe('routes', () => {
   it('muestra la página única con todas las secciones en /', async () => {
     renderRoute('/')
     expect(
-      screen.getByRole('heading', { level: 1, name: /Tu bienestar también construye/ }),
+      screen.getByRole('heading', { level: 1, name: /Tu bienestar mental también construye una mejor versión/ }),
     ).toBeInTheDocument()
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
     for (const id of sectionIds) {
