@@ -48,10 +48,25 @@ export function MainLayout() {
                   </Link>
                 </li>
               ))}
+              {/* En celular y tablet el acceso al panel va dentro del menú */}
+              <li className="site-nav__panel">
+                <Link to="/panel" className="site-nav__link" onClick={() => setMenuOpen(false)}>
+                  Panel institucional
+                </Link>
+              </li>
             </ul>
           </nav>
 
           <div className="site-header__actions">
+            <ButtonLink
+              to="/panel"
+              variant="secondary"
+              size="sm"
+              className="site-header__panel"
+              aria-label="Panel institucional"
+            >
+              Panel<span className="site-header__panel-extra"> institucional</span>
+            </ButtonLink>
             <Link to={sectionHref('territorio')} className="site-header__icon-link">
               <Icon name="search" label="Buscar servicios" />
             </Link>

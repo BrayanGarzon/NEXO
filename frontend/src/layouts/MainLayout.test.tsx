@@ -16,6 +16,13 @@ describe('MainLayout', () => {
     scrollIntoView.mockReset()
   })
 
+  it('enlaza al panel institucional desde el encabezado y el menú', () => {
+    renderRoute('/')
+    const enlaces = screen.getAllByRole('link', { name: 'Panel institucional' })
+    expect(enlaces).toHaveLength(2)
+    for (const enlace of enlaces) expect(enlace).toHaveAttribute('href', '/panel')
+  })
+
   it('el menú lleva a la sección y se cierra en móvil', async () => {
     const user = userEvent.setup()
     const { router } = renderRoute('/')
