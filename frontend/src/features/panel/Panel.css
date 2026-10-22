@@ -734,6 +734,162 @@ button.panel-nav__item:hover {
   border-color: var(--color-focus);
 }
 
+/* ---------- Selector de horario ---------- */
+
+.panel-horario {
+  position: relative;
+}
+
+.panel-horario__campo {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.panel-horario__campo input {
+  flex: 1;
+  min-width: 0;
+}
+
+.panel-horario__abrir {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+  min-height: 2.75rem;
+  padding: 0 var(--space-3);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.panel-horario__abrir:hover,
+.panel-horario__abrir[aria-expanded='true'] {
+  border-color: var(--color-border-strong);
+  background: var(--brand-lila-soft);
+  color: var(--color-accent-ink);
+}
+
+.panel-horario__ventana {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  z-index: 20;
+  display: grid;
+  gap: var(--space-3);
+  width: min(22rem, 100%);
+  padding: var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+}
+
+.panel-horario__ventana:focus {
+  outline: none;
+}
+
+.panel-horario__titulo {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-heading);
+}
+
+/* Interruptor «Días de la semana» / «Fecha» */
+.panel-horario__tipos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-muted);
+}
+
+.panel-horario__tipos button {
+  padding: var(--space-1) var(--space-2);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.panel-horario__tipos button[aria-pressed='true'] {
+  background: var(--color-surface);
+  color: var(--color-heading);
+  box-shadow: var(--shadow-sm);
+}
+
+.panel-horario__dias {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--space-1);
+}
+
+.panel-horario__dias button {
+  aspect-ratio: 1;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+}
+
+.panel-horario__dias button[aria-pressed='true'] {
+  border-color: var(--brand-petroleo);
+  background: var(--brand-petroleo);
+  color: var(--color-text-inverse);
+}
+
+.panel-horario__atajos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.panel-horario__atajos button {
+  padding: 2px var(--space-2);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-accent-ink);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.panel-horario__atajos button:hover {
+  background: var(--brand-lila-soft);
+}
+
+.panel-horario__horas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.panel-horario__vista {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.panel-horario__vista--error {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.panel-horario__acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
 .panel-form__actions {
   display: flex;
   flex-wrap: wrap;

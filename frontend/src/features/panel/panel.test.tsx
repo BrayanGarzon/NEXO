@@ -17,6 +17,22 @@ describe('panel institucional', () => {
     expect(screen.getByRole('heading', { name: 'Actividad reciente' })).toBeInTheDocument()
   })
 
+  it('el horario se elige en un desplegable de días y horas', async () => {
+    const user = userEvent.setup()
+    renderRoute('/panel/servicios/nuevo')
+    const campo = await screen.findByLabelText('Horario')
+    await user.click(screen.getByRole('button', { name: 'Elegir' }))
+    const ventana = screen.getByRole('dialog', { name: 'Elegir horario' })
+
+    await user.click(within(ventana).getByRole('button', { name: 'Vie' }))
+    await user.selectOptions(within(ventana).getByLabelText('Hasta'), '12:00 m.')
+    expect(within(ventana).getByText('Lun – Jue · 8:00 a. m. – 12:00 m.')).toBeVisible()
+
+    await user.click(within(ventana).getByRole('button', { name: 'Aplicar' }))
+    expect(campo).toHaveValue('Lun – Jue · 8:00 a. m. – 12:00 m.')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
   it('la casa del encabezado lleva a la página principal', async () => {
     const user = userEvent.setup()
     const { router } = renderRoute('/panel/observatorio')

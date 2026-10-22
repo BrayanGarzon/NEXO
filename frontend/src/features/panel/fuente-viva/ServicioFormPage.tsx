@@ -10,6 +10,7 @@ import { PanelHeader } from '../PanelHeader'
 import { actualizarServicio, crearServicio, obtenerServicio } from '../services/panelData'
 import type { DatosServicio } from '../types'
 import { useCarga } from '../useCarga'
+import { SelectorHorario } from './SelectorHorario'
 
 const vacio: DatosServicio = {
   nombre: '',
@@ -180,11 +181,10 @@ function Formulario({ id, inicial }: { id?: string; inicial: DatosServicio }) {
       </div>
       <div className="panel-field panel-field--wide">
         <label htmlFor={`${campo}-horario`}>Horario</label>
-        <input
+        <SelectorHorario
           id={`${campo}-horario`}
-          placeholder="Lun – Vie · 8:00 a. m. – 5:00 p. m."
           value={datos.horario}
-          onChange={(event) => cambiar('horario', event.target.value)}
+          onChange={(valor) => cambiar('horario', valor)}
         />
       </div>
       <div className="panel-field panel-field--wide">
