@@ -67,7 +67,8 @@ describe('BrujulaSection', () => {
     expect(
       brujula.getByRole('heading', { name: 'Si necesitas ayuda ahora mismo' }),
     ).toBeInTheDocument()
-    expect(brujula.getByRole('link', { name: '123' })).toHaveAttribute('href', 'tel:123')
+    expect(brujula.getByText(/llama a la línea de emergencias o/)).toBeInTheDocument()
+    expect(brujula.queryByRole('link', { name: '123' })).not.toBeInTheDocument()
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
   })
 

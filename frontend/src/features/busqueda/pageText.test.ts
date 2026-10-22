@@ -12,15 +12,15 @@ describe('searchPage', () => {
 
   it('encuentra palabras del texto sin distinguir tildes y marca la coincidencia', () => {
     page(
-      `<section id="pausa"><p>Son herramientas de autocuidado; llama al <a href="tel:123">123</a>.</p></section>`,
+      `<section id="pausa"><p>Son herramientas de autocuidado; llama a la <a href="#informacion">línea</a>.</p></section>`,
     )
     const [match] = searchPage('AUTOCUIDADO')
     expect(match.section).toBe('Espacio Pausa')
     expect(match.match).toBe('autocuidado')
     expect(match.before).toBe('Son herramientas de ')
     // El enlace forma parte del párrafo: no aparece como resultado aparte.
-    expect(searchPage('123')).toHaveLength(1)
-    expect(searchPage('123')[0].element.tagName).toBe('P')
+    expect(searchPage('línea')).toHaveLength(1)
+    expect(searchPage('línea')[0].element.tagName).toBe('P')
   })
 
   it('respeta las tildes del texto original al recortar el fragmento', () => {

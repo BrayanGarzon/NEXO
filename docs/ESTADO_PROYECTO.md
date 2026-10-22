@@ -30,7 +30,7 @@
     primera pantalla de escritorio (de 600 a 1080 px de alto; el título y la ilustración se
     ajustan a la altura de la ventana).
   - **Brújula:** 3 pasos (necesidad → cómo empezar → ruta con hasta 3 servicios); regresar y
-    empezar de nuevo; ayuda inmediata (línea 123) ante "momento difícil". No diagnostica.
+    empezar de nuevo; ayuda inmediata (línea de emergencias) ante "momento difícil". No diagnostica.
     Opciones más amplias, aparición escalonada al entrar en pantalla, realce al pasar el cursor
     (solo con puntero) y selección marcada con color, borde e icono de verificación.
   - **Nexo Territorio:** búsqueda sin tildes, filtros por categoría y "solo verificados",
@@ -43,7 +43,7 @@
   - **Mi siguiente paso:** guardar y quitar servicios desde el detalle de Territorio; lista con
     "Ver" y "Quitar"; pestaña de acciones sugeridas; estado vacío ilustrado (maceta con brote)
     y detalles botánicos decorativos. Persistencia en `localStorage` (solo en el navegador).
-  - **Información:** descripción, principios y línea 123 integrada con el estilo visual; la
+  - **Información:** descripción, principios y línea de emergencias integrada con el estilo visual; la
     sección y el pie comparten la última pantalla.
 - **Navegación:** menú con scroll suave y sección resaltada; menú móvil; "Saltar al contenido";
   rutas antiguas redirigidas; 404. Cada sección ocupa al menos la pantalla bajo el encabezado,

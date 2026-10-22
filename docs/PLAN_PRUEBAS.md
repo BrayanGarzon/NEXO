@@ -22,13 +22,13 @@
 | `layouts/MainLayout.test.tsx` | El menú lleva a la sección y desplaza la vista; menú móvil abre y cierra; Escape lo cierra y devuelve el foco; Inicio activo al cargar; enlace "Saltar al contenido"; Información es la última sección, seguida del pie, que publica su altura y enlaza a las seis secciones |
 | `features/home/HomePage.test.tsx` | Accesos a secciones dentro de Inicio (sin servicios destacados); el buscador filtra Territorio sin salir de la página |
 | `features/home/ApiStatus.test.tsx` | Estado de la API con `/health` correcto y con error |
-| `features/brujula/BrujulaSection.test.tsx` | Flujo completo de 3 pasos, regresar, empezar de nuevo, enlace "Ver en el mapa"; ayuda inmediata (123) ante "momento difícil"; aparición de las opciones al entrar en pantalla y selección única marcada |
+| `features/brujula/BrujulaSection.test.tsx` | Flujo completo de 3 pasos, regresar, empezar de nuevo, enlace "Ver en el mapa"; ayuda inmediata (línea de emergencias, sin número) ante "momento difícil"; aparición de las opciones al entrar en pantalla y selección única marcada |
 | `features/brujula/buildRoute.test.ts` | Filtro por necesidad, prioridad por modalidad, máximo 3 resultados, ayuda inmediata |
 | `features/territorio/TerritorioSection.test.tsx` | Carga, filtros, detalle por selección y por URL, servicios destacados (demostración, una sola vez, "Ver todos" sin filtros), estado vacío, error y reintento |
 | `features/sonido/AmbientSound.test.tsx` | Apagado por defecto y sin audio hasta pulsar; activar, pausar, reanudar y detener con foco; volumen recordado sin recordar la reproducción; volumen en móvil con Escape; ausente en el panel y sin Web Audio |
 | `features/sonido/ambientEngine.test.ts` | Detección de Web Audio, fundido al volumen elegido, reanudar durante la pausa, detención inmediata e idempotente |
 | `features/territorio/filterServices.test.ts` | Búsqueda sin tildes, combinación de filtros, sin resultados |
-| `features/pausa/PausaSection.test.tsx` | Ejercicios disponibles; fases y anuncios; pausar y continuar; fin tras 4 ciclos, repetir y reiniciar; círculo animado salvo con "Reducir movimiento"; ejercicios por pasos; aviso educativo y 123 (relojes simulados) |
+| `features/pausa/PausaSection.test.tsx` | Ejercicios disponibles; fases y anuncios; pausar y continuar; fin tras 4 ciclos, repetir y reiniciar; círculo animado salvo con "Reducir movimiento"; ejercicios por pasos; aviso educativo y línea de emergencias sin número (relojes simulados) |
 | `features/pausa/breathing.test.ts` | Fases, segundos restantes, avance, cambio de ciclo y fin |
 | `features/paso/PasoSection.test.tsx` | Estado vacío; guardar y quitar desde Territorio; persistencia; orden; servicios inexistentes ignorados; quitar con anuncio; pestañas con clic y flechas |
 | `services/savedServices.test.ts` | Persistencia sin duplicados, notificación, datos corruptos, almacenamiento bloqueado, sincronización entre pestañas |

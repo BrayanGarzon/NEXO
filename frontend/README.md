@@ -26,7 +26,7 @@ vista a cada sección y resalta la que está visible.
 | `#territorio`        | Nexo Territorio: búsqueda, filtros, destacados, ciudad 3D y detalle | Primera versión 3D        |
 | `#pausa`             | Espacio Pausa: respiración guiada y ejercicios por pasos            | Primera versión funcional |
 | `#mi-siguiente-paso` | Mi siguiente paso: servicios guardados (localStorage)               | Primera versión funcional |
-| `#informacion`       | Qué es NEXO JOVEN 360 y línea 123; la sigue el pie de página        | Lista                     |
+| `#informacion`       | Qué es NEXO JOVEN 360 y línea de emergencias; la sigue el pie de página        | Lista                     |
 
 - Las rutas antiguas (`/brujula`, `/territorio`, …) redirigen a su sección y conservan los parámetros.
 - Nexo Territorio lee `?q=`, `?categoria=`, `?servicio=` y `?verificados=1` en `/`

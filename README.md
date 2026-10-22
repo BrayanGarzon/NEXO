@@ -20,7 +20,7 @@ cercano, a dónde acudir y cuál puede ser su siguiente paso.
 | Nexo Territorio | Búsqueda, filtros por categoría y verificación, servicios destacados, mapa provisional y detalle | Demostración |
 | Espacio Pausa | Respiración guiada (4 ciclos, con opción de reducir movimiento) y 4 ejercicios por pasos; educativo, no clínico | Estático |
 | Mi siguiente paso | Servicios guardados desde Territorio: lista, ver detalle, quitar, acciones sugeridas; se guardan solo en el navegador | Demostración |
-| Información | Qué es NEXO JOVEN 360, principios y línea de emergencias 123 | Estático |
+| Información | Qué es NEXO JOVEN 360, principios y línea de emergencias | Estático |
 
 El menú desplaza la vista a cada sección y resalta la visible. Las rutas antiguas (`/brujula`,
 `/territorio?servicio=…`) redirigen a su sección. Brújula no diagnostica, no evalúa y no predice

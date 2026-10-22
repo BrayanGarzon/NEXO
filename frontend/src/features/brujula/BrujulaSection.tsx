@@ -224,8 +224,8 @@ function Results({
           <div>
             <h3 id="ayuda-inmediata">Si necesitas ayuda ahora mismo</h3>
             <p>
-              No estás solo(a). Si sientes que estás en peligro, llama a la línea de emergencias{' '}
-              <a href="tel:123">123</a> o acude al servicio de urgencias más cercano.
+              No estás solo(a). Si sientes que estás en peligro, llama a la línea de emergencias o
+              acude al servicio de urgencias más cercano.
             </p>
           </div>
         </aside>
