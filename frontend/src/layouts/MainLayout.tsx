@@ -108,18 +108,20 @@ export function MainLayout() {
               Secciones
             </h2>
             <ul className="site-footer__links">
-              {mainNav.map((item) => (
-                <li key={item.id}>
-                  <Link to={sectionHref(item.id)}>{item.label}</Link>
-                </li>
-              ))}
+              {mainNav
+                .filter((item) => item.id !== 'informacion')
+                .map((item) => (
+                  <li key={item.id}>
+                    <Link to={sectionHref(item.id)}>{item.label}</Link>
+                  </li>
+                ))}
             </ul>
           </nav>
           <div className="site-footer__note">
             <h2 className="site-footer__heading">Importante</h2>
             <p>
               NEXO JOVEN 360 no ofrece diagnósticos. Si estás en peligro o necesitas ayuda
-              inmediata, llama a la línea de emergencias <strong>123</strong>.
+              inmediata, llama a la línea de emergencias.
             </p>
             <p className="site-footer__meta">
               Prototipo en desarrollo · los servicios mostrados son datos de demostración.

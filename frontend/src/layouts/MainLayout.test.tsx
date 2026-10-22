@@ -152,10 +152,10 @@ describe('MainLayout', () => {
     expect(main.nextElementSibling).toBe(footer)
 
     const informacion = screen.getByRole('region', { name: '¿Qué es NEXO JOVEN 360?' })
-    expect(within(informacion).getByRole('link', { name: '123' })).toHaveAttribute(
-      'href',
-      'tel:123',
+    expect(informacion).toHaveTextContent(
+      'Si estás en peligro o necesitas ayuda inmediata, llama a la línea de emergencias.',
     )
+    expect(within(informacion).queryByRole('link', { name: '123' })).not.toBeInTheDocument()
     const links = within(
       within(footer).getByRole('navigation', { name: 'Secciones' }),
     ).getAllByRole('link')
@@ -165,7 +165,9 @@ describe('MainLayout', () => {
       '/#territorio',
       '/#pausa',
       '/#mi-siguiente-paso',
-      '/#informacion',
     ])
+    expect(within(footer).getByRole('navigation', { name: 'Secciones' })).not.toHaveTextContent(
+      'Información',
+    )
   })
 })

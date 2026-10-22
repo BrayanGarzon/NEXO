@@ -43,8 +43,7 @@ export function InformacionSection() {
           <Icon name="heart" size={22} />
         </span>
         <span>
-          Si estás en peligro o necesitas ayuda inmediata, llama a la línea de emergencias{' '}
-          <a href="tel:123">123</a>.
+          Si estás en peligro o necesitas ayuda inmediata, llama a la línea de emergencias.
         </span>
         <Doodle name="leaf" tone="coral" className="informacion__help-leaf" />
       </p>

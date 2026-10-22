@@ -109,10 +109,11 @@ describe('PausaSection', () => {
     expect(pausa.getByRole('button', { name: 'Paso siguiente' })).toBeDisabled()
   })
 
-  it('aclara que es una herramienta educativa y enlaza la línea 123', () => {
+  it('aclara que es una herramienta educativa y menciona la línea de emergencias sin número', () => {
     const { pausa } = setup()
     expect(pausa.getByText(/no reemplazan la atención profesional/)).toBeInTheDocument()
-    expect(pausa.getByRole('link', { name: '123' })).toHaveAttribute('href', 'tel:123')
+    expect(pausa.getByText(/usa Brújula o llama a la línea de emergencias/)).toBeInTheDocument()
+    expect(pausa.queryByRole('link', { name: '123' })).not.toBeInTheDocument()
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
   })
 })

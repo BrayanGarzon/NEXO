@@ -50,7 +50,7 @@ export function PausaSection() {
 
           <p className="pausa__disclaimer">
             Son herramientas educativas de autocuidado; no reemplazan la atención profesional. Si
-            necesitas apoyo, usa Brújula o llama al <a href="tel:123">123</a> en una emergencia.
+            necesitas apoyo, usa Brújula o llama a la línea de emergencias.
           </p>
         </div>
 
