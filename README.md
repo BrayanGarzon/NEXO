@@ -133,6 +133,7 @@ Todas están en [`.env.example`](.env.example). Crea tu copia local con `cp .env
 | `BACKEND_PORT` | Puerto expuesto de la API | `8000` |
 | `VITE_API_BASE_URL` | URL de la API que usa el frontend | `http://localhost:8000` |
 | `FRONTEND_PORT` | Puerto expuesto del frontend | `5173` |
+| `VITE_WATCH_POLLING` | Recarga en caliente por sondeo dentro de Docker (necesaria en Windows/macOS) | `true` |
 
 > Si el puerto 5432 ya está ocupado (otro PostgreSQL), cambia `POSTGRES_PORT` (p. ej. `5433`) y el
 > puerto dentro de `DATABASE_URL` en tu `.env`.
