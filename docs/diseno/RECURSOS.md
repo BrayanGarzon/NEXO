@@ -9,6 +9,7 @@ Registro de las fuentes y licencias de los recursos externos usados en la interf
 | Manrope, Inter y Caveat (woff2, subconjunto latino) | `frontend/public/fonts/` | Google Fonts | SIL OFL 1.1 | 2026-10-21 |
 | Iconos, trazos decorativos e ilustraciones SVG | `frontend/src/components/` | Elaboración propia | Del proyecto | 2026-10-21 |
 | Ilustración de la maceta (estado vacío de Mi siguiente paso) | `frontend/src/features/paso/SeedlingArt.tsx` | Elaboración propia | Del proyecto | 2026-10-21 |
+| Ciudad 3D ilustrativa de Nexo Territorio: geometría, materiales «toon» y texturas de fachada (generadas por código, sin modelos ni imágenes externas) | `frontend/src/features/territorio/map3d/` | Elaboración propia con Three.js (MIT) y React Three Fiber (MIT) | Del proyecto | 2026-10-22 |
 | Sonido ambiental "Brisa suave" (generado, sin archivo de audio) | `frontend/src/features/sonido/ambientEngine.ts` | Elaboración propia: síntesis en el navegador con la Web Audio API | Del proyecto | 2026-10-21 |
 
 ### Sonido ambiental

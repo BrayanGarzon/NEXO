@@ -6,13 +6,15 @@ import { SearchField } from '../../components/SearchField'
 import { StatusMessage } from '../../components/StatusMessage'
 import { Chip, DemoTag } from '../../components/Tag'
 import { categories, categoryOrder } from '../../content/categories'
-import type { ServiceCategory } from '../../types/catalog'
+import type { DemoService, ServiceCategory } from '../../types/catalog'
 import { FeaturedServices, territorioExplorarId } from './FeaturedServices'
 import { filterServices, isServiceCategory } from './filterServices'
-import { MapCanvas } from './MapCanvas'
+import { TerritorioMap } from './TerritorioMap'
 import { ServiceDetail } from './ServiceDetail'
 import { useDemoServices } from './useDemoServices'
 import './TerritorioSection.css'
+
+const NO_SERVICES: DemoService[] = []
 
 export function TerritorioSection() {
   const [params, setParams] = useSearchParams()
@@ -86,7 +88,17 @@ export function TerritorioSection() {
             onSubmit={(value) => update({ q: value || null, servicio: null })}
           />
         </div>
-        <div className="territorio__filters" role="group" aria-label="Filtrar por categoría">
+      </div>
+
+      <FeaturedServices />
+
+      {/* Filtros: fijos bajo el encabezado mientras se recorre el listado y el mapa. */}
+      <div className="territorio__filters-bar">
+        <div
+          className="territorio__filters container"
+          role="group"
+          aria-label="Filtrar por categoría"
+        >
           <Chip selected={category === null} onClick={() => selectCategory(null)}>
             Todos
           </Chip>
@@ -109,8 +121,6 @@ export function TerritorioSection() {
           </Chip>
         </div>
       </div>
-
-      <FeaturedServices />
 
       <div id={territorioExplorarId} className="territorio__body container">
         <section className="territorio__results" aria-labelledby="resultados-title">
@@ -192,8 +202,9 @@ export function TerritorioSection() {
         </section>
 
         <div className={selected ? 'territorio__map territorio__map--detail' : 'territorio__map'}>
-          <MapCanvas
+          <TerritorioMap
             services={results}
+            allServices={state.status === 'ready' ? state.services : NO_SERVICES}
             selectedId={selectedId}
             onSelect={(id) => update({ servicio: id })}
           />

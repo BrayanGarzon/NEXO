@@ -47,6 +47,30 @@ describe('TerritorioSection', () => {
     expect(screen.queryByRole('complementary', { name: /Espacios culturales/ })).toBeNull()
   })
 
+  it('ordena la sección: encabezado y buscador → destacados → filtros → listado y mapa', async () => {
+    renderRoute('/')
+    const territorio = withinSection('territorio')
+    const order = [
+      territorio.getByRole('heading', { level: 2, name: 'Explora servicios en tu ciudad' }),
+      territorio.getByRole('searchbox'),
+      territorio.getByRole('region', { name: 'Servicios destacados en Villavicencio' }),
+      territorio.getByRole('group', { name: 'Filtrar por categoría' }),
+      await territorio.findByRole('region', { name: /\d+ servicios$/ }),
+    ]
+    for (let i = 1; i < order.length; i++) {
+      expect(
+        order[i - 1].compareDocumentPosition(order[i]) & Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy()
+    }
+  })
+
+  it('las tarjetas destacadas muestran el resumen del catálogo', () => {
+    renderRoute('/')
+    const featured = screen.getByRole('region', { name: 'Servicios destacados en Villavicencio' })
+    const first = demoServices.find((service) => service.id === 'demo-orientacion-juvenil')!
+    expect(within(featured).getByText(first.summary)).toBeInTheDocument()
+  })
+
   it('incluye los servicios destacados como datos de demostración', () => {
     renderRoute('/')
     const featured = withinSection('territorio').getByRole('region', {

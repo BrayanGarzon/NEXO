@@ -25,14 +25,13 @@ const comunaLabels = [
 ]
 
 /*
- * Contenedor PROVISIONAL del mapa. Es un esquema ilustrado, no cartografía real:
- * el mapa urbano 3D de Villavicencio y su proveedor se definirán en una tarea posterior
- * (docs/ARQUITECTURA.md, decisión pendiente 7). Los marcadores sí son interactivos para
- * validar el flujo de selección → detalle.
+ * Vista simple (2D) del mapa: esquema ilustrado, no cartografía real. Se usa cuando el
+ * navegador no puede dibujar la ciudad 3D, si esta falla o si la persona la elige.
+ * Conserva todas las funciones: marcadores filtrados y selección → detalle.
  */
 export function MapCanvas({ services, selectedId, onSelect }: MapCanvasProps) {
   return (
-    <div className="map-canvas">
+    <div className="map-canvas__flat">
       <svg
         className="map-canvas__art"
         viewBox="0 0 100 100"
@@ -92,10 +91,6 @@ export function MapCanvas({ services, selectedId, onSelect }: MapCanvasProps) {
           )
         })}
       </ul>
-
-      <p className="map-canvas__badge">
-        <Icon name="info" size={16} /> Vista provisional · el mapa 3D llegará en una próxima fase
-      </p>
     </div>
   )
 }

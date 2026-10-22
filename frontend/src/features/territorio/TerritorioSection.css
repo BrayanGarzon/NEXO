@@ -8,14 +8,19 @@
   font-size: var(--font-size-2xl);
 }
 
-/* ---------- Barra de búsqueda y filtros ---------- */
+/* ---------- Encabezado, buscador y filtros ---------- */
+
+.territorio {
+  /* Altura de la barra de filtros fija (el resto de la página la tiene en cuenta). */
+  --filters-bar-height: 3.75rem;
+}
 
 .territorio__toolbar {
   display: grid;
   grid-template-columns: auto minmax(0, 28rem);
   align-items: center;
   gap: var(--space-4) var(--space-6);
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-2);
 }
 
 .territorio__heading {
@@ -33,14 +38,37 @@
   width: 100%;
 }
 
+/*
+ * Barra de filtros fija bajo el encabezado del sitio mientras se recorre el listado y el
+ * mapa (solo dentro de la sección). Una fila con desplazamiento horizontal en móviles.
+ */
+.territorio__filters-bar {
+  position: sticky;
+  top: var(--header-height);
+  z-index: 5;
+  margin-bottom: var(--space-4);
+  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: var(--border-width) solid color-mix(in srgb, var(--color-border) 70%, transparent);
+}
+
 .territorio__filters {
-  grid-column: 1 / -1;
   display: flex;
   gap: var(--space-2);
+  min-height: var(--filters-bar-height);
+  align-items: center;
   overflow-x: auto;
-  padding: var(--space-1) var(--space-1) var(--space-2);
-  margin-inline: calc(var(--space-1) * -1);
+  padding-block: var(--space-2);
   scrollbar-width: thin;
+}
+
+/*
+ * Al saltar al listado o a un servicio, deja libre la barra de filtros (el encabezado del
+ * sitio ya lo reserva `scroll-padding-top` en global.css; ambos márgenes se suman).
+ */
+.territorio__body,
+.service-detail {
+  scroll-margin-top: calc(var(--filters-bar-height) + var(--space-2));
 }
 
 .territorio__filters .chip {
@@ -512,35 +540,96 @@
   margin-bottom: var(--space-6);
 }
 
+/* Subsección separada de los filtros: línea discontinua y más aire. */
 .featured__header {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-3);
-  margin-bottom: var(--space-4);
+  gap: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px dashed var(--color-border);
 }
 
 .featured__heading {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2) var(--space-3);
+}
+
+.featured__badge {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 46% 54% 40% 60% / 55% 45% 55% 45%;
+  background: var(--brand-amarillo);
+  color: var(--brand-grafito);
+}
+
+.featured__title {
+  font-size: var(--font-size-xl);
+  color: var(--color-heading);
 }
 
 .featured__all {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-4);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
   font-family: var(--font-display);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-sm);
   color: var(--color-heading);
   text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
 }
 
 .featured__all:hover {
-  text-decoration: underline;
+  border-color: var(--brand-lila);
+  color: var(--color-accent-ink);
+}
+
+.featured__all:focus-visible {
+  border-radius: var(--radius-pill);
+}
+
+/* Pantallas estrechas: insignia y título en la misma fila; la etiqueta, debajo. */
+@media (max-width: 36rem) {
+  .featured__heading {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .featured__heading > :last-child {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .featured__title {
+    font-size: var(--font-size-lg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .featured__all .icon {
+    transition: translate var(--duration-base) var(--ease-out);
+  }
+
+  .featured__all:hover .icon {
+    translate: 3px 0;
+  }
 }
 
 .featured__list {
@@ -574,6 +663,15 @@
 .service-card__title a {
   color: var(--color-heading);
   text-decoration: none;
+}
+
+.service-card__summary {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
 }
 
 .service-card__meta {

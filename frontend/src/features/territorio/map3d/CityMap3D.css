@@ -1,0 +1,117 @@
+/* ---------- Ciudad 3D ---------- */
+
+.map3d {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: radial-gradient(120% 90% at 50% 38%, var(--brand-marfil) 0%, var(--brand-menta) 70%);
+}
+
+.map3d__viewport {
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+}
+
+.map3d__viewport:active {
+  cursor: grabbing;
+}
+
+.map3d__viewport:focus-visible {
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 3px var(--color-focus);
+}
+
+.map3d__canvas {
+  display: block;
+}
+
+/* Pines HTML sobre la escena: accesibles con teclado y lector de pantalla. */
+.map3d__pins {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+
+.map3d__pin {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  justify-items: center;
+  visibility: hidden;
+  will-change: transform;
+}
+
+.map3d__pin > .map-pin {
+  pointer-events: auto;
+  translate: -50% -100%;
+}
+
+.map3d__pin--selected {
+  z-index: 1;
+}
+
+.map3d__pin-name {
+  position: absolute;
+  top: var(--space-2);
+  translate: -50% 0;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-heading);
+  font-family: var(--font-display);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  /* Envuelve en lugar de salirse del mapa cuando el pin está cerca del borde. */
+  width: max-content;
+  max-width: 11rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* Flotación muy suave de los pines (solo sin «reducir movimiento»). */
+@media (prefers-reduced-motion: no-preference) {
+  .map3d__pin > .map-pin {
+    animation: map3d-float 3.2s ease-in-out infinite alternate;
+  }
+
+  .map3d__pin:nth-child(2n) > .map-pin {
+    animation-delay: -1.6s;
+  }
+}
+
+@keyframes map3d-float {
+  from {
+    translate: -50% -100%;
+  }
+
+  to {
+    translate: -50% calc(-100% - 5px);
+  }
+}
+
+.map3d__hint {
+  position: absolute;
+  left: 50%;
+  top: var(--space-4);
+  translate: -50% 0;
+  max-width: calc(100% - 2 * var(--space-4));
+  margin: 0;
+  max-width: min(20rem, calc(100% - 2 * var(--space-4)));
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--brand-petroleo) 82%, transparent);
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-xs);
+  text-align: center;
+  pointer-events: none;
+}
+
+.map3d__hint:empty {
+  display: none;
+}

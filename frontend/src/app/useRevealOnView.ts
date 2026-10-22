@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
  * Indica si el elemento ya entró en pantalla (una sola vez), para lanzar animaciones de
  * aparición al verlo y no al cargar la página. Sin IntersectionObserver cuenta como visible.
  */
-export function useRevealOnView<T extends Element>() {
+export function useRevealOnView<T extends Element>(rootMargin = '0px 0px -15% 0px') {
   const ref = useRef<T>(null)
   const [revealed, setRevealed] = useState(() => typeof IntersectionObserver === 'undefined')
 
@@ -17,11 +17,11 @@ export function useRevealOnView<T extends Element>() {
         setRevealed(true)
         observer.disconnect()
       },
-      { rootMargin: '0px 0px -15% 0px' },
+      { rootMargin },
     )
     observer.observe(element)
     return () => observer.disconnect()
-  }, [revealed])
+  }, [revealed, rootMargin])
 
   return [ref, revealed] as const
 }
