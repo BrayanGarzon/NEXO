@@ -8,7 +8,7 @@ export interface ServiceFilters {
 }
 
 /** Normaliza para buscar sin distinguir mayúsculas ni tildes. */
-function normalize(text: string) {
+export function normalize(text: string) {
   return text
     .normalize('NFD')
     .replace(/\p{Diacritic}/gu, '')

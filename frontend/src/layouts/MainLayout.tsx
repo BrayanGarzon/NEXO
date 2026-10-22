@@ -6,6 +6,7 @@ import { ButtonLink } from '../components/Button'
 import { Doodle } from '../components/Doodle'
 import { Icon } from '../components/Icon'
 import { Logo } from '../components/Logo'
+import { SiteSearch } from '../features/busqueda/SiteSearch'
 import { ApiStatus } from '../features/home/ApiStatus'
 import { AmbientSound } from '../features/sonido/AmbientSound'
 import './MainLayout.css'
@@ -67,9 +68,7 @@ export function MainLayout() {
           </nav>
 
           <div className="site-header__actions">
-            <Link to={sectionHref('territorio')} className="site-header__icon-link">
-              <Icon name="search" label="Buscar servicios" />
-            </Link>
+            <SiteSearch />
             <ButtonLink to={sectionHref('territorio')} className="site-header__cta">
               Explorar
             </ButtonLink>

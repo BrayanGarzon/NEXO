@@ -22,6 +22,30 @@ describe('MainLayout', () => {
     expect(screen.queryByRole('button', { name: 'Panel institucional' })).not.toBeInTheDocument()
   })
 
+  it('la lupa busca en toda la página y lleva al resultado', async () => {
+    const user = userEvent.setup()
+    const { router } = renderRoute('/')
+    await user.click(screen.getByRole('button', { name: 'Buscar en la página' }))
+
+    const dialog = screen.getByRole('dialog', { name: 'Buscar en NEXO JOVEN 360' })
+    await user.type(within(dialog).getByRole('searchbox'), 'liga')
+    const servicios = within(dialog).getByRole('region', { name: 'Servicios' })
+    await user.click(within(servicios).getByRole('link', { name: /Liga Juvenil de Fútbol/ }))
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(router.state.location.search).toBe('?servicio=demo-liga-futbol')
+    expect(router.state.location.hash).toBe('#territorio')
+  })
+
+  it('la búsqueda avisa cuando no hay resultados', async () => {
+    const user = userEvent.setup()
+    renderRoute('/')
+    await user.click(screen.getByRole('button', { name: 'Buscar en la página' }))
+    const dialog = screen.getByRole('dialog')
+    await user.type(within(dialog).getByRole('searchbox'), 'xyzzy')
+    expect(within(dialog).getByText(/No encontramos resultados para «xyzzy»/)).toBeInTheDocument()
+  })
+
   it('el menú lleva a la sección y se cierra en móvil', async () => {
     const user = userEvent.setup()
     const { router } = renderRoute('/')
