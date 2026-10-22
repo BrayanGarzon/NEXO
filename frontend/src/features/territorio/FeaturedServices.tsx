@@ -6,6 +6,9 @@ import { DemoTag, Tag } from '../../components/Tag'
 import { categories } from '../../content/categories'
 import { getFeaturedDemoServices } from '../../services/catalog'
 
+/** Id del bloque de resultados y mapa, destino de «Ver todos» y de cada destacado. */
+export const territorioExplorarId = 'territorio-explorar'
+
 export function FeaturedServices() {
   const services = getFeaturedDemoServices()
 
@@ -13,10 +16,16 @@ export function FeaturedServices() {
     <section className="featured container" aria-labelledby="featured-title">
       <header className="featured__header">
         <div className="featured__heading">
-          <h2 id="featured-title">Servicios destacados en Villavicencio</h2>
+          <span className="featured__badge" aria-hidden="true">
+            <Icon name="sparkle" size={18} />
+          </span>
+          <h3 id="featured-title" className="featured__title">
+            Servicios destacados en Villavicencio
+          </h3>
           <DemoTag />
         </div>
-        <Link to="/#territorio" className="featured__all">
+        {/* Sin parámetros de búsqueda: el listado se muestra completo, sin filtros. */}
+        <Link to={`/#${territorioExplorarId}`} className="featured__all">
           Ver todos <Icon name="arrow-right" size={18} />
         </Link>
       </header>
@@ -27,11 +36,15 @@ export function FeaturedServices() {
             <Card key={service.id} as="li" interactive className="service-card">
               <ServiceThumb icon={category.icon} tone={category.tone} />
               <div className="service-card__body">
-                <h3 className="service-card__title">
-                  <Link to={`/?servicio=${service.id}#territorio`} className="card__link">
+                <h4 className="service-card__title">
+                  <Link
+                    to={`/?servicio=${service.id}#${territorioExplorarId}`}
+                    className="card__link"
+                  >
                     {service.name}
                   </Link>
-                </h3>
+                </h4>
+                <p className="service-card__summary">{service.summary}</p>
                 <p className="service-card__meta">
                   {category.label} · Comuna {service.comuna}
                 </p>

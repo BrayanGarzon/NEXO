@@ -1,4 +1,5 @@
 import { Annotation } from '../../components/Annotation'
+import { Doodle } from '../../components/Doodle'
 import { Icon, type IconName } from '../../components/Icon'
 import './InformacionSection.css'
 
@@ -33,9 +34,13 @@ export function InformacionSection() {
           confiable sobre servicios de apoyo, recursos de bienestar, actividades juveniles y canales
           institucionales, en un solo lugar.
         </p>
-        <Annotation tone="menta" tilt={-3}>
-          Información clara y cercana
-        </Annotation>
+        <div className="informacion__art">
+          <Annotation tone="menta" tilt={-3}>
+            Información clara y cercana
+          </Annotation>
+          <Doodle name="sprout" tone="menta" className="informacion__sprout" />
+          <Doodle name="sparkle" tone="amarillo" filled className="informacion__spark" />
+        </div>
       </div>
       <ul className="informacion__list">
         {principles.map((item) => (
@@ -51,11 +56,14 @@ export function InformacionSection() {
         ))}
       </ul>
       <p className="informacion__help">
-        <Icon name="heart" size={20} />
+        <span className="informacion__help-icon" aria-hidden="true">
+          <Icon name="heart" size={22} />
+        </span>
         <span>
           Si estás en peligro o necesitas ayuda inmediata, llama a la línea de emergencias{' '}
           <a href="tel:123">123</a>.
         </span>
+        <Doodle name="leaf" tone="coral" className="informacion__help-leaf" />
       </p>
     </section>
   )

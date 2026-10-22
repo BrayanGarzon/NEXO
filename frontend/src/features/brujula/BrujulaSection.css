@@ -1,5 +1,44 @@
 .brujula {
+  position: relative;
+  overflow: hidden;
   padding-block: var(--space-8);
+}
+
+.brujula > .container {
+  position: relative;
+}
+
+/* Decoración botánica de fondo (no intercepta clics ni se anuncia). */
+.brujula__decor {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.brujula__branch {
+  position: absolute;
+  left: -1.5rem;
+  bottom: var(--space-5);
+  width: clamp(6rem, 11vw, 9.5rem);
+  opacity: 0.55;
+  stroke-width: 3.5;
+}
+
+.brujula__sprout {
+  position: absolute;
+  right: var(--space-6);
+  bottom: var(--space-4);
+  width: clamp(3.5rem, 6vw, 5rem);
+  opacity: 0.6;
+  stroke-width: 4;
+}
+
+.brujula__decor-spark {
+  position: absolute;
+  right: 12%;
+  top: var(--space-7);
+  width: 2rem;
+  opacity: 0.7;
 }
 
 /* ---------- Pasos ---------- */
@@ -7,7 +46,7 @@
 .stepper {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2) var(--space-6);
+  gap: var(--space-2) var(--space-2);
   margin: 0 0 var(--space-6);
   padding: 0;
   list-style: none;
@@ -22,6 +61,22 @@
   color: var(--color-text-muted);
 }
 
+/* Trazo que une los pasos: se completa a medida que se avanza. */
+.stepper__item + .stepper__item::before {
+  content: '';
+  width: 2rem;
+  height: 2px;
+  margin-right: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-muted);
+  transition: background-color var(--duration-base) var(--ease-out);
+}
+
+.stepper__item--current::before,
+.stepper__item--done::before {
+  background: var(--color-accent);
+}
+
 .stepper__number {
   display: grid;
   place-items: center;
@@ -31,6 +86,9 @@
   background: var(--color-surface-muted);
   font-weight: var(--font-weight-bold);
   font-size: var(--font-size-xs);
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out);
 }
 
 .stepper__item--current {
@@ -52,7 +110,7 @@
 
 .brujula__step {
   display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.4fr);
   gap: var(--space-7);
   align-items: start;
 }
@@ -80,9 +138,9 @@
 
 .brujula__art {
   position: relative;
-  width: 12rem;
-  height: 10rem;
-  margin-top: var(--space-4);
+  width: 15rem;
+  height: 12rem;
+  margin-top: var(--space-3);
 }
 
 .brujula__compass {
@@ -91,8 +149,8 @@
   top: 1rem;
   display: grid;
   place-items: center;
-  width: 7.5rem;
-  height: 7.5rem;
+  width: 9.5rem;
+  height: 9.5rem;
   border-radius: 46% 54% 40% 60% / 55% 45% 55% 45%;
   background: var(--brand-lila-soft);
   color: var(--color-accent-ink);
@@ -110,7 +168,15 @@
   position: absolute;
   right: 0;
   bottom: 0;
-  width: 4.5rem;
+  width: 5rem;
+}
+
+.brujula__squiggle {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 4rem;
+  stroke-width: 4;
 }
 
 .brujula__note {
@@ -134,7 +200,71 @@
 .brujula__grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.brujula__grid .choice-tile {
+  min-height: 12rem;
   gap: var(--space-3);
+}
+
+.brujula__grid .choice-tile__icon {
+  width: 3.5rem;
+  height: 3.5rem;
+}
+
+.brujula__grid .choice-tile__label {
+  font-size: var(--font-size-md);
+}
+
+.brujula__grid--two .choice-tile {
+  min-height: 13rem;
+}
+
+/* Aparición escalonada de las opciones (solo sin «reducir movimiento»). */
+@media (prefers-reduced-motion: no-preference) {
+  .brujula__grid[data-reveal='pending'] .choice-tile {
+    opacity: 0;
+  }
+
+  .brujula__grid[data-reveal='shown'] .choice-tile {
+    animation: choice-rise 360ms var(--ease-out) backwards;
+  }
+
+  .brujula__grid .choice-tile:nth-child(2) {
+    animation-delay: 40ms;
+  }
+
+  .brujula__grid .choice-tile:nth-child(3) {
+    animation-delay: 80ms;
+  }
+
+  .brujula__grid .choice-tile:nth-child(4) {
+    animation-delay: 120ms;
+  }
+
+  .brujula__grid .choice-tile:nth-child(5) {
+    animation-delay: 160ms;
+  }
+
+  .brujula__grid .choice-tile:nth-child(6) {
+    animation-delay: 200ms;
+  }
+
+  .brujula__grid .choice-tile:nth-child(7) {
+    animation-delay: 240ms;
+  }
+
+  .brujula__grid .choice-tile:nth-child(8) {
+    animation-delay: 280ms;
+  }
+}
+
+@keyframes choice-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 }
 
 .brujula__grid--two {
@@ -160,6 +290,31 @@
 
   .brujula__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+
+  .brujula__grid .choice-tile,
+  .brujula__grid--two .choice-tile {
+    min-height: 9rem;
+  }
+
+  .brujula__grid .choice-tile__label {
+    font-size: var(--font-size-sm);
+  }
+
+  .brujula__decor-spark {
+    display: none;
+  }
+}
+
+/* En pantallas estrechas los pasos pasan a varias líneas: sin trazo de unión. */
+@media (max-width: 36rem) {
+  .stepper {
+    gap: var(--space-2) var(--space-5);
+  }
+
+  .stepper__item + .stepper__item::before {
+    display: none;
   }
 }
 

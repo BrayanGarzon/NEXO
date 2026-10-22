@@ -2,7 +2,7 @@ import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import * as catalog from '../../services/catalog'
-import { renderRoute } from '../../test/renderRoute'
+import { renderRoute, withinSection } from '../../test/renderRoute'
 import { demoServices } from '../../mocks/demoServices'
 
 describe('TerritorioSection', () => {
@@ -21,23 +21,6 @@ describe('TerritorioSection', () => {
     expect(
       await screen.findByRole('heading', { name: `${demoServices.length} servicios` }),
     ).toBeInTheDocument()
-  })
-
-  it('el mapa ilustrado alterna entre 3D y 2D y limita el zoom', async () => {
-    const user = userEvent.setup()
-    renderRoute('/')
-    await screen.findByRole('heading', { name: /servicios$/ })
-    const controles = screen.getByRole('group', { name: 'Controles del mapa' })
-
-    const vista3d = within(controles).getByRole('button', { name: 'Vista en 3D' })
-    expect(vista3d).toHaveAttribute('aria-pressed', 'true')
-    await user.click(vista3d)
-    expect(vista3d).toHaveAttribute('aria-pressed', 'false')
-    expect(within(controles).queryByRole('button', { name: 'Girar el mapa' })).toBeNull()
-
-    const alejar = within(controles).getByRole('button', { name: 'Alejar' })
-    await user.click(alejar)
-    expect(alejar).toBeDisabled()
   })
 
   it('filtra por categoría y muestra el detalle al seleccionar', async () => {
@@ -62,6 +45,58 @@ describe('TerritorioSection', () => {
 
     await user.click(within(detail).getByRole('button', { name: 'Cerrar detalle' }))
     expect(screen.queryByRole('complementary', { name: /Espacios culturales/ })).toBeNull()
+  })
+
+  it('ordena la sección: encabezado y buscador → destacados → filtros → listado y mapa', async () => {
+    renderRoute('/')
+    const territorio = withinSection('territorio')
+    const order = [
+      territorio.getByRole('heading', { level: 2, name: 'Explora servicios en tu ciudad' }),
+      territorio.getByRole('searchbox'),
+      territorio.getByRole('region', { name: 'Servicios destacados en Villavicencio' }),
+      territorio.getByRole('group', { name: 'Filtrar por categoría' }),
+      await territorio.findByRole('region', { name: /\d+ servicios$/ }),
+    ]
+    for (let i = 1; i < order.length; i++) {
+      expect(
+        order[i - 1].compareDocumentPosition(order[i]) & Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy()
+    }
+  })
+
+  it('las tarjetas destacadas muestran el resumen del catálogo', () => {
+    renderRoute('/')
+    const featured = screen.getByRole('region', { name: 'Servicios destacados en Villavicencio' })
+    const first = demoServices.find((service) => service.id === 'demo-orientacion-juvenil')!
+    expect(within(featured).getByText(first.summary)).toBeInTheDocument()
+  })
+
+  it('incluye los servicios destacados como datos de demostración', () => {
+    renderRoute('/')
+    const featured = withinSection('territorio').getByRole('region', {
+      name: 'Servicios destacados en Villavicencio',
+    })
+    expect(within(featured).getByText('Datos de demostración')).toBeInTheDocument()
+    expect(within(featured).getAllByRole('listitem')).toHaveLength(3)
+    expect(
+      screen.getAllByRole('region', { name: 'Servicios destacados en Villavicencio' }),
+    ).toHaveLength(1)
+  })
+
+  it('«Ver todos» muestra el listado completo y cada destacado abre su detalle', async () => {
+    const user = userEvent.setup()
+    const { router } = renderRoute('/?categoria=cultura#territorio')
+    const featured = screen.getByRole('region', { name: 'Servicios destacados en Villavicencio' })
+    expect(
+      within(featured).getByRole('link', { name: 'Centro de Orientación Juvenil' }),
+    ).toHaveAttribute('href', '/?servicio=demo-orientacion-juvenil#territorio-explorar')
+
+    await user.click(within(featured).getByRole('link', { name: /Ver todos/ }))
+    expect(router.state.location.search).toBe('')
+    expect(router.state.location.hash).toBe('#territorio-explorar')
+    expect(
+      await screen.findByRole('heading', { name: `${demoServices.length} servicios` }),
+    ).toBeInTheDocument()
   })
 
   it('abre el detalle indicado en la URL', async () => {

@@ -28,7 +28,8 @@ servicios que muestra el frontend es **sintético** y no pasa por la API (ver "F
 | Sistema visual | `src/styles/`, `src/components/` | Tokens CSS y componentes compartidos: `Button`/`ButtonLink`, `Card`, `Tag`/`DemoTag`/`Chip`, `SearchField`, `ChoiceTile`, `StatusMessage`, `Icon`, `IconBadge`, `Annotation`, `Doodle`, `PhotoFrame`, `Logo`, ilustraciones |
 | Layout público | `src/layouts/MainLayout.*` | Encabezado fijo, menú (con versión móvil), pie, enlace "Saltar al contenido" |
 | Página única | `src/features/home/HomePage.tsx` | Compone todas las secciones públicas |
-| Secciones | `src/features/{brujula,territorio,upcoming,informacion}/` | Una carpeta por sección; cada una exporta `…Section` con un `id` de ancla |
+| Secciones | `src/features/{brujula,territorio,pausa,paso,informacion}/` | Una carpeta por sección; cada una exporta `…Section` con un `id` de ancla |
+| Servicios guardados | `src/services/savedServices.ts`, `src/features/paso/useSavedServices.ts` | Lista en `localStorage`, compartida por Territorio y Mi siguiente paso (`useSyncExternalStore`) |
 | Estados de ruta | `src/features/not-found/`, `src/components/RouteErrorBoundary.tsx` | 404 y error de ruta |
 | Datos | `src/services/`, `src/mocks/`, `src/types/`, `src/content/` | Cliente HTTP, acceso al catálogo, datos sintéticos, tipos y contenido estático |
 
@@ -130,6 +131,8 @@ demostración.
 | 19 | Catálogo detrás de `services/catalog.ts` con datos sintéticos marcados en pantalla | Avanzar la interfaz sin inventar un contrato; cambio a API localizado en un archivo. |
 | 20 | Estado de Territorio en la URL | Enlaces directos a un servicio o búsqueda. |
 | 21 | Paneles institucionales fuera de la página única, con layout propio | Público distinto (personal institucional) y futura autenticación. |
+| 22 | "Mi siguiente paso" guarda solo en `localStorage`, sin cuentas | No hay autenticación pública ni contrato; evita datos personales en el servidor. Migrar a la API exigiría un contrato y una decisión de privacidad. |
+| 23 | Temporizador de Espacio Pausa basado en `Date.now()` | Mantiene el ritmo aunque el navegador ralentice los intervalos. |
 
 ## Convenciones de código
 

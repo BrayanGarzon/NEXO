@@ -187,3 +187,29 @@
   fill: var(--brand-coral);
   opacity: 0.45;
 }
+
+/*
+ * Puntos de giro para animar la escena (coordenadas del viewBox): las palmas pivotan en la base
+ * del tronco, las hojas en la copa y cada gaviota en su centro.
+ */
+.illus__palm {
+  transform-origin: 70px 330px;
+}
+
+.illus__palm .illus__fronds {
+  transform-origin: 62px 218px;
+}
+
+.illus__palm--far {
+  transform-origin: 330px 320px;
+}
+
+.illus__palm--far .illus__fronds {
+  transform-origin: 322px 250px;
+}
+
+.illus__sun,
+.illus__bird {
+  transform-box: fill-box;
+  transform-origin: center;
+}

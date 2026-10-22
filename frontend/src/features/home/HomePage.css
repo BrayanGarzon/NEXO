@@ -2,13 +2,18 @@
 
 .hero {
   position: relative;
+  /* Portada arriba y accesos abajo: los accesos cierran Inicio sin quedar recortados. */
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  padding-block: var(--space-7) var(--space-8);
+  padding-top: var(--space-7);
 }
 
 .hero__inner {
   position: relative;
+  flex: 1;
   display: grid;
+  align-content: center;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
   align-items: center;
   gap: var(--space-7);
@@ -194,9 +199,33 @@
   rotate: 18deg;
 }
 
+/*
+ * Escritorio: el título y la ilustración se ajustan a la altura de la ventana para que la
+ * portada y los cuatro accesos se vean completos en la primera pantalla (desde ~800 px de alto).
+ */
+@media (min-width: 56.01rem) {
+  .hero {
+    padding-top: var(--space-6);
+  }
+
+  .hero__copy {
+    gap: var(--space-4);
+  }
+
+  .hero__title {
+    font-size: min(var(--font-size-hero), 6.5vh);
+    font-size: min(var(--font-size-hero), 6.5svh);
+  }
+
+  .hero__visual {
+    max-width: min(34rem, 100vh - 26rem);
+    max-width: min(34rem, 100svh - 26rem);
+  }
+}
+
 @media (max-width: 56rem) {
   .hero {
-    padding-block: var(--space-5) var(--space-7);
+    padding-top: var(--space-5);
   }
 
   .hero__inner {
@@ -229,9 +258,11 @@
 
 .modules {
   position: relative;
-  padding-block: var(--space-7) var(--space-6);
+  margin-top: var(--space-6);
+  padding-block: var(--space-6);
   background: var(--color-surface);
-  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  /* Franja cerrada por abajo: separa Inicio de la sección siguiente. */
+  border-radius: var(--radius-xl);
   box-shadow: 0 -12px 30px -24px rgb(22 59 58 / 0.35);
 }
 
@@ -348,88 +379,209 @@
   }
 }
 
-/* ---------- Servicios destacados ---------- */
+/* Ventanas de poca altura (portátiles): Inicio algo más compacto para que quepan los accesos. */
+@media (min-width: 56.01rem) and (max-height: 52rem) {
+  .hero {
+    padding-top: var(--space-5);
+  }
 
-.featured {
-  padding-block: var(--space-6);
+  .hero__copy {
+    gap: var(--space-3);
+  }
+
+  .hero__title {
+    font-size: min(var(--font-size-hero), 6vh);
+    font-size: min(var(--font-size-hero), 6svh);
+  }
+
+  .hero__visual {
+    max-width: min(34rem, 100vh - 23rem);
+    max-width: min(34rem, 100svh - 23rem);
+  }
+
+  /* Las notas manuscritas se reducen con la ilustración para no taparla. */
+  .hero__note {
+    font-size: min(var(--font-size-hand), 3.4vh);
+  }
+
+  .hero__note.annotation--lg {
+    font-size: min(2.6rem, 4.6vh);
+  }
+
+  .modules {
+    margin-top: var(--space-5);
+    padding-block: var(--space-5);
+  }
+
+  .module-card {
+    min-height: 0;
+    padding-block: var(--space-4);
+  }
+
+  .module-card__icon {
+    margin-bottom: var(--space-1);
+  }
+
+  .module-card__description {
+    max-width: none;
+  }
 }
 
-.featured__header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  margin-bottom: var(--space-5);
+/* Ventanas muy bajas (menos de ~690 px): un escalón más compacto, sin ocultar contenido. */
+@media (min-width: 56.01rem) and (max-height: 43rem) {
+  .hero {
+    padding-top: var(--space-4);
+  }
+
+  .hero__copy {
+    gap: var(--space-2);
+  }
+
+  .hero__title {
+    font-size: min(var(--font-size-hero), 5.5vh);
+    font-size: min(var(--font-size-hero), 5.5svh);
+  }
+
+  .hero__visual {
+    max-width: min(34rem, 100vh - 20rem);
+    max-width: min(34rem, 100svh - 20rem);
+  }
+
+  .hero__lead {
+    font-size: var(--font-size-md);
+  }
+
+  .modules {
+    margin-top: var(--space-4);
+    padding-block: var(--space-4);
+  }
+
+  .module-card__icon {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .module-card__icon .icon {
+    width: 28px;
+    height: 28px;
+  }
 }
 
-.featured__heading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-3);
+/* ---------- Animación del Inicio: atardecer ---------- */
+
+/*
+ * El sol se pone tras la cordillera (recortado en LlanoScene) y vuelve a salir; los rayos del
+ * doodle giran, las palmas se mecen, las gaviotas cruzan aleteando y las notas se balancean.
+ * Se usa `transform`, así que se conserva la inclinación (`rotate`) de notas y doodle. Solo en
+ * Inicio: la misma ilustración en Espacio Pausa queda quieta. Con prefers-reduced-motion,
+ * global.css reduce las animaciones a un instante.
+ */
+
+.hero .illus__sun {
+  animation: hero-sunset 16s ease-in-out infinite;
 }
 
-.featured__all {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-family: var(--font-display);
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-sm);
-  color: var(--color-heading);
-  text-decoration: none;
+.hero .hero__sun {
+  transform-origin: 52% 58%;
+  animation: hero-spin 24s linear infinite;
 }
 
-.featured__all:hover {
-  text-decoration: underline;
+.hero .illus__palm {
+  animation: hero-sway 7s ease-in-out infinite alternate;
 }
 
-.featured__list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-4);
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.hero .illus__palm--far {
+  animation-delay: -3s;
 }
 
-.service-card {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-4);
+.hero .illus__birds {
+  animation: hero-fly-across 16s linear infinite;
 }
 
-.service-card__body {
-  display: grid;
-  justify-items: start;
-  gap: var(--space-1);
-  min-width: 0;
-  flex: 1;
+.hero .illus__bird {
+  animation: hero-flap 0.9s ease-in-out infinite alternate;
 }
 
-.service-card__title {
-  font-size: var(--font-size-md);
+.hero .illus__bird:nth-child(2) {
+  animation-delay: -0.3s;
 }
 
-.service-card__title a {
-  color: var(--color-heading);
-  text-decoration: none;
+.hero .illus__bird:nth-child(3) {
+  animation-delay: -0.6s;
 }
 
-.service-card__meta {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
+.hero .hero__note {
+  transform-origin: 50% -10%;
+  animation: hero-pendulum 5s ease-in-out infinite alternate;
 }
 
-.service-card__chevron {
-  flex: none;
-  color: var(--color-heading);
+.hero .hero__note--bottom {
+  animation-duration: 6s;
+  animation-delay: -2.5s;
 }
 
-@media (max-width: 64rem) {
-  .featured__list {
-    grid-template-columns: 1fr;
+/* Visible, baja tomando tono coral, queda oculto un momento y vuelve a subir. */
+@keyframes hero-sunset {
+  0%,
+  15% {
+    transform: translateY(0);
+    fill: var(--brand-amarillo);
+  }
+
+  45% {
+    fill: var(--brand-coral);
+  }
+
+  50%,
+  62% {
+    transform: translateY(180px);
+    fill: var(--brand-coral);
+  }
+
+  100% {
+    transform: translateY(0);
+    fill: var(--brand-amarillo);
+  }
+}
+
+@keyframes hero-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes hero-sway {
+  from {
+    transform: rotate(-2deg);
+  }
+
+  to {
+    transform: rotate(2.5deg);
+  }
+}
+
+@keyframes hero-fly-across {
+  from {
+    transform: translate(-200px, 30px);
+  }
+
+  to {
+    transform: translate(320px, -40px);
+  }
+}
+
+@keyframes hero-flap {
+  to {
+    transform: scaleY(-0.6);
+  }
+}
+
+@keyframes hero-pendulum {
+  from {
+    transform: rotate(-3deg);
+  }
+
+  to {
+    transform: rotate(3deg);
   }
 }
