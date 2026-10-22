@@ -28,7 +28,7 @@ describe('filterServices', () => {
 describe('isServiceCategory', () => {
   it('valida categorías conocidas', () => {
     expect(isServiceCategory('cultura')).toBe(true)
-    expect(isServiceCategory('otra')).toBe(false)
+    expect(isServiceCategory('otra')).toBe(true)
     expect(isServiceCategory(null)).toBe(false)
   })
 })

@@ -7,7 +7,13 @@
  */
 
 export type ServiceCategory =
-  'salud-mental' | 'educacion' | 'deporte' | 'cultura' | 'empleo' | 'recreacion'
+  | 'salud-mental'
+  | 'educacion'
+  | 'deporte'
+  | 'cultura'
+  | 'empleo'
+  | 'recreacion'
+  | 'otra'
 
 /** Cómo se puede empezar a usar el servicio (usado por Brújula). */
 export type ServiceModality = 'presencial' | 'acompanamiento' | 'informacion' | 'grupal'

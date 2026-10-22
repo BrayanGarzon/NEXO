@@ -16,6 +16,12 @@ describe('MainLayout', () => {
     scrollIntoView.mockReset()
   })
 
+  it('no muestra el acceso al panel institucional en el encabezado', () => {
+    renderRoute('/')
+    expect(screen.queryByRole('link', { name: 'Panel institucional' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Panel institucional' })).not.toBeInTheDocument()
+  })
+
   it('el menú lleva a la sección y se cierra en móvil', async () => {
     const user = userEvent.setup()
     const { router } = renderRoute('/')

@@ -214,7 +214,9 @@ mantenimiento de la información). Alcance funcional en [`PLAN_PERSONA_3.md`](PL
 ServicioAdmin
   id                    uuid
   nombre                string
-  categoria             "salud-mental" | "educacion" | "deporte" | "cultura" | "empleo" | "recreacion"
+  categoria             "salud-mental" | "educacion" | "deporte" | "cultura" | "empleo" | "recreacion" | "otra"
+  categoria_otro        string | null       detalle requerido cuando categoria = "otra"
+  motivo_creacion       string              justificación de la necesidad que atiende el servicio
   institucion           string            (o institucion_id cuando exista el recurso)
   resumen               string
   direccion             string
