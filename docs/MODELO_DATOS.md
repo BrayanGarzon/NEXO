@@ -72,6 +72,10 @@ Tipos comunes a todas las tablas: `id UUID(texto)`, `created_at`, `updated_at`.
 | `category` | texto (vocab) | no | Ver [categorías de servicios](#vocabularios-controlados). |
 | `modality` | texto (vocab) | no | `presencial`, `virtual`, `mixto`. |
 | `is_free` | booleano | no | Por defecto `true`. |
+| `comuna` | entero | sí | Comuna de Villavicencio (1–8). |
+| `schedule` | texto | sí | Horario de atención en texto libre. Máx. 200 caracteres. |
+| `offerings` | lista de texto (JSON) | no | Servicios ofrecidos. Por defecto lista vacía `[]`. |
+| `verified` | booleano | no | Verificado por una fuente oficial. Por defecto `false`. |
 | `address` | texto | sí | Dirección si es presencial. |
 | `latitude` | decimal | sí | |
 | `longitude` | decimal | sí | |

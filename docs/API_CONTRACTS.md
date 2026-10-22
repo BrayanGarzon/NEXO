@@ -94,7 +94,7 @@ Implementado y probado (`backend/app/api/routes/`, `backend/tests/`). Todos los 
 
 | Método | Ruta | Parámetros | Respuesta |
 | ------ | ---- | ---------- | --------- |
-| GET | `/api/v1/services` | `q`, `category`, `modality`, `is_free`, `entity_id`, `page`, `page_size` | `Page<Service>` |
+| GET | `/api/v1/services` | `q`, `category`, `modality`, `is_free`, `verified`, `entity_id`, `page`, `page_size` | `Page<Service>` |
 | GET | `/api/v1/services/{id}` | — | `Service` · 404 si no existe |
 
 ```json
@@ -103,11 +103,17 @@ Implementado y probado (`backend/app/api/routes/`, `backend/tests/`). Todos los 
   "id": "e8b0...-...", "title": "Orientación psicológica gratuita",
   "slug": "orientacion-psicologica-gratuita", "summary": "Atención en salud mental para jóvenes.",
   "description": "…", "category": "salud_mental", "modality": "presencial",
-  "is_free": true, "address": "Cra 00 #00-00", "latitude": 4.142, "longitude": -73.629,
+  "is_free": true, "comuna": 2, "schedule": "Lun–Vie 8:00 a. m. – 5:00 p. m.",
+  "offerings": ["Consulta psicológica individual", "Terapia grupal"], "verified": true,
+  "address": "Cra 00 #00-00", "latitude": 4.142, "longitude": -73.629,
   "status": "activo", "entity_id": "a1c2...-...",
   "created_at": "2026-10-21T10:00:00-05:00", "updated_at": "2026-10-21T10:00:00-05:00"
 }
 ```
+
+Campos: `comuna` (entero 1–8 o `null`), `schedule` (texto libre o `null`), `offerings`
+(lista de texto, por defecto `[]`), `verified` (booleano, por defecto `false`). El filtro
+`verified=true|false` acota por servicios verificados por fuente oficial.
 
 ### Recursos de bienestar
 

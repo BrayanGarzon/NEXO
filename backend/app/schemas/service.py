@@ -44,6 +44,10 @@ class ServiceRead(BaseModel):
     category: ServiceCategory
     modality: Modality
     is_free: bool
+    comuna: int | None
+    schedule: str | None
+    offerings: list[str] = []
+    verified: bool
     address: str | None
     latitude: float | None
     longitude: float | None

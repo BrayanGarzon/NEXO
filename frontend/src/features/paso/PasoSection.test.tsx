@@ -1,6 +1,8 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import * as catalog from '../../services/catalog'
+import { demoServices } from '../../mocks/demoServices'
 import { SAVED_SERVICES_KEY, reloadSavedServices } from '../../services/savedServices'
 import { renderRoute, withinSection } from '../../test/renderRoute'
 
@@ -14,6 +16,8 @@ describe('PasoSection', () => {
     localStorage.clear()
     reloadSavedServices()
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('sin red')))
+    // El catálogo consume la API real; en los tests servimos los datos de demostración.
+    vi.spyOn(catalog, 'listDemoServices').mockResolvedValue(demoServices)
   })
 
   afterEach(() => {

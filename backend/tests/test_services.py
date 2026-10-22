@@ -14,6 +14,10 @@ def _seed(db: Session) -> None:
                 category="salud_mental",
                 modality="presencial",
                 is_free=True,
+                comuna=2,
+                schedule="Lun–Vie 8:00 a. m. – 5:00 p. m.",
+                offerings=["Consulta individual", "Terapia grupal"],
+                verified=True,
                 status="activo",
                 entity_id="ent-1",
             ),
@@ -24,6 +28,10 @@ def _seed(db: Session) -> None:
                 category="empleo",
                 modality="virtual",
                 is_free=True,
+                comuna=4,
+                schedule="Lun–Vie 7:30 a. m. – 4:30 p. m.",
+                offerings=["Registro de hoja de vida"],
+                verified=False,
                 status="activo",
                 entity_id="ent-2",
             ),
@@ -34,6 +42,10 @@ def _seed(db: Session) -> None:
                 category="juridico",
                 modality="mixto",
                 is_free=False,
+                comuna=5,
+                schedule="Mar y Jue 9:00 a. m. – 12:00 m.",
+                offerings=[],
+                verified=True,
                 status="inactivo",
                 entity_id="ent-1",
             ),
@@ -63,6 +75,10 @@ def test_list_services_envelope(api_client: TestClient, db_session: Session) -> 
         "category",
         "modality",
         "is_free",
+        "comuna",
+        "schedule",
+        "offerings",
+        "verified",
         "address",
         "latitude",
         "longitude",
@@ -90,6 +106,8 @@ def test_list_services_filters(api_client: TestClient, db_session: Session) -> N
     assert api_client.get("/api/v1/services", params={"category": "empleo"}).json()["total"] == 1
     assert api_client.get("/api/v1/services", params={"modality": "virtual"}).json()["total"] == 1
     assert api_client.get("/api/v1/services", params={"is_free": True}).json()["total"] == 2
+    assert api_client.get("/api/v1/services", params={"verified": True}).json()["total"] == 2
+    assert api_client.get("/api/v1/services", params={"verified": False}).json()["total"] == 1
     assert api_client.get("/api/v1/services", params={"entity_id": "ent-1"}).json()["total"] == 2
     assert api_client.get("/api/v1/services", params={"q": "empleo"}).json()["total"] == 1
     assert api_client.get("/api/v1/services", params={"q": "salud"}).json()["total"] == 2
@@ -106,6 +124,41 @@ def test_invalid_modality_returns_422(api_client: TestClient) -> None:
 def test_invalid_pagination_returns_422(api_client: TestClient) -> None:
     assert api_client.get("/api/v1/services", params={"page": 0}).status_code == 422
     assert api_client.get("/api/v1/services", params={"page_size": 999}).status_code == 422
+
+
+def test_list_services_serializes_new_fields(api_client: TestClient, db_session: Session) -> None:
+    _seed(db_session)
+
+    item = api_client.get("/api/v1/services", params={"q": "psicológica"}).json()["items"][0]
+
+    assert item["comuna"] == 2
+    assert item["schedule"] == "Lun–Vie 8:00 a. m. – 5:00 p. m."
+    assert item["verified"] is True
+    assert isinstance(item["offerings"], list)
+    assert item["offerings"] == ["Consulta individual", "Terapia grupal"]
+
+
+def test_offerings_defaults_to_empty_list(api_client: TestClient, db_session: Session) -> None:
+    db_session.add(
+        Service(
+            title="Servicio sin offerings",
+            slug="servicio-sin-offerings",
+            summary="Servicio mínimo",
+            category="educacion",
+            modality="virtual",
+            is_free=True,
+            status="activo",
+            entity_id="ent-9",
+        )
+    )
+    db_session.commit()
+
+    item = api_client.get("/api/v1/services", params={"q": "sin offerings"}).json()["items"][0]
+
+    assert item["offerings"] == []
+    assert item["verified"] is False
+    assert item["comuna"] is None
+    assert item["schedule"] is None
 
 
 def test_get_service_detail(api_client: TestClient, db_session: Session) -> None:
