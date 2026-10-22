@@ -15,9 +15,7 @@ export const routes: RouteObject[] = [
     children: [
       { index: true, element: <HomePage /> },
       // Rutas antiguas: llevan a la sección correspondiente de la página única.
-      ...sectionIds
-        .filter((id) => id !== 'inicio')
-        .map((id) => ({ path: id, element: <RedirectToSection id={id} /> })),
+      ...sectionIds.map((id) => ({ path: id, element: <RedirectToSection id={id} /> })),
       { path: '*', element: <NotFoundPage /> },
     ],
   },

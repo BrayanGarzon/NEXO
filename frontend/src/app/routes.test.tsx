@@ -24,14 +24,11 @@ describe('routes', () => {
     expect(await screen.findByText('API no disponible')).toBeInTheDocument()
   })
 
-  it.each(sectionIds.filter((id) => id !== 'inicio'))(
-    'redirige /%s a su sección de la página única',
-    async (id) => {
-      const { router } = renderRoute(`/${id}`)
-      await waitFor(() => expect(router.state.location.pathname).toBe('/'))
-      expect(router.state.location.hash).toBe(`#${id}`)
-    },
-  )
+  it.each(sectionIds)('redirige /%s a su sección de la página única', async (id) => {
+    const { router } = renderRoute(`/${id}`)
+    await waitFor(() => expect(router.state.location.pathname).toBe('/'))
+    expect(router.state.location.hash).toBe(`#${id}`)
+  })
 
   it('conserva los parámetros al redirigir rutas antiguas', async () => {
     const { router } = renderRoute('/territorio?servicio=demo-liga-futbol')
@@ -48,8 +45,10 @@ describe('routes', () => {
     expect(screen.queryByRole('navigation', { name: 'Navegación principal' })).toBeNull()
   })
 
-  it('muestra la página 404 en rutas desconocidas', () => {
+  it('muestra la página 404 en rutas desconocidas, sin sección activa en el menú', () => {
     renderRoute('/ruta-inexistente')
     expect(screen.getByRole('heading', { name: 'Página no encontrada' })).toBeInTheDocument()
+    const nav = screen.getByRole('navigation', { name: 'Navegación principal' })
+    expect(nav.querySelector('[aria-current]')).toBeNull()
   })
 })

@@ -49,8 +49,9 @@ interface BandState {
  *
  * Si varias secciones comparten fila (Espacio Pausa y Mi siguiente paso), se prefiere
  * la del `#hash` actual, es decir, la que la persona acaba de elegir en el menú.
+ * Fuera de la página única (p. ej. la 404) no hay sección activa.
  */
-export function useActiveSection(ids: string[]) {
+export function useActiveSection(ids: string[]): string | undefined {
   const { pathname, hash } = useLocation()
   const [band, setBand] = useState<BandState>({ inBand: [], last: ids[0] })
   const idsKey = ids.join(',')
@@ -82,6 +83,7 @@ export function useActiveSection(ids: string[]) {
     // `pathname`: vuelve a observar cuando la página única aparece tras una redirección.
   }, [idsKey, pathname])
 
+  if (pathname !== '/') return undefined
   const hashId = decodeURIComponent(hash.slice(1))
   if (band.inBand.includes(hashId)) return hashId
   return band.inBand[0] ?? band.last
