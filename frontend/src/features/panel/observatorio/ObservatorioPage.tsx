@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react'
 import { Link } from 'react-router'
-import { Annotation } from '../../../components/Annotation'
-import { Button } from '../../../components/Button'
+import { Button, ButtonLink } from '../../../components/Button'
 import { Icon, type IconName } from '../../../components/Icon'
 import { StatusMessage } from '../../../components/StatusMessage'
 import { Chip, Tag } from '../../../components/Tag'
@@ -42,11 +41,6 @@ export function ObservatorioPage() {
       <PanelHeader
         titulo="Resumen general"
         subtitulo="Estado del catálogo y calidad de la información."
-        nota={
-          <Annotation tone="amarillo" tilt={4} className="panel-header__note">
-            Datos claros para decisiones reales
-          </Annotation>
-        }
       />
       {state.status === 'loading' && (
         <StatusMessage kind="loading" title="Calculando indicadores…" />
@@ -65,6 +59,15 @@ export function ObservatorioPage() {
       {state.status === 'ready' && <Tablero datos={state.data} />}
     </>
   )
+}
+
+/** Qué hacer con cada tipo de incidencia. */
+const incidenciaAcciones: Record<TipoIncidencia, string> = {
+  sin_fuente: 'Añade al menos una fuente que respalde la información.',
+  fuente_antigua: 'Vuelve a consultar la fuente y actualiza su fecha de consulta.',
+  vencido: 'Verifica que la información siga vigente y renueva su revisión.',
+  campos_incompletos: 'Completa los datos que faltan del servicio.',
+  en_revision_prolongada: 'Revísalo y publícalo o devuélvelo a borrador.',
 }
 
 const tarjetas: { estado: EstadoServicio | 'total'; etiqueta: string; icono: IconName }[] = [
@@ -102,19 +105,31 @@ function Tablero({ datos }: { datos: DatosObservatorio }) {
     <div className="panel-dashboard">
       <ul className="panel-kpis" aria-label="Resumen del catálogo">
         {tarjetas.map((tarjeta) => (
-          <li key={tarjeta.estado} className={`panel-kpi panel-kpi--${tarjeta.estado}`}>
-            <span className="panel-kpi__icon">
-              <Icon name={tarjeta.icono} size={20} />
-            </span>
-            <span className="panel-kpi__value">
-              {tarjeta.estado === 'total' ? resumen.total : resumen.porEstado[tarjeta.estado]}
-            </span>
-            <span className="panel-kpi__label">{tarjeta.etiqueta}</span>
+          <li key={tarjeta.estado}>
+            <Link
+              to={
+                tarjeta.estado === 'total'
+                  ? '/panel/servicios'
+                  : `/panel/servicios?estado=${tarjeta.estado}`
+              }
+              className={`panel-kpi panel-kpi--${tarjeta.estado}`}
+            >
+              <span className="panel-kpi__icon">
+                <Icon name={tarjeta.icono} size={20} />
+              </span>
+              <span className="panel-kpi__value">
+                {tarjeta.estado === 'total' ? resumen.total : resumen.porEstado[tarjeta.estado]}
+              </span>
+              <span className="panel-kpi__label">{tarjeta.etiqueta}</span>
+              <Icon name="chevron-right" size={18} className="panel-kpi__arrow" />
+            </Link>
           </li>
         ))}
       </ul>
 
       <div className="panel-grid">
+        <Incidencias incidencias={detectarIncidencias(servicios, hoy)} />
+
         <section className="panel-card" aria-labelledby="calidad-titulo">
           <h3 id="calidad-titulo">Calidad de la información</h3>
           <div className="panel-quality">
@@ -137,8 +152,29 @@ function Tablero({ datos }: { datos: DatosObservatorio }) {
           <p className="panel-hint">Servicios activos ({totalCalidad}); excluye los no vigentes.</p>
         </section>
 
+        <section className="panel-card" aria-labelledby="vigencia-titulo">
+          <h3 id="vigencia-titulo">Vigencia de publicados</h3>
+          <p className="panel-hint">
+            Un servicio publicado debe revisarse cada {configuracionActual().plazoVigenciaDias}{' '}
+            días.
+          </p>
+          <ul className="panel-stats">
+            <li className="panel-stat panel-stat--ok">
+              <strong>{vigencia.vigentes}</strong> Vigentes
+            </li>
+            <li className="panel-stat panel-stat--pendiente">
+              <strong>{vigencia.porVencer}</strong> Por vencer (
+              {configuracionActual().avisoPorVencerDias} días)
+            </li>
+            <li className="panel-stat panel-stat--sin">
+              <strong>{vigencia.vencidos}</strong> Vencidos
+            </li>
+          </ul>
+        </section>
+
         <section className="panel-card" aria-labelledby="categorias-titulo">
           <h3 id="categorias-titulo">Servicios por categoría</h3>
+          <p className="panel-hint">Todos los servicios del catálogo, en cualquier estado.</p>
           <Barras
             datos={calcularPorCategoria(servicios).map(({ categoria, total }) => ({
               etiqueta: categories[categoria].label,
@@ -150,6 +186,7 @@ function Tablero({ datos }: { datos: DatosObservatorio }) {
 
         <section className="panel-card" aria-labelledby="actividad-titulo">
           <h3 id="actividad-titulo">Actividad reciente</h3>
+          <p className="panel-hint">Últimos cambios de estado en los servicios.</p>
           <ol className="panel-activity">
             {actividad.map((evento) => (
               <li key={evento.id}>
@@ -166,50 +203,15 @@ function Tablero({ datos }: { datos: DatosObservatorio }) {
           </ol>
         </section>
 
-        <section className="panel-card" aria-labelledby="vigencia-titulo">
-          <h3 id="vigencia-titulo">Vigencia de publicados</h3>
-          <ul className="panel-stats">
-            <li className="panel-stat panel-stat--ok">
-              <strong>{vigencia.vigentes}</strong> Vigentes
-            </li>
-            <li className="panel-stat panel-stat--pendiente">
-              <strong>{vigencia.porVencer}</strong> Por vencer (
-              {configuracionActual().avisoPorVencerDias} días)
-            </li>
-            <li className="panel-stat panel-stat--sin">
-              <strong>{vigencia.vencidos}</strong> Vencidos
-            </li>
-          </ul>
-        </section>
-
-        <Incidencias incidencias={detectarIncidencias(servicios, hoy)} />
-
-        <section className="panel-card panel-grid__wide" aria-labelledby="cobertura-titulo">
-          <h3 id="cobertura-titulo">Cobertura de fuentes</h3>
-          <p className="panel-hint">Servicios publicados y cuántos tienen una fuente oficial.</p>
-          <div className="panel-coverage">
-            <TablaCobertura
-              titulo="Por categoría"
-              filas={cobertura.porCategoria.map((fila) => ({
-                ...fila,
-                nombre: categories[fila.categoria].label,
-              }))}
-            />
-            <TablaCobertura
-              titulo="Por comuna"
-              filas={cobertura.porComuna.map((fila) => ({
-                ...fila,
-                nombre: `Comuna ${fila.comuna}`,
-              }))}
-            />
-          </div>
-        </section>
-
-        <section className="panel-card panel-grid__wide" aria-labelledby="validaciones-titulo">
+        <section className="panel-card panel-grid__span2" aria-labelledby="validaciones-titulo">
           <div className="panel-card__head">
             <h3 id="validaciones-titulo">Validaciones de calidad</h3>
             <Tag tone="demo">Conjunto sintético</Tag>
           </div>
+          <p className="panel-hint">
+            Reglas automáticas sobre los servicios activos. Cada fallo aparece en «Necesitan
+            atención».
+          </p>
           <div className="panel-table-scroll" tabIndex={0} role="region" aria-label="Validaciones">
             <table className="panel-table">
               <thead>
@@ -240,6 +242,27 @@ function Tablero({ datos }: { datos: DatosObservatorio }) {
             Ejecutadas el {formatearFechaHora(new Date().toISOString())}.
           </p>
         </section>
+
+        <section className="panel-card panel-grid__wide" aria-labelledby="cobertura-titulo">
+          <h3 id="cobertura-titulo">Cobertura de fuentes</h3>
+          <p className="panel-hint">Servicios publicados y cuántos tienen una fuente oficial.</p>
+          <div className="panel-coverage">
+            <TablaCobertura
+              titulo="Por categoría"
+              filas={cobertura.porCategoria.map((fila) => ({
+                ...fila,
+                nombre: categories[fila.categoria].label,
+              }))}
+            />
+            <TablaCobertura
+              titulo="Por comuna"
+              filas={cobertura.porComuna.map((fila) => ({
+                ...fila,
+                nombre: `Comuna ${fila.comuna}`,
+              }))}
+            />
+          </div>
+        </section>
       </div>
     </div>
   )
@@ -250,9 +273,27 @@ function Incidencias({ incidencias }: { incidencias: ReturnType<typeof detectarI
   const tipos = Object.keys(incidenciaLabels) as TipoIncidencia[]
   const visibles = incidencias.filter((incidencia) => !tipo || incidencia.tipo === tipo)
 
+  if (incidencias.length === 0) {
+    return (
+      <section className="panel-card panel-grid__wide" aria-labelledby="incidencias-titulo">
+        <h3 id="incidencias-titulo">Necesitan atención</h3>
+        <p className="panel-all-clear">
+          <Icon name="verified" size={20} />
+          Todo en orden: ningún servicio necesita atención.
+        </p>
+      </section>
+    )
+  }
+
   return (
-    <section className="panel-card panel-grid__span2" aria-labelledby="incidencias-titulo">
-      <h3 id="incidencias-titulo">Incidencias</h3>
+    <section className="panel-card panel-grid__wide" aria-labelledby="incidencias-titulo">
+      <h3 id="incidencias-titulo">Necesitan atención</h3>
+      <p className="panel-hint">
+        {incidencias.length === 1
+          ? 'Hay 1 problema por resolver.'
+          : `Hay ${incidencias.length} problemas por resolver.`}{' '}
+        Abre cada servicio para corregirlo.
+      </p>
       <div className="panel-chips" role="group" aria-label="Filtrar incidencias">
         <Chip selected={tipo === null} onClick={() => setTipo(null)}>
           Todas <span className="panel-count">{incidencias.length}</span>
@@ -272,10 +313,24 @@ function Incidencias({ incidencias }: { incidencias: ReturnType<typeof detectarI
         <ul className="panel-issues">
           {visibles.map((incidencia) => (
             <li key={`${incidencia.servicioId}-${incidencia.tipo}`}>
-              <Link to={`/panel/servicios/${incidencia.servicioId}`}>{incidencia.nombre}</Link>
-              <Tag tone="warning" icon="alert">
-                {incidenciaLabels[incidencia.tipo]}
-              </Tag>
+              <div className="panel-issues__info">
+                <span className="panel-issues__name">
+                  {incidencia.nombre}
+                  <Tag tone="warning" icon="alert">
+                    {incidenciaLabels[incidencia.tipo]}
+                  </Tag>
+                </span>
+                <span className="panel-issues__action">{incidenciaAcciones[incidencia.tipo]}</span>
+              </div>
+              <ButtonLink
+                to={`/panel/servicios/${incidencia.servicioId}`}
+                variant="secondary"
+                size="sm"
+                iconEnd="arrow-right"
+                aria-label={`Revisar ${incidencia.nombre}`}
+              >
+                Revisar
+              </ButtonLink>
             </li>
           ))}
         </ul>

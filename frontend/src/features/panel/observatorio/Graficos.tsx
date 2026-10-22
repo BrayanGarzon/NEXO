@@ -60,14 +60,14 @@ export function Barras({ datos }: { datos: Segmento[] }) {
     <ul className="panel-bars">
       {datos.map((dato) => (
         <li key={dato.etiqueta} className="panel-bars__item">
-          <span className="panel-bars__value">{dato.valor}</span>
+          <span className="panel-bars__label">{dato.etiqueta}</span>
           <span className="panel-bars__track" aria-hidden="true">
             <span
               className={`panel-bars__bar ${dato.serie}`}
-              style={{ height: `${(dato.valor / maximo) * 100}%` }}
+              style={{ width: `${(dato.valor / maximo) * 100}%` }}
             />
           </span>
-          <span className="panel-bars__label">{dato.etiqueta}</span>
+          <span className="panel-bars__value">{dato.valor}</span>
         </li>
       ))}
     </ul>

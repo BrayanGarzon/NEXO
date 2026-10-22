@@ -9,12 +9,10 @@ interface PanelHeaderProps {
   antes?: ReactNode
   /** Contenido bajo el título (etiquetas). */
   children?: ReactNode
-  /** Nota manuscrita junto al usuario. */
-  nota?: ReactNode
 }
 
 /** Encabezado de página del panel: título, subtítulo y usuario institucional. */
-export function PanelHeader({ titulo, subtitulo, antes, children, nota }: PanelHeaderProps) {
+export function PanelHeader({ titulo, subtitulo, antes, children }: PanelHeaderProps) {
   return (
     <header className="panel-header">
       <div className="panel-header__titles">
@@ -24,7 +22,6 @@ export function PanelHeader({ titulo, subtitulo, antes, children, nota }: PanelH
         {children}
       </div>
       <div className="panel-header__user">
-        {nota}
         <DemoTag />
         <PanelPerfil />
       </div>

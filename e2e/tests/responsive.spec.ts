@@ -147,7 +147,7 @@ test.describe('Panel institucional', () => {
       'Servicios por categoría',
       'Actividad reciente',
       'Vigencia de publicados',
-      'Incidencias',
+      'Necesitan atención',
       'Cobertura de fuentes',
       'Validaciones de calidad',
     ]) {
