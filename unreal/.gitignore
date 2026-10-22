@@ -1,0 +1,15 @@
+# Artefactos generados por Unreal Engine (se regeneran al abrir el proyecto)
+Binaries/
+Intermediate/
+Saved/
+DerivedDataCache/
+Build/
+.vs/
+*.sln
+*.VC.db
+*.opensdf
+*.sdf
+*.suo
+
+# Paquete empaquetado para Pixel Streaming
+Packaged/
