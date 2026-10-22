@@ -19,6 +19,7 @@ def list_services(
     category: ServiceCategory | None = None,
     modality: Modality | None = None,
     is_free: bool | None = None,
+    verified: bool | None = None,
     entity_id: str | None = None,
 ) -> Page[ServiceRead]:
     items, total = service_service.list_services(
@@ -28,6 +29,7 @@ def list_services(
         category=category.value if category else None,
         modality=modality.value if modality else None,
         is_free=is_free,
+        verified=verified,
         entity_id=entity_id,
     )
     return Page(items=items, total=total, page=params.page, page_size=params.page_size)

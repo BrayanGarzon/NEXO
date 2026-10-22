@@ -2,6 +2,7 @@ import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useEffect, useState } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import * as catalog from '../../services/catalog'
 import { demoServices } from '../../mocks/demoServices'
 import { renderRoute, withinSection } from '../../test/renderRoute'
 import type { CityMap3DProps } from './map3d/CityMap3D'
@@ -70,6 +71,8 @@ describe('TerritorioMap', () => {
     mocks.unmounts = 0
     Object.values(mocks.api).forEach((fn) => fn.mockClear())
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('sin red')))
+    // El catálogo consume la API real; en los tests servimos los datos de demostración.
+    vi.spyOn(catalog, 'listDemoServices').mockResolvedValue(demoServices)
     Element.prototype.scrollIntoView = vi.fn()
   })
 

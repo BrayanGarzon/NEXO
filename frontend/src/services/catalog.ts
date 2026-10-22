@@ -1,15 +1,24 @@
-import { demoServices } from '../mocks/demoServices'
+import type { ApiEntity, ApiService, Page } from '../types/api'
 import type { DemoService } from '../types/catalog'
+import { demoServices } from '../mocks/demoServices'
+import { apiGet } from './apiClient'
+import { toDemoService } from './serviceMapper'
 
 /*
- * Acceso al catálogo de servicios.
+ * Acceso al catálogo de servicios (tarea F6).
  *
- * PROVISIONAL: devuelve datos de demostración mientras el contrato `/api/v1/services`
- * no esté aprobado (docs/API_CONTRACTS.md). Al aprobarse, estas funciones pasarán a
- * usar `apiGet` de ./apiClient sin cambiar su firma para los componentes (tarea F6).
+ * Consume la API real `/api/v1/services` y adapta cada servicio al modelo de vista
+ * `DemoService` con `toDemoService`. Los componentes no cambian: siguen recibiendo
+ * `DemoService`.
+ *
+ * Reserva: si la API no responde, `listDemoServices` propaga el error (la UI de
+ * Territorio muestra su estado de error con reintento). Los accesos síncronos
+ * (`getFeaturedDemoServices`, `getAllDemoServicesSync`) leen una caché llenada por
+ * `listDemoServices`; mientras esté vacía devuelven los datos de demostración, para
+ * que Inicio, Brújula y «Mi siguiente paso» nunca queden sin contenido.
  */
 
-const SIMULATED_LATENCY_MS = 350
+const PAGE_SIZE = 100
 
 export interface ListOptions {
   signal?: AbortSignal
@@ -17,31 +26,64 @@ export interface ListOptions {
   simulate?: 'error'
 }
 
-export function listDemoServices({ signal, simulate }: ListOptions = {}): Promise<DemoService[]> {
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => {
-      if (simulate === 'error') reject(new Error('Error simulado del catálogo'))
-      else resolve(demoServices)
-    }, SIMULATED_LATENCY_MS)
-    signal?.addEventListener('abort', () => {
-      clearTimeout(timer)
-      reject(new DOMException('Cancelado', 'AbortError'))
-    })
-  })
+/** Caché del último catálogo cargado desde la API (null = aún no se ha cargado). */
+let cache: DemoService[] | null = null
+
+/** Descarga todas las páginas de un recurso `/api/v1` y las concatena. */
+async function fetchAllPages<T>(path: string, signal?: AbortSignal): Promise<T[]> {
+  const items: T[] = []
+  let page = 1
+  for (;;) {
+    const sep = path.includes('?') ? '&' : '?'
+    const result = await apiGet<Page<T>>(
+      `${path}${sep}page=${page}&page_size=${PAGE_SIZE}`,
+      signal,
+    )
+    items.push(...result.items)
+    if (items.length >= result.total || result.items.length === 0) break
+    page += 1
+  }
+  return items
 }
 
-const FEATURED_IDS = [
-  'demo-orientacion-juvenil',
-  'demo-actividades-deportivas',
-  'demo-casa-juventud',
-]
+/** Mapa `entity_id → nombre` para mostrar la institución en el detalle. */
+async function fetchEntityNames(signal?: AbortSignal): Promise<Map<string, string>> {
+  try {
+    const entities = await fetchAllPages<ApiEntity>('/api/v1/entities', signal)
+    return new Map(entities.map((entity) => [entity.id, entity.name]))
+  } catch {
+    // La institución no es crítica: si falla, el mapeo usa su reserva.
+    return new Map()
+  }
+}
 
-export function getFeaturedDemoServices(): DemoService[] {
-  return FEATURED_IDS.map((id) => demoServices.find((service) => service.id === id)).filter(
-    (service): service is DemoService => service !== undefined,
+export async function listDemoServices({
+  signal,
+  simulate,
+}: ListOptions = {}): Promise<DemoService[]> {
+  if (simulate === 'error') {
+    throw new Error('Error simulado del catálogo')
+  }
+  const [apiServices, entityNames] = await Promise.all([
+    fetchAllPages<ApiService>('/api/v1/services', signal),
+    fetchEntityNames(signal),
+  ])
+  const services = apiServices.map((service) =>
+    toDemoService(service, {
+      institution: service.entity_id ? entityNames.get(service.entity_id) : undefined,
+    }),
   )
+  cache = services
+  return services
+}
+
+/** Hasta tres servicios destacados: verificados primero; reserva a datos demo. */
+export function getFeaturedDemoServices(): DemoService[] {
+  const source = cache ?? demoServices
+  const verified = source.filter((service) => service.verified)
+  return (verified.length > 0 ? verified : source).slice(0, 3)
 }
 
 export function getAllDemoServicesSync(): DemoService[] {
-  return demoServices
+  return cache ?? demoServices
 }

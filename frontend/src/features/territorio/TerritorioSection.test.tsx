@@ -8,6 +8,8 @@ import { demoServices } from '../../mocks/demoServices'
 describe('TerritorioSection', () => {
   beforeEach(() => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('sin red')))
+    // El catálogo consume la API real; en los tests servimos los datos de demostración.
+    vi.spyOn(catalog, 'listDemoServices').mockResolvedValue(demoServices)
   })
 
   afterEach(() => {

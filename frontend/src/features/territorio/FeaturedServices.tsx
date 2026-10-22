@@ -46,7 +46,8 @@ export function FeaturedServices() {
                 </h4>
                 <p className="service-card__summary">{service.summary}</p>
                 <p className="service-card__meta">
-                  {category.label} · Comuna {service.comuna}
+                  {category.label}
+                  {service.comuna > 0 && ` · Comuna ${service.comuna}`}
                 </p>
                 {service.verified && (
                   <Tag tone="success" icon="verified">
