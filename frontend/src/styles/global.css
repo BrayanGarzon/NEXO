@@ -231,6 +231,12 @@ button {
   min-height: calc(100svh - var(--header-height));
 }
 
+/* La última sección comparte la pantalla final con el pie (altura medida en MainLayout). */
+.layout__main > section[id]:last-child {
+  min-height: calc(100vh - var(--header-height) - var(--site-footer-height, 0px));
+  min-height: calc(100svh - var(--header-height) - var(--site-footer-height, 0px));
+}
+
 .section-eyebrow {
   display: inline-flex;
   align-items: center;

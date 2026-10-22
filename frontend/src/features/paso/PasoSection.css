@@ -40,9 +40,18 @@
   width: 3rem;
 }
 
+/* Rama decorativa bajo el encabezado (no intercepta clics ni se anuncia). */
+.paso__branch {
+  width: clamp(6rem, 10vw, 8rem);
+  margin-top: var(--space-6);
+  opacity: 0.4;
+  stroke-width: 3.5;
+}
+
 /* ---------- Tarjeta ---------- */
 
 .paso__card {
+  position: relative;
   padding: var(--space-4) var(--space-5) var(--space-5);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-xl);
@@ -57,8 +66,20 @@
   border-bottom: var(--border-width) solid var(--color-border);
 }
 
+.paso__card-sprout {
+  position: absolute;
+  top: calc(var(--space-6) * -1);
+  right: var(--space-6);
+  width: 3.25rem;
+  stroke-width: 4.5;
+}
+
 .paso__tab {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
   padding: var(--space-3) var(--space-4);
   border: 0;
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
@@ -88,6 +109,103 @@
   gap: var(--space-4);
 }
 
+/* ---------- Estado vacío ---------- */
+
+.paso-empty {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4) var(--space-2);
+  text-align: center;
+}
+
+.paso-empty__title {
+  font-size: var(--font-size-lg);
+}
+
+.paso-empty__text {
+  max-width: 36ch;
+  margin-bottom: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.seedling-art {
+  width: 9rem;
+  margin-bottom: var(--space-2);
+  overflow: visible;
+}
+
+.seedling-art__ground {
+  fill: var(--brand-menta);
+}
+
+.seedling-art__stem {
+  fill: none;
+  stroke: var(--brand-menta-ink);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.seedling-art__leaf {
+  fill: var(--brand-menta);
+  stroke: var(--brand-menta-ink);
+  stroke-width: 3.5;
+  stroke-linejoin: round;
+}
+
+.seedling-art__leaf--left,
+.seedling-art__leaf--right {
+  transform-box: fill-box;
+}
+
+.seedling-art__leaf--left {
+  transform-origin: 100% 100%;
+}
+
+.seedling-art__leaf--right {
+  transform-origin: 0% 100%;
+}
+
+.seedling-art__pot {
+  fill: var(--brand-coral);
+}
+
+.seedling-art__rim {
+  fill: var(--brand-coral-ink);
+}
+
+.seedling-art__spark {
+  fill: var(--brand-amarillo);
+}
+
+.seedling-art__dot {
+  fill: var(--brand-lila);
+}
+
+/* Las hojas se mecen muy despacio (solo sin «reducir movimiento»). */
+@media (prefers-reduced-motion: no-preference) {
+  .seedling-art__leaf--left {
+    animation: leaf-sway 5s ease-in-out infinite alternate;
+  }
+
+  .seedling-art__leaf--right {
+    animation: leaf-sway 5s ease-in-out -2.5s infinite alternate-reverse;
+  }
+}
+
+@keyframes leaf-sway {
+  from {
+    rotate: -4deg;
+  }
+
+  to {
+    rotate: 4deg;
+  }
+}
+
+/* ---------- Opciones guardadas ---------- */
+
 .paso__meta {
   display: flex;
   flex-wrap: wrap;
@@ -106,6 +224,7 @@
 }
 
 .paso-item {
+  position: relative;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
@@ -165,6 +284,8 @@
 .paso__add {
   display: flex;
   justify-content: center;
+  padding-top: var(--space-2);
+  border-top: 1px dashed var(--color-border);
 }
 
 /* ---------- Acciones sugeridas ---------- */
@@ -234,6 +355,10 @@
     right: 0;
     margin: 0;
   }
+
+  .paso__branch {
+    display: none;
+  }
 }
 
 @media (max-width: 36rem) {
@@ -246,6 +371,14 @@
   }
 
   .paso-item .service-thumb {
+    display: none;
+  }
+
+  .paso__tab {
+    padding-inline: var(--space-3);
+  }
+
+  .paso__tab .icon {
     display: none;
   }
 

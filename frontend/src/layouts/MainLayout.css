@@ -168,13 +168,15 @@
 /* ---------- Pie de página ---------- */
 
 .site-footer {
-  margin-top: var(--space-8);
+  position: relative;
+  overflow: hidden;
   background: var(--brand-petroleo);
   color: color-mix(in srgb, var(--color-text-inverse) 85%, transparent);
   font-size: var(--font-size-sm);
 }
 
 .site-footer__inner {
+  position: relative;
   display: grid;
   grid-template-columns: 1.4fr 1fr 1.4fr;
   gap: var(--space-6);
@@ -186,6 +188,25 @@
   gap: var(--space-4);
   align-content: start;
   max-width: 34ch;
+}
+
+.site-footer__heading {
+  margin-bottom: var(--space-3);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--brand-menta);
+}
+
+/* Rama decorativa en la esquina del pie. */
+.site-footer__branch {
+  position: absolute;
+  right: -1rem;
+  bottom: -0.5rem;
+  width: clamp(7rem, 12vw, 10rem);
+  color: var(--brand-menta);
+  opacity: 0.18;
+  stroke-width: 3.5;
 }
 
 .site-footer__links {
@@ -227,5 +248,9 @@
 @media (max-width: 48rem) {
   .site-footer__inner {
     grid-template-columns: 1fr;
+  }
+
+  .site-footer__links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

@@ -3,14 +3,14 @@ import { Link } from 'react-router'
 import { Annotation } from '../../components/Annotation'
 import { ButtonLink } from '../../components/Button'
 import { Doodle } from '../../components/Doodle'
-import { Icon } from '../../components/Icon'
+import { Icon, type IconName } from '../../components/Icon'
 import { ServiceThumb } from '../../components/illustrations/ServiceThumb'
-import { StatusMessage } from '../../components/StatusMessage'
 import { DemoTag } from '../../components/Tag'
 import { categories } from '../../content/categories'
 import { getAllDemoServicesSync } from '../../services/catalog'
 import type { DemoService } from '../../types/catalog'
 import { suggestedActions } from './pasoContent'
+import { SeedlingArt } from './SeedlingArt'
 import { useSavedServices } from './useSavedServices'
 import './PasoSection.css'
 
@@ -47,9 +47,9 @@ export function PasoSection() {
     document.getElementById(`${tabsId}-${next}`)?.focus()
   }
 
-  const tabs: { id: Tab; label: string }[] = [
-    { id: 'opciones', label: `Mis opciones (${services.length})` },
-    { id: 'acciones', label: 'Acciones sugeridas' },
+  const tabs: { id: Tab; label: string; icon: IconName }[] = [
+    { id: 'opciones', label: `Mis opciones (${services.length})`, icon: 'bookmark' },
+    { id: 'acciones', label: 'Acciones sugeridas', icon: 'sprout' },
   ]
 
   return (
@@ -68,9 +68,11 @@ export function PasoSection() {
           </Annotation>
           <Doodle name="leaf" tone="menta" className="paso__leaf" />
         </div>
+        <Doodle name="branch" tone="menta" className="paso__branch" />
       </header>
 
       <div className="paso__card">
+        <Doodle name="sprout" tone="menta" className="paso__card-sprout" />
         <div className="paso__tabs" role="tablist" aria-label="Mi siguiente paso">
           {tabs.map((item) => (
             <button
@@ -85,6 +87,7 @@ export function PasoSection() {
               onClick={() => setTab(item.id)}
               onKeyDown={handleTabKey}
             >
+              <Icon name={item.icon} size={18} />
               {item.label}
             </button>
           ))}
@@ -98,16 +101,16 @@ export function PasoSection() {
           className="paso__panel"
         >
           {services.length === 0 ? (
-            <StatusMessage
-              kind="empty"
-              title="Aún no has guardado opciones"
-              description="En Nexo Territorio, abre un servicio y pulsa «Guardar» para tenerlo a mano aquí."
-              action={
-                <ButtonLink to="/#territorio" variant="accent" size="sm" iconEnd="arrow-right">
-                  Explorar servicios
-                </ButtonLink>
-              }
-            />
+            <div className="paso-empty" role="status">
+              <SeedlingArt />
+              <h3 className="paso-empty__title">Aún no has guardado opciones</h3>
+              <p className="paso-empty__text">
+                En Nexo Territorio, abre un servicio y pulsa «Guardar» para tenerlo a mano aquí.
+              </p>
+              <ButtonLink to="/#territorio" variant="accent" size="sm" iconEnd="arrow-right">
+                Explorar servicios
+              </ButtonLink>
+            </div>
           ) : (
             <>
               <div className="paso__meta">
@@ -156,7 +159,11 @@ export function PasoSection() {
             {announcement}
           </p>
           <div className="paso__add">
-            <ButtonLink to="/#territorio" variant="accent" iconStart="plus">
+            <ButtonLink
+              to="/#territorio"
+              variant={services.length === 0 ? 'secondary' : 'accent'}
+              iconStart="plus"
+            >
               Agregar más opciones
             </ButtonLink>
           </div>
