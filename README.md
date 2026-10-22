@@ -15,10 +15,11 @@ cercano, a dónde acudir y cuál puede ser su siguiente paso.
 
 | Sección | Qué hace | Datos |
 | ------- | -------- | ----- |
-| Inicio | Hero editorial, buscador, cuatro accesos y servicios destacados | Demostración |
+| Inicio | Hero editorial, buscador y cuatro accesos | Estático |
 | Brújula | Orientación **informativa** en 3 pasos (qué buscas → cómo empezar → tu ruta) | Demostración |
-| Nexo Territorio | Búsqueda, filtros por categoría y verificación, mapa provisional y detalle | Demostración |
-| Espacio Pausa / Mi siguiente paso | Tarjetas "próximamente" | — |
+| Nexo Territorio | Búsqueda, filtros por categoría y verificación, servicios destacados, mapa provisional y detalle | Demostración |
+| Espacio Pausa | Respiración guiada (4 ciclos, con opción de reducir movimiento) y 4 ejercicios por pasos; educativo, no clínico | Estático |
+| Mi siguiente paso | Servicios guardados desde Territorio: lista, ver detalle, quitar, acciones sugeridas; se guardan solo en el navegador | Demostración |
 | Información | Qué es NEXO JOVEN 360, principios y línea de emergencias 123 | Estático |
 
 El menú desplaza la vista a cada sección y resalta la visible. Las rutas antiguas (`/brujula`,
@@ -37,7 +38,6 @@ riesgos.
 - API de negocio (`/api/v1/…`), modelo de datos y migraciones (backend).
 - Paneles institucionales **Fuente Viva** y **Observatorio** (ver
   [`docs/PLAN_PERSONA_3.md`](docs/PLAN_PERSONA_3.md)) y su autenticación.
-- Espacio Pausa y Mi siguiente paso.
 - Pruebas de extremo a extremo.
 
 ## Tecnologías
@@ -172,8 +172,8 @@ Dentro de Docker: `docker compose exec backend pytest`. Más detalle en
 │       ├── app/                  # router, rutas, navegación por secciones
 │       ├── components/           # sistema visual compartido (Button, Card, Tag, Icon, …)
 │       ├── content/              # contenido estático de interfaz (categorías)
-│       ├── features/             # home (página única), brujula, territorio, upcoming,
-│       │                         # informacion, not-found
+│       ├── features/             # home (página única), brujula, territorio, pausa, paso,
+│       │                         # informacion, not-found, panel (Persona 3)
 │       ├── layouts/              # MainLayout: encabezado, menú y pie
 │       ├── mocks/                # datos de demostración (sintéticos)
 │       ├── services/             # cliente HTTP y acceso a datos

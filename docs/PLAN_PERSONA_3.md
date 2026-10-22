@@ -145,7 +145,8 @@ SVG/CSS propios; si se propone una librería de gráficos, justificarla en el PR
 
 Sin coordinar con Brayan, **no editar**:
 
-- `frontend/src/features/{home,brujula,territorio,upcoming,informacion,not-found}/`
+- `frontend/src/features/{home,brujula,territorio,pausa,paso,informacion,not-found}/`
+- `frontend/src/services/savedServices.ts`
 - `frontend/src/layouts/MainLayout.*`
 - `frontend/src/app/navigation.ts`, `useSectionNavigation.ts`, `RedirectToSection.tsx`
 - `frontend/src/components/**` y `frontend/src/styles/**`
