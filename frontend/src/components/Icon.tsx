@@ -106,6 +106,10 @@ const paths = {
   sprout: (
     <path d="M12 20v-8M12 12c0-4-3-6-7-6 0 4 3 6 7 6zM12 14c0-3 2.5-5 6-5 0 3.5-2.5 5-6 5z" />
   ),
+  volume: <path d="M4 9h4l5-4v14l-5-4H4zM16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11" />,
+  'volume-off': <path d="M4 9h4l5-4v14l-5-4H4zM17 10l4 4M21 10l-4 4" />,
+  play: <path d="M8 5.5v13l10-6.5z" />,
+  pause: <path d="M9 5v14M15 5v14" />,
 } satisfies Record<string, ReactNode>
 
 export type IconName = keyof typeof paths

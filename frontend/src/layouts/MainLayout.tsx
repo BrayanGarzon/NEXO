@@ -7,6 +7,7 @@ import { Doodle } from '../components/Doodle'
 import { Icon } from '../components/Icon'
 import { Logo } from '../components/Logo'
 import { ApiStatus } from '../features/home/ApiStatus'
+import { AmbientSound } from '../features/sonido/AmbientSound'
 import './MainLayout.css'
 
 export function MainLayout() {
@@ -141,6 +142,8 @@ export function MainLayout() {
           </div>
         </div>
       </footer>
+
+      <AmbientSound />
     </div>
   )
 }

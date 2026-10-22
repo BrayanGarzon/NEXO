@@ -1,0 +1,205 @@
+/* Control flotante y discreto, en la esquina inferior derecha. */
+.ambient {
+  position: fixed;
+  right: max(var(--space-4), env(safe-area-inset-right));
+  bottom: max(var(--space-4), env(safe-area-inset-bottom));
+  z-index: calc(var(--z-header) - 1);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  backdrop-filter: blur(8px);
+  box-shadow: var(--shadow-md);
+  font-size: var(--font-size-sm);
+}
+
+.ambient--playing,
+.ambient--paused {
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-4);
+}
+
+.ambient__start {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-4);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-heading);
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-semibold);
+}
+
+.ambient__start:hover {
+  background: var(--brand-menta);
+}
+
+.ambient__start:focus-visible,
+.ambient__button:focus-visible {
+  border-radius: var(--radius-pill);
+}
+
+.ambient__status {
+  min-width: 4.5rem;
+  color: var(--color-heading);
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-semibold);
+}
+
+.ambient__button {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-heading);
+}
+
+.ambient__button:hover {
+  background: var(--color-surface-muted);
+}
+
+.ambient__volume {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-inline: var(--space-2);
+  color: var(--color-text-muted);
+}
+
+.ambient__volume input {
+  width: 6rem;
+  min-height: 2.75rem;
+  margin: 0;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
+/* Barras de ecualizador: indican actividad, pero el texto «Sonando» es la referencia. */
+.ambient__bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 0.875rem;
+  margin-right: var(--space-1);
+}
+
+.ambient__bars span {
+  width: 3px;
+  height: 40%;
+  border-radius: var(--radius-pill);
+  background: var(--brand-menta-ink);
+}
+
+.ambient--playing .ambient__bars span {
+  height: 70%;
+}
+
+.ambient--playing .ambient__bars span:nth-child(2) {
+  height: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ambient--playing .ambient__bars span {
+    animation: ambient-bar 2.4s ease-in-out infinite alternate;
+  }
+
+  .ambient--playing .ambient__bars span:nth-child(2) {
+    animation-delay: -0.8s;
+  }
+
+  .ambient--playing .ambient__bars span:nth-child(3) {
+    animation-delay: -1.6s;
+  }
+}
+
+@keyframes ambient-bar {
+  from {
+    transform: scaleY(0.45);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.ambient__bars span {
+  transform-origin: bottom;
+}
+
+/* El botón de volumen solo se usa en pantallas estrechas. */
+.ambient__volume-toggle {
+  display: none;
+}
+
+/*
+ * Móvil: control compacto en la esquina para no tapar el contenido. El estado lo indican
+ * el icono de pausa/reanudar y su nombre accesible; el texto «Sonando» se sigue anunciando.
+ * El volumen se abre en una ventana sobre el control.
+ */
+@media (max-width: 36rem) {
+  .ambient {
+    right: max(var(--space-3), env(safe-area-inset-right));
+    bottom: max(var(--space-3), env(safe-area-inset-bottom));
+  }
+
+  .ambient__start {
+    padding-inline: var(--space-3);
+  }
+
+  .ambient__start-text,
+  .ambient__status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .ambient--playing,
+  .ambient--paused {
+    gap: 0;
+    padding-left: var(--space-3);
+  }
+
+  .ambient__volume-toggle {
+    display: grid;
+  }
+
+  .ambient__volume-toggle[aria-expanded='true'] {
+    background: var(--brand-lila-soft);
+    color: var(--color-accent-ink);
+  }
+
+  .ambient__volume {
+    display: none;
+  }
+
+  .ambient__volume--open {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + var(--space-2));
+    display: flex;
+    padding: var(--space-1) var(--space-3);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+  }
+
+  .ambient__volume--open .icon {
+    display: none;
+  }
+
+  .ambient__volume input {
+    width: 8rem;
+  }
+}
