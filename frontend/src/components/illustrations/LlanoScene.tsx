@@ -7,6 +7,7 @@ import './illustrations.css'
  */
 export function LlanoScene() {
   const sky = useId()
+  const aboveRidge = useId()
   return (
     <svg
       className="illus"
@@ -19,9 +20,25 @@ export function LlanoScene() {
           <stop offset="0" className="illus__sky-top" />
           <stop offset="0.75" className="illus__sky-bottom" />
         </linearGradient>
+        {/* Cielo por encima de la cordillera: el sol queda detrás de las montañas al ponerse. */}
+        <clipPath id={aboveRidge}>
+          <path d="M0 0h400v244l-56-50-44 40-62-62-34 30-54-66-58 80-40-30L0 250z" />
+        </clipPath>
       </defs>
       <rect width="400" height="440" fill={`url(#${sky})`} />
-      <circle cx="268" cy="150" r="54" className="illus__sun" />
+      <g clipPath={`url(#${aboveRidge})`}>
+        <circle cx="268" cy="150" r="54" className="illus__sun" />
+      </g>
+      <g className="illus__clouds">
+        <path
+          className="illus__cloud"
+          d="M40 92a14 14 0 0 1 14-14 20 20 0 0 1 36-4 14 14 0 0 1 14 18z"
+        />
+        <path
+          className="illus__cloud illus__cloud--far"
+          d="M228 58a10 10 0 0 1 10-10 15 15 0 0 1 27-3 10 10 0 0 1 10 13z"
+        />
+      </g>
       <path
         className="illus__far"
         d="M0 250 52 186l40 30 58-80 54 66 34-30 62 62 44-40 56 50v196H0z"

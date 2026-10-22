@@ -77,6 +77,19 @@
   animation: illus-river-glint 5s ease-in-out infinite;
 }
 
+/* Nubes: derivan muy despacio de un lado a otro, como en una tarde sin viento. */
+.illus__cloud {
+  fill: var(--brand-blanco);
+  opacity: 0.75;
+  animation: illus-cloud-drift 28s ease-in-out infinite alternate;
+}
+
+.illus__cloud--far {
+  opacity: 0.55;
+  animation-duration: 36s;
+  animation-delay: -12s;
+}
+
 @keyframes illus-sun-drift {
   0%,
   100% {
@@ -107,6 +120,16 @@
   }
 }
 
+@keyframes illus-cloud-drift {
+  from {
+    transform: translateX(-18px);
+  }
+
+  to {
+    transform: translateX(26px);
+  }
+}
+
 @keyframes illus-river-glint {
   0%,
   100% {
@@ -121,7 +144,8 @@
   .illus__sun,
   .illus__palm,
   .illus__bird,
-  .illus__river {
+  .illus__river,
+  .illus__cloud {
     animation: none;
   }
 }

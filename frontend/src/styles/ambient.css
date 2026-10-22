@@ -1,0 +1,155 @@
+/*
+ * Movimiento ambiental: los adornos de trazo manual respiran y se mecen muy despacio para
+ * que la web se sienta tranquila y viva. Reglas comunes:
+ *  - Solo sin «reducir movimiento» (prefers-reduced-motion: no-preference).
+ *  - Ciclos largos (4–9 s), amplitudes pequeñas y curvas suaves; nada parpadea ni rebota.
+ *  - Se anima `transform`, así que se conserva la inclinación (`rotate`) de cada adorno.
+ * Las ilustraciones (LlanoScene) y el Inicio tienen sus propias animaciones.
+ */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Hojas, brotes y ramas: brisa suave desde el tallo. */
+  :is(
+    .hero__leaf,
+    .brujula__sprout,
+    .brujula__leaf,
+    .informacion__sprout,
+    .informacion__help-leaf,
+    .paso__card-sprout
+  ) {
+    transform-origin: 50% 95%;
+    animation: ambient-sway 7s ease-in-out infinite alternate;
+  }
+
+  :is(.brujula__branch, .paso__branch, .site-footer__branch) {
+    transform-origin: 5% 85%;
+    animation: ambient-sway 9s ease-in-out infinite alternate;
+  }
+
+  /* Desfases para que no se muevan al unísono. */
+  .brujula__leaf,
+  .informacion__help-leaf {
+    animation-delay: -3s;
+  }
+
+  .brujula__branch,
+  .paso__card-sprout {
+    animation-delay: -4.5s;
+  }
+
+  /* Destellos: se encienden y apagan lentamente. */
+  :is(.brujula__decor-spark, .brujula__spark, .informacion__spark, .status-page__doodle) {
+    animation: ambient-twinkle 4.5s ease-in-out infinite alternate;
+  }
+
+  .brujula__spark {
+    animation-delay: -2s;
+  }
+
+  /* Corazón del título: late al ritmo de una respiración tranquila. */
+  .hero__heart {
+    animation: ambient-breathe 4s ease-in-out infinite;
+  }
+
+  /* Ondita de Brújula: flota de lado a lado. */
+  .brujula__squiggle {
+    animation: ambient-drift 6s ease-in-out infinite alternate;
+  }
+
+  /* Adornos de las tarjetas del Inicio: flotan, cada uno a su tiempo. */
+  .module-card__doodle {
+    animation: ambient-float 6s ease-in-out infinite alternate;
+  }
+
+  .module-card:nth-child(2) .module-card__doodle {
+    animation-delay: -1.5s;
+  }
+
+  .module-card:nth-child(3) .module-card__doodle {
+    animation-delay: -3s;
+  }
+
+  .module-card:nth-child(4) .module-card__doodle {
+    animation-delay: -4.5s;
+  }
+
+  /* El resaltado del título se dibuja una vez al cargar, como un marcador. */
+  .hero__title .marker {
+    animation: ambient-marker 1.1s var(--ease-out) 0.3s backwards;
+  }
+
+  /* Los títulos de sección aparecen con suavidad al llegar a ellos (si el navegador lo admite). */
+  @supports (animation-timeline: view()) {
+    .layout__main > section:not(.hero) h2 {
+      animation: ambient-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+  }
+}
+
+@keyframes ambient-sway {
+  from {
+    transform: rotate(-3deg);
+  }
+
+  to {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes ambient-twinkle {
+  from {
+    transform: scale(0.9);
+    opacity: 0.65;
+  }
+
+  to {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+@keyframes ambient-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  45% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes ambient-drift {
+  from {
+    transform: translateX(-4px);
+  }
+
+  to {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes ambient-float {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes ambient-marker {
+  from {
+    background-size: 0% 62%;
+  }
+}
+
+@keyframes ambient-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
