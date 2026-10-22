@@ -1,8 +1,9 @@
 import json
 from functools import lru_cache
+from typing import Annotated
 
 from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -22,7 +23,11 @@ class Settings(BaseSettings):
         default="postgresql+psycopg://nexo:nexo_local_dev@localhost:5432/nexo_joven_360",
         alias="DATABASE_URL",
     )
-    cors_origins: list[str] = Field(default=["http://localhost:5173"], alias="CORS_ORIGINS")
+    # NoDecode: evita que pydantic-settings intente json.loads sobre el valor del entorno
+    # antes del validador; así `split_cors_origins` recibe el string crudo y acepta JSON o comas.
+    cors_origins: Annotated[list[str], NoDecode] = Field(
+        default=["http://localhost:5173"], alias="CORS_ORIGINS"
+    )
 
     @field_validator("database_url")
     @classmethod
