@@ -6,6 +6,7 @@ import { demoServices } from '../../../mocks/demoServices'
 import type { MapApi } from './camera'
 import { buildCity } from './cityLayout'
 import CityMap3D from './CityMap3D'
+import { buildRoutePath, ROUTE_START } from './routePath'
 
 // jsdom no puede dibujar WebGL: se sustituye el lienzo y se prueba la lógica que lo rodea.
 vi.mock('@react-three/fiber', async (importOriginal) => ({
@@ -30,6 +31,7 @@ function setup(props: Partial<Parameters<typeof CityMap3D>[0]> = {}) {
       services={demoServices}
       allServices={demoServices}
       selectedId={null}
+      routeService={null}
       onSelect={onSelect}
       apiRef={apiRef}
       onContextLost={vi.fn()}
@@ -51,6 +53,18 @@ describe('CityMap3D', () => {
     expect(onSelect).toHaveBeenCalledWith(demoServices[1].id)
   })
 
+  it('construye una ruta 3D desde el inicio hasta el servicio por los ejes de las calles', () => {
+    const destination = hubs.get('demo-ruta-empleo')!
+    const route = buildRoutePath(destination)
+
+    expect(route[0]).toEqual(ROUTE_START)
+    expect(route.at(-1)).toEqual(destination)
+    expect(route).toHaveLength(5)
+    expect(route[1].z).toBe(ROUTE_START.z)
+    expect(route[2].x).toBe(route[1].x)
+    expect(route[3].z).toBe(route[2].z)
+  })
+
   it('centra la cámara en el servicio seleccionado (desde la lista, el mapa o la URL)', async () => {
     const { api, view, apiRef } = setup()
     view.rerender(
@@ -58,6 +72,7 @@ describe('CityMap3D', () => {
         services={demoServices}
         allServices={demoServices}
         selectedId="demo-ruta-empleo"
+        routeService={null}
         onSelect={vi.fn()}
         apiRef={apiRef}
         onContextLost={vi.fn()}
@@ -77,6 +92,7 @@ describe('CityMap3D', () => {
     const props = {
       allServices: demoServices,
       selectedId: null,
+      routeService: null,
       onSelect: vi.fn(),
       apiRef,
       onContextLost: vi.fn(),

@@ -163,6 +163,23 @@ alembic upgrade head && alembic downgrade base && alembic upgrade head   # requi
 Dentro de Docker: `docker compose exec backend pytest`. Más detalle en
 [`docs/PLAN_PRUEBAS.md`](docs/PLAN_PRUEBAS.md).
 
+## Despliegue (demo pública en Render)
+
+[`render.yaml`](render.yaml) describe la demo con planes gratuitos: PostgreSQL
+(`nexo-joven-360-db`), la API (`nexo-joven-360-api`) y el frontend como sitio estático
+(`nexo-joven-360`). Para crearla:
+
+1. En [Render](https://dashboard.render.com) conecta la cuenta de GitHub con acceso a este
+   repositorio.
+2. **New → Blueprint**, elige el repositorio y la rama, y confirma con **Apply**.
+3. Al terminar, abre `https://nexo-joven-360.onrender.com`. Si Render asignó otros subdominios,
+   ajusta `VITE_API_BASE_URL` (frontend, requiere volver a desplegar) y `CORS_ORIGINS` (API).
+
+La API aplica las migraciones y carga los datos semilla en cada arranque (es idempotente). Cada
+push a la rama elegida vuelve a desplegar. Limitaciones del plan gratuito: la API se suspende tras
+15 minutos sin uso (la primera visita tarda cerca de un minuto) y la base de datos gratuita
+caduca a los 30 días.
+
 ## Estructura de carpetas
 
 ```text

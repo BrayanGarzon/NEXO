@@ -6,6 +6,7 @@ import type { DemoService } from '../../types/catalog'
 interface MapCanvasProps {
   services: DemoService[]
   selectedId: string | null
+  routeService: DemoService | null
   onSelect: (id: string) => void
 }
 
@@ -29,7 +30,23 @@ const comunaLabels = [
  * navegador no puede dibujar la ciudad 3D, si esta falla o si la persona la elige.
  * Conserva todas las funciones: marcadores filtrados y selección → detalle.
  */
-export function MapCanvas({ services, selectedId, onSelect }: MapCanvasProps) {
+export function MapCanvas({ services, selectedId, routeService, onSelect }: MapCanvasProps) {
+  const routeStart = { x: 36, y: 64 }
+  const routeDestination = routeService?.mapPosition
+  const routeIntersection = routeDestination
+    ? [
+        { x: 36, y: 33 },
+        { x: 36, y: 64 },
+        { x: 66, y: 33 },
+        { x: 66, y: 64 },
+      ].reduce((nearest, point) =>
+        Math.hypot(point.x - routeDestination.x, point.y - routeDestination.y) <
+        Math.hypot(nearest.x - routeDestination.x, nearest.y - routeDestination.y)
+          ? point
+          : nearest,
+      )
+    : null
+
   return (
     <div className="map-canvas__flat">
       <svg
@@ -47,6 +64,33 @@ export function MapCanvas({ services, selectedId, onSelect }: MapCanvasProps) {
         <path className="map-canvas__river" d="M-4 90C14 80 28 86 40 74s20-26 36-30 22-14 30-26" />
         <path className="map-canvas__park" d="M42 40c6-4 14-2 16 4s-2 12-10 12-12-10-6-16z" />
       </svg>
+
+      {routeService && routeDestination && routeIntersection && (
+        <>
+          <svg
+            className="map-route"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <path
+              className="map-route__line"
+              d={`M ${routeStart.x} ${routeStart.y} H ${routeIntersection.x} V ${routeIntersection.y}`}
+            />
+            <path
+              className="map-route__connector"
+              d={`M ${routeIntersection.x} ${routeIntersection.y} L ${routeDestination.x} ${routeDestination.y}`}
+            />
+            <circle className="map-route__start" cx={routeStart.x} cy={routeStart.y} r="2.2" />
+            <circle
+              className="map-route__destination"
+              cx={routeDestination.x}
+              cy={routeDestination.y}
+              r="2.2"
+            />
+          </svg>
+        </>
+      )}
 
       {comunaLabels.map((comuna) => (
         <span

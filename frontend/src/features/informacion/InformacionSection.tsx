@@ -1,25 +1,8 @@
 import { Annotation } from '../../components/Annotation'
 import { Doodle } from '../../components/Doodle'
-import { Icon, type IconName } from '../../components/Icon'
+import { Icon } from '../../components/Icon'
+import { principles } from './informacionContent'
 import './InformacionSection.css'
-
-const principles: { icon: IconName; title: string; text: string }[] = [
-  {
-    icon: 'verified',
-    title: 'Información confiable',
-    text: 'Los servicios muestran si ya fueron verificados y de qué institución provienen.',
-  },
-  {
-    icon: 'compass',
-    title: 'Orientación, no diagnóstico',
-    text: 'Brújula te muestra opciones según lo que buscas. No evalúa ni diagnostica.',
-  },
-  {
-    icon: 'users',
-    title: 'Hecho para jóvenes',
-    text: 'Servicios, actividades y espacios de Villavicencio pensados para ti.',
-  },
-]
 
 export function InformacionSection() {
   return (
@@ -60,8 +43,7 @@ export function InformacionSection() {
           <Icon name="heart" size={22} />
         </span>
         <span>
-          Si estás en peligro o necesitas ayuda inmediata, llama a la línea de emergencias{' '}
-          <a href="tel:123">123</a>.
+          Si estás en peligro o necesitas ayuda inmediata, llama a la línea de emergencias.
         </span>
         <Doodle name="leaf" tone="coral" className="informacion__help-leaf" />
       </p>

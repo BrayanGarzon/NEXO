@@ -27,6 +27,7 @@ vi.mock('./map3d/CityMap3D', () => ({
   default: function FakeCityMap3D({
     services,
     selectedId,
+    routeService,
     onSelect,
     apiRef,
     onContextLost,
@@ -41,7 +42,11 @@ vi.mock('./map3d/CityMap3D', () => ({
       }
     }, [apiRef])
     return (
-      <div data-testid="escena-3d" data-selected={selectedId ?? ''}>
+      <div
+        data-testid="escena-3d"
+        data-selected={selectedId ?? ''}
+        data-route={routeService?.id ?? ''}
+      >
         <ul aria-label="Servicios en el mapa">
           {services.map((service) => (
             <li key={service.id}>
@@ -105,6 +110,20 @@ describe('TerritorioMap', () => {
       'true',
     )
     expect(screen.getByTestId('escena-3d')).toHaveAttribute('data-selected', 'demo-liga-futbol')
+  })
+
+  it('mantiene la ruta en la escena 3D al pulsar Cómo llegar', async () => {
+    const user = userEvent.setup()
+    renderRoute('/?servicio=demo-liga-futbol#territorio')
+    const detail = await screen.findByRole('complementary', { name: 'Liga Juvenil de Fútbol' })
+    await user.click(within(detail).getByRole('button', { name: 'Cómo llegar' }))
+
+    expect(screen.getByTestId('escena-3d')).toHaveAttribute('data-route', 'demo-liga-futbol')
+    expect(screen.getByTestId('escena-3d')).toHaveAttribute('data-selected', 'demo-liga-futbol')
+    expect(
+      screen.getByText(/Ruta esquemática: desde el punto de inicio referencial/),
+    ).toHaveTextContent('hasta Liga Juvenil de Fútbol')
+    expect(toolbar().queryByRole('button', { name: /Vista simple 2D/ })).toBeNull()
   })
 
   it('seleccionar en la lista llega a la escena (que centra la cámara)', async () => {

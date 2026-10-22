@@ -196,6 +196,8 @@
 /* Con el detalle abierto, el mapa se reduce para no tapar el marcador seleccionado. */
 .territorio__map--detail .map-canvas {
   right: calc(min(22rem, 100% - 2 * var(--space-4)) + var(--space-4));
+  border-radius: var(--radius-xl);
+  overflow: hidden;
 }
 
 /* ---------- Mapa provisional ---------- */
@@ -211,6 +213,55 @@
   inset: 0;
   width: 100%;
   height: 100%;
+}
+
+.map-route {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.map-route__line,
+.map-route__connector {
+  fill: none;
+  stroke: var(--color-focus);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.map-route__connector {
+  stroke-dasharray: 2 1.5;
+}
+
+.map-route__start {
+  fill: var(--color-surface);
+  stroke: var(--color-focus);
+  stroke-width: 0.8;
+}
+
+.map-route__destination {
+  fill: var(--color-focus);
+  stroke: var(--color-surface);
+  stroke-width: 0.8;
+}
+
+.map-canvas__route-notice {
+  position: absolute;
+  left: var(--space-4);
+  right: var(--space-4);
+  bottom: 4.5rem;
+  z-index: 2;
+  max-width: 36rem;
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  font-size: var(--font-size-sm);
 }
 
 .map-canvas__block {
@@ -641,23 +692,104 @@
   list-style: none;
 }
 
+/* Tarjeta de servicio destacado: portada con el color de la categoría, datos y pie con acción. */
 .service-card {
+  --tone-bg: var(--brand-menta);
+  --tone-shape: var(--brand-menta-ink);
+  --tone-ink: var(--brand-menta-ink);
   display: flex;
-  align-items: center;
-  gap: var(--space-4);
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+}
+
+.service-card--lila {
+  --tone-bg: var(--brand-lila-soft);
+  --tone-shape: var(--brand-lila);
+  --tone-ink: var(--brand-lila-ink);
+}
+
+.service-card--amarillo {
+  --tone-bg: var(--brand-amarillo-soft);
+  --tone-shape: var(--brand-amarillo);
+  --tone-ink: var(--brand-grafito);
+}
+
+.service-card--coral {
+  --tone-bg: var(--brand-coral-soft);
+  --tone-shape: var(--brand-coral);
+  --tone-ink: var(--brand-coral-ink);
+}
+
+.service-card:hover,
+.service-card:focus-within {
+  border-color: var(--tone-shape);
+  box-shadow: var(--shadow-lg);
+}
+
+.service-card__cover {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  height: 5.5rem;
   padding: var(--space-4);
+  background: var(--tone-bg);
+}
+
+.service-card__wave {
+  position: absolute;
+  inset: auto 0 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--tone-shape);
+  opacity: 0.35;
+}
+
+.service-card__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--tone-ink);
+  box-shadow: var(--shadow-sm);
+}
+
+.service-card__category {
+  position: relative;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 0.75);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--tone-ink);
 }
 
 .service-card__body {
   display: grid;
-  justify-items: start;
-  gap: var(--space-1);
-  min-width: 0;
+  align-content: start;
+  gap: var(--space-2);
   flex: 1;
+  min-width: 0;
+  padding: var(--space-4) var(--space-5) var(--space-3);
 }
 
 .service-card__title {
-  font-size: var(--font-size-md);
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: var(--font-size-lg);
+  line-height: 1.3;
 }
 
 .service-card__title a {
@@ -671,21 +803,86 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   font-size: var(--font-size-sm);
-  color: var(--color-text);
-}
-
-.service-card__meta {
-  font-size: var(--font-size-sm);
+  line-height: 1.5;
   color: var(--color-text-muted);
 }
 
-.service-card__chevron {
-  flex: none;
-  color: var(--color-heading);
+.service-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
 }
 
+.service-card__meta > span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.service-card__meta .icon {
+  color: var(--color-text-muted);
+}
+
+.service-card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-inline: var(--space-5);
+  padding-block: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.service-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-heading);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .service-card__icon,
+  .service-card__cta .icon {
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .service-card:hover .service-card__icon {
+    transform: scale(1.06) rotate(-4deg);
+  }
+
+  .service-card:hover .service-card__cta .icon,
+  .service-card:focus-within .service-card__cta .icon {
+    transform: translateX(3px);
+  }
+}
+
+/* En tableta y celular las tarjetas se deslizan en horizontal en vez de apilarse. */
 @media (max-width: 64rem) {
   .featured__list {
-    grid-template-columns: 1fr;
+    grid-template-columns: none;
+    grid-auto-columns: minmax(18rem, 45%);
+    grid-auto-flow: column;
+    margin-inline: calc(-1 * var(--space-2));
+    padding: var(--space-2) var(--space-2) var(--space-4);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--space-2);
+  }
+
+  .service-card {
+    scroll-snap-align: start;
+  }
+}
+
+@media (max-width: 36rem) {
+  .featured__list {
+    grid-auto-columns: 82%;
   }
 }

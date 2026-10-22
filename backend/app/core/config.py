@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -22,6 +22,15 @@ class Settings(BaseSettings):
         alias="DATABASE_URL",
     )
     cors_origins: list[str] = Field(default=["http://localhost:5173"], alias="CORS_ORIGINS")
+
+    @field_validator("database_url")
+    @classmethod
+    def use_psycopg_driver(cls, value: str) -> str:
+        """Render y otros proveedores entregan `postgresql://`; el driver instalado es psycopg 3."""
+        for prefix in ("postgresql://", "postgres://"):
+            if value.startswith(prefix):
+                return "postgresql+psycopg://" + value.removeprefix(prefix)
+        return value
 
 
 @lru_cache

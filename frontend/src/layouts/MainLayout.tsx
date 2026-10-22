@@ -6,6 +6,7 @@ import { ButtonLink } from '../components/Button'
 import { Doodle } from '../components/Doodle'
 import { Icon } from '../components/Icon'
 import { Logo } from '../components/Logo'
+import { SiteSearch } from '../features/busqueda/SiteSearch'
 import { ApiStatus } from '../features/home/ApiStatus'
 import { AmbientSound } from '../features/sonido/AmbientSound'
 import './MainLayout.css'
@@ -13,8 +14,6 @@ import './MainLayout.css'
 export function MainLayout() {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
-  const layoutRef = useRef<HTMLDivElement>(null)
-  const footerRef = useRef<HTMLElement>(null)
   const activeSection = useActiveSection(sectionIds)
   useScrollToHash()
 
@@ -30,19 +29,8 @@ export function MainLayout() {
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [menuOpen])
 
-  // Expone la altura del pie para que la última sección y el pie compartan la pantalla final.
-  useEffect(() => {
-    const footer = footerRef.current
-    if (!footer || typeof ResizeObserver === 'undefined') return
-    const observer = new ResizeObserver(() => {
-      layoutRef.current?.style.setProperty('--site-footer-height', `${footer.offsetHeight}px`)
-    })
-    observer.observe(footer)
-    return () => observer.disconnect()
-  }, [])
-
   return (
-    <div className="layout" ref={layoutRef}>
+    <div className="layout">
       <a className="skip-link" href="#contenido">
         Saltar al contenido
       </a>
@@ -80,9 +68,7 @@ export function MainLayout() {
           </nav>
 
           <div className="site-header__actions">
-            <Link to={sectionHref('territorio')} className="site-header__icon-link">
-              <Icon name="search" label="Buscar servicios" />
-            </Link>
+            <SiteSearch />
             <ButtonLink to={sectionHref('territorio')} className="site-header__cta">
               Explorar
             </ButtonLink>
@@ -107,7 +93,7 @@ export function MainLayout() {
         <Outlet />
       </main>
 
-      <footer className="site-footer" ref={footerRef}>
+      <footer className="site-footer">
         <Doodle name="branch" tone="menta" className="site-footer__branch" />
         <div className="site-footer__inner container">
           <div className="site-footer__brand">
@@ -122,18 +108,20 @@ export function MainLayout() {
               Secciones
             </h2>
             <ul className="site-footer__links">
-              {mainNav.map((item) => (
-                <li key={item.id}>
-                  <Link to={sectionHref(item.id)}>{item.label}</Link>
-                </li>
-              ))}
+              {mainNav
+                .filter((item) => item.id !== 'informacion')
+                .map((item) => (
+                  <li key={item.id}>
+                    <Link to={sectionHref(item.id)}>{item.label}</Link>
+                  </li>
+                ))}
             </ul>
           </nav>
           <div className="site-footer__note">
             <h2 className="site-footer__heading">Importante</h2>
             <p>
               NEXO JOVEN 360 no ofrece diagnósticos. Si estás en peligro o necesitas ayuda
-              inmediata, llama a la línea de emergencias <strong>123</strong>.
+              inmediata, llama a la línea de emergencias.
             </p>
             <p className="site-footer__meta">
               Prototipo en desarrollo · los servicios mostrados son datos de demostración.

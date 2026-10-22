@@ -223,18 +223,12 @@ button {
 /* ---------- Página única ---------- */
 
 /*
- * Cada sección ocupa al menos la pantalla visible bajo el encabezado: al llegar a una
- * sección desde el menú no asoma la siguiente. Solo es un mínimo; nada se recorta.
+ * Solo el Inicio ocupa la pantalla visible bajo el encabezado. Las demás secciones miden lo
+ * que su contenido, para que no queden huecos vacíos entre ellas.
  */
-.layout__main > section[id] {
+.layout__main > section#inicio {
   min-height: calc(100vh - var(--header-height));
   min-height: calc(100svh - var(--header-height));
-}
-
-/* La última sección comparte la pantalla final con el pie (altura medida en MainLayout). */
-.layout__main > section[id]:last-child {
-  min-height: calc(100vh - var(--header-height) - var(--site-footer-height, 0px));
-  min-height: calc(100svh - var(--header-height) - var(--site-footer-height, 0px));
 }
 
 .section-eyebrow {

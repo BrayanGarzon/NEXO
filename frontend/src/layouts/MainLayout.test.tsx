@@ -22,6 +22,55 @@ describe('MainLayout', () => {
     expect(screen.queryByRole('button', { name: 'Panel institucional' })).not.toBeInTheDocument()
   })
 
+  it('la lupa busca en toda la página y lleva al resultado', async () => {
+    const user = userEvent.setup()
+    const { router } = renderRoute('/')
+    await user.click(screen.getByRole('button', { name: 'Buscar en la página' }))
+
+    const dialog = screen.getByRole('dialog', { name: 'Buscar en NEXO JOVEN 360' })
+    await user.type(within(dialog).getByRole('searchbox'), 'liga')
+    const servicios = within(dialog).getByRole('region', { name: 'Servicios' })
+    await user.click(within(servicios).getByRole('link', { name: /Liga Juvenil de Fútbol/ }))
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(router.state.location.search).toBe('?servicio=demo-liga-futbol')
+    expect(router.state.location.hash).toBe('#territorio')
+  })
+
+  it('la lupa encuentra palabras del texto de la página', async () => {
+    const user = userEvent.setup()
+    renderRoute('/')
+    await user.click(screen.getByRole('button', { name: 'Buscar en la página' }))
+    const dialog = screen.getByRole('dialog')
+    await user.type(within(dialog).getByRole('searchbox'), 'autocuidado')
+
+    const enPagina = within(dialog).getByRole('region', { name: 'En la página' })
+    await user.click(within(enPagina).getByRole('button', { name: /Espacio Pausa/ }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    await waitFor(() =>
+      expect(screen.getByText(/herramientas educativas de autocuidado/)).toHaveClass(
+        'site-search-hit',
+      ),
+    )
+  })
+
+  it('Escape cierra la búsqueda aunque haya texto escrito', async () => {
+    const user = userEvent.setup()
+    renderRoute('/')
+    await user.click(screen.getByRole('button', { name: 'Buscar en la página' }))
+    await user.type(within(screen.getByRole('dialog')).getByRole('searchbox'), 'hola{Escape}')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('la búsqueda avisa cuando no hay resultados', async () => {
+    const user = userEvent.setup()
+    renderRoute('/')
+    await user.click(screen.getByRole('button', { name: 'Buscar en la página' }))
+    const dialog = screen.getByRole('dialog')
+    await user.type(within(dialog).getByRole('searchbox'), 'xyzzy')
+    expect(within(dialog).getByText(/No encontramos resultados para «xyzzy»/)).toBeInTheDocument()
+  })
+
   it('el menú lleva a la sección y se cierra en móvil', async () => {
     const user = userEvent.setup()
     const { router } = renderRoute('/')
@@ -94,36 +143,19 @@ describe('MainLayout', () => {
     )
   })
 
-  it('Información cierra la página justo antes del pie, que mide su altura', () => {
-    let notifySize = () => {}
-    vi.stubGlobal(
-      'ResizeObserver',
-      class {
-        constructor(callback: () => void) {
-          notifySize = callback
-        }
-        observe() {}
-        disconnect() {}
-      },
-    )
-    const { container } = renderRoute('/')
+  it('Información cierra la página justo antes del pie', () => {
+    renderRoute('/')
     const footer = screen.getByRole('contentinfo')
-    Object.defineProperty(footer, 'offsetHeight', { configurable: true, value: 280 })
-    notifySize()
-
-    // La última sección usa esta variable para compartir la pantalla final con el pie.
-    const layout = container.querySelector<HTMLElement>('.layout')!
-    expect(layout.style.getPropertyValue('--site-footer-height')).toBe('280px')
 
     const main = screen.getByRole('main')
     expect(main.lastElementChild).toHaveAttribute('id', 'informacion')
     expect(main.nextElementSibling).toBe(footer)
 
     const informacion = screen.getByRole('region', { name: '¿Qué es NEXO JOVEN 360?' })
-    expect(within(informacion).getByRole('link', { name: '123' })).toHaveAttribute(
-      'href',
-      'tel:123',
+    expect(informacion).toHaveTextContent(
+      'Si estás en peligro o necesitas ayuda inmediata, llama a la línea de emergencias.',
     )
+    expect(within(informacion).queryByRole('link', { name: '123' })).not.toBeInTheDocument()
     const links = within(
       within(footer).getByRole('navigation', { name: 'Secciones' }),
     ).getAllByRole('link')
@@ -133,7 +165,9 @@ describe('MainLayout', () => {
       '/#territorio',
       '/#pausa',
       '/#mi-siguiente-paso',
-      '/#informacion',
     ])
+    expect(within(footer).getByRole('navigation', { name: 'Secciones' })).not.toHaveTextContent(
+      'Información',
+    )
   })
 })

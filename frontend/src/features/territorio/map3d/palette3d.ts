@@ -25,6 +25,8 @@ export const cityColors = {
   plaza: '#f7f4ed',
   trunk: '#7a5b45',
   hubPad: '#f7f4ed',
+  route: '#00e5ff',
+  routeOutline: '#163b3a',
 } as const
 
 /** Fachadas: marfil, menta, amarillo suave, coral suave, lila suave, arena y blanco. */

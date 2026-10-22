@@ -19,6 +19,8 @@ import { CameraRig } from './CameraRig'
 import { buildCity, CITY_HALF, CITY_RIM, type Vec2 } from './cityLayout'
 import { CityModel } from './CityModel'
 import { createCityResources } from './cityResources'
+import { RoutePath } from './RouteOverlay'
+import { buildRoutePath } from './routePath'
 import { chooseQuality, readDeviceHints } from './quality'
 import { MARKER_HEIGHT, ServiceMarkers } from './ServiceMarkers'
 import './CityMap3D.css'
@@ -29,6 +31,7 @@ export interface CityMap3DProps {
   /** Todo el catálogo cargado: fija la distribución de la ciudad. */
   allServices: DemoService[]
   selectedId: string | null
+  routeService: DemoService | null
   onSelect: (id: string) => void
   apiRef: MutableRefObject<MapApi | null>
   onContextLost: () => void
@@ -75,6 +78,7 @@ export default function CityMap3D({
   services,
   allServices,
   selectedId,
+  routeService,
   onSelect,
   apiRef,
   onContextLost,
@@ -99,6 +103,7 @@ export default function CityMap3D({
 
   const home = useMemo(() => [...layout.hubs.values()], [layout])
   const visibleIds = useMemo(() => new Set(services.map((service) => service.id)), [services])
+  const routeDestination = routeService ? layout.hubs.get(routeService.id) : undefined
   // Contenedor de gestos (lienzo + pines). Se guarda en el estado para montar el lienzo
   // solo cuando existe: R3F conecta sus eventos a él al crearse.
   const [surface, setSurface] = useState<HTMLDivElement | null>(null)
@@ -146,9 +151,12 @@ export default function CityMap3D({
     const hub = selectedId ? layout.hubs.get(selectedId) : undefined
     if (!hub) return
     // Espera a que la cámara esté lista en el primer montaje.
-    const frame = requestAnimationFrame(() => apiRef.current?.focus(hub))
+    const frame = requestAnimationFrame(() => {
+      if (routeService?.id === selectedId) apiRef.current?.fitTo(buildRoutePath(hub))
+      else apiRef.current?.focus(hub)
+    })
     return () => cancelAnimationFrame(frame)
-  }, [selectedId, layout, apiRef])
+  }, [selectedId, routeService?.id, layout, apiRef])
 
   // Al cambiar los filtros (sin selección), la cámara encuadra los servicios que quedan.
   const visibleKey = [...visibleIds].sort().join()
@@ -265,6 +273,9 @@ export default function CityMap3D({
               shadows={quality.shadows}
               reduceMotion={reduceMotion}
             />
+            {routeService && routeDestination && (
+              <RoutePath service={routeService} destination={routeDestination} />
+            )}
             <CameraRig
               apiRef={apiRef}
               home={home}

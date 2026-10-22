@@ -1,7 +1,6 @@
 import { Link } from 'react-router'
 import { Card } from '../../components/Card'
 import { Icon } from '../../components/Icon'
-import { ServiceThumb } from '../../components/illustrations/ServiceThumb'
 import { DemoTag, Tag } from '../../components/Tag'
 import { categories } from '../../content/categories'
 import { getFeaturedDemoServices } from '../../services/catalog'
@@ -33,8 +32,21 @@ export function FeaturedServices() {
         {services.map((service) => {
           const category = categories[service.category]
           return (
-            <Card key={service.id} as="li" interactive className="service-card">
-              <ServiceThumb icon={category.icon} tone={category.tone} />
+            <Card
+              key={service.id}
+              as="li"
+              interactive
+              className={`service-card service-card--${category.tone}`}
+            >
+              <div className="service-card__cover" aria-hidden="true">
+                <svg viewBox="0 0 320 96" preserveAspectRatio="none" className="service-card__wave">
+                  <path d="M0 70c60-22 120-26 180-12s100 14 140 0v38H0z" />
+                </svg>
+                <span className="service-card__icon">
+                  <Icon name={category.icon} size={24} />
+                </span>
+                <span className="service-card__category">{category.label}</span>
+              </div>
               <div className="service-card__body">
                 <h4 className="service-card__title">
                   <Link
@@ -46,16 +58,32 @@ export function FeaturedServices() {
                 </h4>
                 <p className="service-card__summary">{service.summary}</p>
                 <p className="service-card__meta">
-                  {category.label}
-                  {service.comuna > 0 && ` · Comuna ${service.comuna}`}
+                  {/* La API puede no traer comuna ni distancia (valen 0): no se muestran. */}
+                  {service.comuna > 0 && (
+                    <span>
+                      <Icon name="map-pin" size={16} /> Comuna {service.comuna}
+                    </span>
+                  )}
+                  {service.distanceKm > 0 && (
+                    <span>
+                      <Icon name="navigation" size={16} />{' '}
+                      {service.distanceKm.toLocaleString('es-CO')} km
+                    </span>
+                  )}
                 </p>
-                {service.verified && (
+              </div>
+              <div className="service-card__footer">
+                {service.verified ? (
                   <Tag tone="success" icon="verified">
                     Servicio verificado
                   </Tag>
+                ) : (
+                  <span />
                 )}
+                <span className="service-card__cta" aria-hidden="true">
+                  Ver detalle <Icon name="arrow-right" size={16} />
+                </span>
               </div>
-              <Icon name="chevron-right" className="service-card__chevron" />
             </Card>
           )
         })}

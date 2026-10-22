@@ -72,7 +72,7 @@ describe('PausaSection', () => {
     expect(pausa.getByRole('button', { name: 'Comenzar' })).toBeInTheDocument()
   })
 
-  it('el círculo crece al inhalar, salvo con «Reducir movimiento»', async () => {
+  it('el círculo crece al inhalar', async () => {
     const { user, pausa } = setup()
     await user.click(pausa.getByRole('button', { name: 'Comenzar' }))
     advance(2000)
@@ -80,8 +80,14 @@ describe('PausaSection', () => {
     expect(scale).toBeGreaterThan(0.75)
     expect(scale).toBeLessThan(0.9)
     expect(document.querySelector('#pausa .breathing__bar')).toBeNull()
+    expect(pausa.queryByRole('checkbox', { name: 'Reducir movimiento' })).toBeNull()
+  })
 
-    await user.click(pausa.getByRole('checkbox', { name: 'Reducir movimiento' }))
+  it('con «Reducir movimiento» del sistema el círculo queda quieto y se ve la barra', async () => {
+    vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('reduce') }))
+    const { user, pausa } = setup()
+    await user.click(pausa.getByRole('button', { name: 'Comenzar' }))
+    advance(2000)
     expect(orb().style.transform).toBe('scale(1)')
     expect(document.querySelector('#pausa .breathing__bar')).not.toBeNull()
   })
@@ -103,10 +109,11 @@ describe('PausaSection', () => {
     expect(pausa.getByRole('button', { name: 'Paso siguiente' })).toBeDisabled()
   })
 
-  it('aclara que es una herramienta educativa y enlaza la línea 123', () => {
+  it('aclara que es una herramienta educativa y menciona la línea de emergencias sin número', () => {
     const { pausa } = setup()
     expect(pausa.getByText(/no reemplazan la atención profesional/)).toBeInTheDocument()
-    expect(pausa.getByRole('link', { name: '123' })).toHaveAttribute('href', 'tel:123')
+    expect(pausa.getByText(/usa Brújula o llama a la línea de emergencias/)).toBeInTheDocument()
+    expect(pausa.queryByRole('link', { name: '123' })).not.toBeInTheDocument()
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
   })
 })

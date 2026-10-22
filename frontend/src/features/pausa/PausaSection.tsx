@@ -12,7 +12,6 @@ const TICK_MS = 100
 
 export function PausaSection() {
   const [exerciseId, setExerciseId] = useState(exercises[0].id)
-  const [reduceMotion, setReduceMotion] = useState(prefersReducedMotion)
   const exercise = exercises.find((item) => item.id === exerciseId) ?? exercises[0]
 
   return (
@@ -49,18 +48,9 @@ export function PausaSection() {
             ))}
           </ul>
 
-          <label className="pausa__motion">
-            <input
-              type="checkbox"
-              checked={reduceMotion}
-              onChange={(event) => setReduceMotion(event.target.checked)}
-            />
-            Reducir movimiento
-          </label>
-
           <p className="pausa__disclaimer">
             Son herramientas educativas de autocuidado; no reemplazan la atención profesional. Si
-            necesitas apoyo, usa Brújula o llama al <a href="tel:123">123</a> en una emergencia.
+            necesitas apoyo, usa Brújula o llama a la línea de emergencias.
           </p>
         </div>
 
@@ -75,7 +65,7 @@ export function PausaSection() {
             <h3 className="pausa__exercise-title">{exercise.title}</h3>
             <p className="pausa__exercise-intro">{exercise.intro}</p>
             {exercise.kind === 'breathing' ? (
-              <BreathingPlayer reduceMotion={reduceMotion} />
+              <BreathingPlayer />
             ) : (
               <StepsPlayer key={exercise.id} exercise={exercise} />
             )}
@@ -86,7 +76,9 @@ export function PausaSection() {
   )
 }
 
-function BreathingPlayer({ reduceMotion }: { reduceMotion: boolean }) {
+function BreathingPlayer() {
+  // Respeta la opción «Reducir movimiento» del sistema operativo.
+  const [reduceMotion] = useState(prefersReducedMotion)
   const [running, setRunning] = useState(false)
   const [elapsed, setElapsed] = useState(0)
   const state = breathingStateAt(elapsed, breathingPhases, breathingCycles)
