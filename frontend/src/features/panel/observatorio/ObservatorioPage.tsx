@@ -8,7 +8,7 @@ import { categories } from '../../../content/categories'
 import { EstadoTag } from '../EstadoTag'
 import { formatearFechaHora, hoyIso } from '../fechas'
 import { PanelHeader } from '../PanelHeader'
-import { accionLabels } from '../reglas'
+import { accionLabels, configuracionActual } from '../reglas'
 import { cargarObservatorio, type DatosObservatorio } from '../services/panelData'
 import type { EstadoServicio } from '../types'
 import { useCarga } from '../useCarga'
@@ -17,6 +17,7 @@ import {
   calcularCobertura,
   calcularPorCategoria,
   calcularResumen,
+  calcularVigencia,
   detectarIncidencias,
   ejecutarValidaciones,
   incidenciaLabels,
@@ -82,6 +83,8 @@ function Tablero({ datos }: { datos: DatosObservatorio }) {
   const distribucion = calcularPorCategoria(servicios)
   const totalDistribucion = distribucion.reduce((suma, fila) => suma + fila.total, 0)
   const validaciones = ejecutarValidaciones(servicios, hoy)
+  const vigencia = calcularVigencia(servicios, hoy)
+  const avisoDias = configuracionActual().avisoPorVencerDias
 
   return (
     <div className="panel-dashboard">
@@ -110,6 +113,27 @@ function Tablero({ datos }: { datos: DatosObservatorio }) {
       </ul>
 
       <div className="panel-grid">
+        <section className="panel-card panel-grid__wide" aria-labelledby="vigencia-titulo">
+          <h3 id="vigencia-titulo">Vigencia de los servicios publicados</h3>
+          <p className="panel-hint">
+            Según la fecha de vigencia de cada servicio publicado y el aviso configurado.
+          </p>
+          <ul className="panel-vigencia" aria-label="Vigencia de los servicios publicados">
+            <li className="panel-vigencia__item panel-vigencia__item--vigentes">
+              <span className="panel-vigencia__value">{vigencia.vigentes}</span>
+              <span className="panel-vigencia__label">Vigentes</span>
+            </li>
+            <li className="panel-vigencia__item panel-vigencia__item--por-vencer">
+              <span className="panel-vigencia__value">{vigencia.porVencer}</span>
+              <span className="panel-vigencia__label">Por vencer ({avisoDias} días)</span>
+            </li>
+            <li className="panel-vigencia__item panel-vigencia__item--vencidos">
+              <span className="panel-vigencia__value">{vigencia.vencidos}</span>
+              <span className="panel-vigencia__label">Vencidos</span>
+            </li>
+          </ul>
+        </section>
+
         <Incidencias incidencias={detectarIncidencias(servicios, hoy)} />
 
         <div className="panel-grid__wide panel-category-charts">

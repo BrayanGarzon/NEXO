@@ -1005,6 +1005,55 @@ button.panel-nav__item:hover {
   color: var(--color-accent-ink);
 }
 
+.panel-vigencia {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.panel-vigencia__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-left-width: 4px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.panel-vigencia__item--vigentes {
+  border-left-color: var(--color-success);
+}
+.panel-vigencia__item--por-vencer {
+  border-left-color: var(--brand-coral-ink);
+}
+.panel-vigencia__item--vencidos {
+  border-left-color: var(--color-accent-ink);
+}
+
+.panel-vigencia__value {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-heading);
+  line-height: 1;
+}
+
+.panel-vigencia__label {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+@media (max-width: 640px) {
+  .panel-vigencia {
+    grid-template-columns: 1fr;
+  }
+}
+
 .panel-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
