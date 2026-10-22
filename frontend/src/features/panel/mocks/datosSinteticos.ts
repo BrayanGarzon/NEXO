@@ -1,6 +1,7 @@
 import { aFechaIso, sumarDias } from '../fechas'
 import type {
   AccionRevision,
+  DatosUsuario,
   EstadoServicio,
   EventoRevision,
   FechaIso,
@@ -18,6 +19,14 @@ import type {
  */
 
 export const USUARIO_DEMO = 'María González'
+
+/** Perfil de la persona que usa el panel en la demo. */
+export const PERFIL_DEMO: DatosUsuario = {
+  nombre: USUARIO_DEMO,
+  correo: 'maria.gonzalez@example.org',
+  institucion: 'Secretaría de Juventud (ejemplo)',
+  rol: 'administrador',
+}
 
 interface Semilla {
   id: string
@@ -409,10 +418,7 @@ const usuariosSemilla: (Omit<UsuarioInstitucional, 'ultimoAcceso'> & {
 })[] = [
   {
     id: 'us-maria',
-    nombre: USUARIO_DEMO,
-    correo: 'maria.gonzalez@example.org',
-    institucion: 'Secretaría de Juventud (ejemplo)',
-    rol: 'administrador',
+    ...PERFIL_DEMO,
     activo: true,
     accesoHaceDias: 0,
   },

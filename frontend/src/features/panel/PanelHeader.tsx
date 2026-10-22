@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { DemoTag } from '../../components/Tag'
-import { USUARIO_DEMO } from './mocks/datosSinteticos'
+import { PanelPerfil } from './PanelPerfil'
 
 interface PanelHeaderProps {
   titulo: string
@@ -26,17 +26,7 @@ export function PanelHeader({ titulo, subtitulo, antes, children, nota }: PanelH
       <div className="panel-header__user">
         {nota}
         <DemoTag />
-        <span className="panel-user">
-          <span className="panel-user__avatar" aria-hidden="true">
-            {USUARIO_DEMO.split(' ')
-              .map((parte) => parte[0])
-              .join('')}
-          </span>
-          <span>
-            <span className="panel-user__name">{USUARIO_DEMO}</span>
-            <span className="panel-user__role">Gestión institucional</span>
-          </span>
-        </span>
+        <PanelPerfil />
       </div>
     </header>
   )

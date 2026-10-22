@@ -17,6 +17,22 @@ describe('panel institucional', () => {
     expect(screen.getByRole('heading', { name: 'Actividad reciente' })).toBeInTheDocument()
   })
 
+  it('el botón Admin abre el perfil y permite cerrar sesión', async () => {
+    const user = userEvent.setup()
+    const { router } = renderRoute('/panel/observatorio')
+    await user.click(await screen.findByRole('button', { name: 'Admin, ver perfil' }))
+    const perfil = screen.getByRole('dialog', { name: 'María González' })
+    expect(within(perfil).getByText('maria.gonzalez@example.org')).toBeInTheDocument()
+    expect(within(perfil).getByText('Administración')).toBeInTheDocument()
+
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Admin, ver perfil' }))
+    await user.click(screen.getByRole('button', { name: 'Cerrar sesión' }))
+    expect(router.state.location.pathname).toBe('/')
+  })
+
   it('Fuente Viva muestra la tabla y filtra por estado', async () => {
     const user = userEvent.setup()
     renderRoute('/panel/servicios')

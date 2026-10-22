@@ -157,39 +157,141 @@ button.panel-nav__item:hover {
   gap: var(--space-3);
 }
 
+/* Aviso de demo un poco más grande que la etiqueta normal, junto al botón de perfil */
+.panel-header__user .tag {
+  min-height: 3.5rem;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-md);
+}
+
+.panel-header__user .tag .icon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.panel-perfil {
+  position: relative;
+}
+
 .panel-user {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
+  min-height: 3.5rem;
+  padding: var(--space-1) var(--space-4) var(--space-1) var(--space-1);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.panel-user:hover,
+.panel-user[aria-expanded='true'] {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-sm);
 }
 
 .panel-user__avatar {
   display: grid;
   place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 3rem;
+  height: 3rem;
   border-radius: var(--radius-pill);
   background: var(--brand-lila-soft);
   color: var(--color-accent-ink);
   font-family: var(--font-display);
   font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-md);
+  flex-shrink: 0;
 }
 
-.panel-user__name,
-.panel-user__role {
-  display: block;
-  line-height: var(--line-height-snug);
+.panel-user__avatar--grande {
+  width: 3.25rem;
+  height: 3.25rem;
+  font-size: var(--font-size-md);
 }
 
 .panel-user__name {
-  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+}
+
+.panel-user__chevron {
+  color: var(--color-text-muted);
+  transition: transform 0.15s ease;
+}
+
+.panel-user[aria-expanded='true'] .panel-user__chevron {
+  transform: rotate(180deg);
+}
+
+.panel-perfil__ventana {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  z-index: 20;
+  display: grid;
+  gap: var(--space-4);
+  width: min(20rem, calc(100vw - 2rem));
+  padding: var(--space-5);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+}
+
+.panel-perfil__ventana:focus {
+  outline: none;
+}
+
+.panel-perfil__cabecera {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.panel-perfil__nombre {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+  color: var(--color-heading);
+}
+
+.panel-perfil__correo,
+.panel-perfil__nota {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  overflow-wrap: anywhere;
+}
+
+.panel-perfil__datos {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-top: var(--space-4);
+  border-top: var(--border-width) solid var(--color-border);
+}
+
+.panel-perfil__datos div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
   font-size: var(--font-size-sm);
 }
 
-.panel-user__role {
+.panel-perfil__datos dt {
   color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
+}
+
+.panel-perfil__datos dd {
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+  text-align: right;
 }
 
 .panel-back {
@@ -1046,15 +1148,33 @@ button.panel-nav__item:hover {
     justify-content: space-between;
   }
 
-  .panel-user__name,
-  .panel-user__role {
-    display: none;
+  .panel-user,
+  .panel-header__user .tag {
+    min-height: 3rem;
+  }
+
+  .panel-header__user {
+    gap: var(--space-2);
+  }
+
+  .panel-header__user .tag {
+    padding: var(--space-2);
+    font-size: 0.8125rem;
+  }
+
+  .panel-user {
+    gap: var(--space-1);
+    padding-right: var(--space-2);
+  }
+
+  .panel-user__name {
+    font-size: var(--font-size-md);
   }
 
   .panel-user__avatar {
-    width: 2rem;
-    height: 2rem;
-    font-size: var(--font-size-xs);
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: var(--font-size-sm);
   }
 
   .panel-card {
@@ -1209,6 +1329,66 @@ button.panel-nav__item:hover {
 
 .panel-toolbar__select select {
   border-radius: var(--radius-pill);
+}
+
+/* ---------- Listas desplegables ----------
+ * Sin esto, la lista nativa toma el color de acento del sistema operativo (p. ej. rosado
+ * en macOS). Donde el navegador lo permite, se pinta con la paleta del proyecto.
+ */
+
+@supports (appearance: base-select) {
+  .panel select,
+  .panel select::picker(select) {
+    appearance: base-select;
+  }
+
+  .panel select {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    cursor: pointer;
+  }
+
+  .panel select::picker-icon {
+    margin-left: auto;
+    color: var(--color-text-muted);
+    transition: rotate 0.15s ease;
+  }
+
+  .panel select:open::picker-icon {
+    rotate: 180deg;
+  }
+
+  .panel select::picker(select) {
+    margin-top: var(--space-1);
+    padding: var(--space-1);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+  }
+
+  .panel select option {
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    cursor: pointer;
+  }
+
+  .panel select option:is(:hover, :focus-visible) {
+    background: var(--brand-lila-soft);
+    color: var(--color-accent-ink);
+    box-shadow: none;
+  }
+
+  .panel select option:checked {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .panel select option::checkmark {
+    color: var(--color-accent);
+  }
 }
 
 /* ---------- Categorías ---------- */
