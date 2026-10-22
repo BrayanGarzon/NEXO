@@ -13,8 +13,6 @@ import './MainLayout.css'
 export function MainLayout() {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
-  const layoutRef = useRef<HTMLDivElement>(null)
-  const footerRef = useRef<HTMLElement>(null)
   const activeSection = useActiveSection(sectionIds)
   useScrollToHash()
 
@@ -30,19 +28,8 @@ export function MainLayout() {
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [menuOpen])
 
-  // Expone la altura del pie para que la última sección y el pie compartan la pantalla final.
-  useEffect(() => {
-    const footer = footerRef.current
-    if (!footer || typeof ResizeObserver === 'undefined') return
-    const observer = new ResizeObserver(() => {
-      layoutRef.current?.style.setProperty('--site-footer-height', `${footer.offsetHeight}px`)
-    })
-    observer.observe(footer)
-    return () => observer.disconnect()
-  }, [])
-
   return (
-    <div className="layout" ref={layoutRef}>
+    <div className="layout">
       <a className="skip-link" href="#contenido">
         Saltar al contenido
       </a>
@@ -107,7 +94,7 @@ export function MainLayout() {
         <Outlet />
       </main>
 
-      <footer className="site-footer" ref={footerRef}>
+      <footer className="site-footer">
         <Doodle name="branch" tone="menta" className="site-footer__branch" />
         <div className="site-footer__inner container">
           <div className="site-footer__brand">

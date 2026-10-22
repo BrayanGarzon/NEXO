@@ -94,26 +94,9 @@ describe('MainLayout', () => {
     )
   })
 
-  it('Información cierra la página justo antes del pie, que mide su altura', () => {
-    let notifySize = () => {}
-    vi.stubGlobal(
-      'ResizeObserver',
-      class {
-        constructor(callback: () => void) {
-          notifySize = callback
-        }
-        observe() {}
-        disconnect() {}
-      },
-    )
-    const { container } = renderRoute('/')
+  it('Información cierra la página justo antes del pie', () => {
+    renderRoute('/')
     const footer = screen.getByRole('contentinfo')
-    Object.defineProperty(footer, 'offsetHeight', { configurable: true, value: 280 })
-    notifySize()
-
-    // La última sección usa esta variable para compartir la pantalla final con el pie.
-    const layout = container.querySelector<HTMLElement>('.layout')!
-    expect(layout.style.getPropertyValue('--site-footer-height')).toBe('280px')
 
     const main = screen.getByRole('main')
     expect(main.lastElementChild).toHaveAttribute('id', 'informacion')
