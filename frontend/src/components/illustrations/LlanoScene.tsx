@@ -7,6 +7,7 @@ import './illustrations.css'
  */
 export function LlanoScene() {
   const sky = useId()
+  const aboveRidge = useId()
   return (
     <svg
       className="illus"
@@ -19,9 +20,15 @@ export function LlanoScene() {
           <stop offset="0" className="illus__sky-top" />
           <stop offset="0.75" className="illus__sky-bottom" />
         </linearGradient>
+        {/* Cielo por encima de la cordillera: el sol queda detrás de las montañas al ponerse. */}
+        <clipPath id={aboveRidge}>
+          <path d="M0 0h400v244l-56-50-44 40-62-62-34 30-54-66-58 80-40-30L0 250z" />
+        </clipPath>
       </defs>
       <rect width="400" height="440" fill={`url(#${sky})`} />
-      <circle cx="268" cy="150" r="54" className="illus__sun" />
+      <g clipPath={`url(#${aboveRidge})`}>
+        <circle cx="268" cy="150" r="54" className="illus__sun" />
+      </g>
       <path
         className="illus__far"
         d="M0 250 52 186l40 30 58-80 54 66 34-30 62 62 44-40 56 50v196H0z"
@@ -34,14 +41,22 @@ export function LlanoScene() {
       />
       <g className="illus__palm">
         <path d="M70 330c2-40 0-80-8-112" />
-        <path d="M62 218c-20-6-36 2-46 14M62 218c-6-18-22-26-38-24M62 218c10-18 28-22 44-16M62 218c20-2 34 10 38 24M62 218c-2-16 6-30 18-36" />
+        <path
+          className="illus__fronds"
+          d="M62 218c-20-6-36 2-46 14M62 218c-6-18-22-26-38-24M62 218c10-18 28-22 44-16M62 218c20-2 34 10 38 24M62 218c-2-16 6-30 18-36"
+        />
       </g>
       <g className="illus__palm illus__palm--far">
         <path d="M330 320c0-26-2-50-8-70" />
-        <path d="M322 250c-12-4-22 2-28 10M322 250c-4-12-14-16-24-14M322 250c6-12 18-14 28-10M322 250c12 0 20 6 24 16" />
+        <path
+          className="illus__fronds"
+          d="M322 250c-12-4-22 2-28 10M322 250c-4-12-14-16-24-14M322 250c6-12 18-14 28-10M322 250c12 0 20 6 24 16"
+        />
       </g>
       <g className="illus__birds">
-        <path d="M150 104l10 8 10-8M184 86l8 6 8-6M120 132l7 5 7-5" />
+        <path className="illus__bird" d="M150 104l10 8 10-8" />
+        <path className="illus__bird" d="M184 86l8 6 8-6" />
+        <path className="illus__bird" d="M120 132l7 5 7-5" />
       </g>
     </svg>
   )

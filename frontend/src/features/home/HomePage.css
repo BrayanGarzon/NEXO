@@ -431,3 +431,122 @@
     height: 28px;
   }
 }
+
+/* ---------- Animación del Inicio: atardecer ---------- */
+
+/*
+ * El sol se pone tras la cordillera (recortado en LlanoScene) y vuelve a salir; los rayos del
+ * doodle giran, las palmas se mecen, las gaviotas cruzan aleteando y las notas se balancean.
+ * Se usa `transform`, así que se conserva la inclinación (`rotate`) de notas y doodle. Solo en
+ * Inicio: la misma ilustración en Espacio Pausa queda quieta. Con prefers-reduced-motion,
+ * global.css reduce las animaciones a un instante.
+ */
+
+.hero .illus__sun {
+  animation: hero-sunset 16s ease-in-out infinite;
+}
+
+.hero .hero__sun {
+  transform-origin: 52% 58%;
+  animation: hero-spin 24s linear infinite;
+}
+
+.hero .illus__palm {
+  animation: hero-sway 7s ease-in-out infinite alternate;
+}
+
+.hero .illus__palm--far {
+  animation-delay: -3s;
+}
+
+.hero .illus__birds {
+  animation: hero-fly-across 16s linear infinite;
+}
+
+.hero .illus__bird {
+  animation: hero-flap 0.9s ease-in-out infinite alternate;
+}
+
+.hero .illus__bird:nth-child(2) {
+  animation-delay: -0.3s;
+}
+
+.hero .illus__bird:nth-child(3) {
+  animation-delay: -0.6s;
+}
+
+.hero .hero__note {
+  transform-origin: 50% -10%;
+  animation: hero-pendulum 5s ease-in-out infinite alternate;
+}
+
+.hero .hero__note--bottom {
+  animation-duration: 6s;
+  animation-delay: -2.5s;
+}
+
+/* Visible, baja tomando tono coral, queda oculto un momento y vuelve a subir. */
+@keyframes hero-sunset {
+  0%,
+  15% {
+    transform: translateY(0);
+    fill: var(--brand-amarillo);
+  }
+
+  45% {
+    fill: var(--brand-coral);
+  }
+
+  50%,
+  62% {
+    transform: translateY(180px);
+    fill: var(--brand-coral);
+  }
+
+  100% {
+    transform: translateY(0);
+    fill: var(--brand-amarillo);
+  }
+}
+
+@keyframes hero-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes hero-sway {
+  from {
+    transform: rotate(-2deg);
+  }
+
+  to {
+    transform: rotate(2.5deg);
+  }
+}
+
+@keyframes hero-fly-across {
+  from {
+    transform: translate(-200px, 30px);
+  }
+
+  to {
+    transform: translate(320px, -40px);
+  }
+}
+
+@keyframes hero-flap {
+  to {
+    transform: scaleY(-0.6);
+  }
+}
+
+@keyframes hero-pendulum {
+  from {
+    transform: rotate(-3deg);
+  }
+
+  to {
+    transform: rotate(3deg);
+  }
+}
