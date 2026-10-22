@@ -8,6 +8,9 @@
 
 .illus__sun {
   fill: var(--brand-amarillo);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: illus-sun-drift 7s ease-in-out infinite;
 }
 
 .illus__palm,
@@ -38,16 +41,89 @@
 .illus__palm {
   stroke: var(--brand-petroleo);
   stroke-width: 6;
+  transform-box: view-box;
+  transform-origin: 70px 330px;
+  animation: illus-palm-sway 5s ease-in-out infinite;
 }
 
 .illus__palm--far {
   stroke-width: 4;
   opacity: 0.8;
+  transform-origin: 330px 320px;
+  animation-duration: 6.5s;
+  animation-direction: reverse;
 }
 
 .illus__birds {
   stroke: var(--brand-grafito);
   stroke-width: 3;
+}
+
+.illus__bird {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: illus-bird-flight 3.8s ease-in-out infinite;
+}
+
+.illus__bird--two {
+  animation-delay: -1.2s;
+}
+
+.illus__bird--three {
+  animation-delay: -2.4s;
+}
+
+.illus__river {
+  animation: illus-river-glint 5s ease-in-out infinite;
+}
+
+@keyframes illus-sun-drift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-7px, -9px);
+  }
+}
+
+@keyframes illus-palm-sway {
+  0%,
+  100% {
+    transform: rotate(-1.5deg);
+  }
+  50% {
+    transform: rotate(1.5deg);
+  }
+}
+
+@keyframes illus-bird-flight {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0);
+  }
+  50% {
+    transform: translate(8px, -7px) rotate(-5deg);
+  }
+}
+
+@keyframes illus-river-glint {
+  0%,
+  100% {
+    opacity: 0.65;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .illus__sun,
+  .illus__palm,
+  .illus__bird,
+  .illus__river {
+    animation: none;
+  }
 }
 
 .service-thumb {

@@ -41,7 +41,9 @@ export function LlanoScene() {
         <path d="M322 250c-12-4-22 2-28 10M322 250c-4-12-14-16-24-14M322 250c6-12 18-14 28-10M322 250c12 0 20 6 24 16" />
       </g>
       <g className="illus__birds">
-        <path d="M150 104l10 8 10-8M184 86l8 6 8-6M120 132l7 5 7-5" />
+        <path className="illus__bird illus__bird--one" d="M150 104l10 8 10-8" />
+        <path className="illus__bird illus__bird--two" d="M184 86l8 6 8-6" />
+        <path className="illus__bird illus__bird--three" d="M120 132l7 5 7-5" />
       </g>
     </svg>
   )
