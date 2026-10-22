@@ -181,8 +181,8 @@ export function TerritorioSection() {
                       <span className="result-item__text">
                         <span className="result-item__name">{service.name}</span>
                         <span className="result-item__meta">
-                          {meta.label} · Comuna {service.comuna} ·{' '}
-                          {service.distanceKm.toLocaleString('es-CO')} km
+                          {meta.label}
+                          {service.comuna > 0 && ` · Comuna ${service.comuna}`}
                         </span>
                       </span>
                       {service.verified && (
