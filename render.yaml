@@ -1,6 +1,8 @@
-# Blueprint de Render para la demo pública de NEXO JOVEN 360 (planes gratuitos).
+# Blueprint de Render para NEXO JOVEN 360.
+# Despliega SOLO el backend + PostgreSQL. El frontend vive en Vercel
+# (https://www.nexojoven360.site), por eso aquí no hay servicio estático.
 # Crear desde el panel de Render: New → Blueprint → elegir este repositorio.
-# Si Render asigna otro subdominio a algún servicio, ajustar CORS_ORIGINS y VITE_API_BASE_URL.
+# Si Render asigna otro subdominio al backend, actualizar VITE_API_BASE_URL en Vercel.
 
 databases:
   - name: nexo-joven-360-db
@@ -29,22 +31,6 @@ services:
         fromDatabase:
           name: nexo-joven-360-db
           property: connectionString
+      # Orígenes permitidos: el frontend desplegado en Vercel (con y sin www).
       - key: CORS_ORIGINS
-        value: '["https://nexo-joven-360.onrender.com"]'
-
-  - type: web
-    name: nexo-joven-360
-    runtime: static
-    rootDir: frontend
-    buildCommand: npm ci && npm run build
-    staticPublishPath: dist
-    envVars:
-      - key: NODE_VERSION
-        value: "22.12.0"
-      - key: VITE_API_BASE_URL
-        value: https://nexo-joven-360-api.onrender.com
-    # La app usa rutas del navegador (/panel, /brujula…): todo se sirve desde index.html.
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+        value: https://www.nexojoven360.site, https://nexojoven360.site
