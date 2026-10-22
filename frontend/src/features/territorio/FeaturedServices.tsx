@@ -16,7 +16,12 @@ export function FeaturedServices() {
     <section className="featured container" aria-labelledby="featured-title">
       <header className="featured__header">
         <div className="featured__heading">
-          <h3 id="featured-title">Servicios destacados en Villavicencio</h3>
+          <span className="featured__badge" aria-hidden="true">
+            <Icon name="sparkle" size={18} />
+          </span>
+          <h3 id="featured-title" className="featured__title">
+            Servicios destacados en Villavicencio
+          </h3>
           <DemoTag />
         </div>
         {/* Sin parámetros de búsqueda: el listado se muestra completo, sin filtros. */}
@@ -39,6 +44,7 @@ export function FeaturedServices() {
                     {service.name}
                   </Link>
                 </h4>
+                <p className="service-card__summary">{service.summary}</p>
                 <p className="service-card__meta">
                   {category.label} · Comuna {service.comuna}
                 </p>
