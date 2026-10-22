@@ -14,12 +14,21 @@
   transition:
     border-color var(--duration-fast) var(--ease-out),
     background-color var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out);
+    box-shadow var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
 }
 
-.choice-tile:hover {
-  border-color: var(--brand-lila);
-  transform: translateY(-2px);
+/* Realce al pasar el cursor solo en dispositivos con puntero (en táctil no queda «pegado»). */
+@media (hover: hover) {
+  .choice-tile:hover {
+    border-color: var(--brand-lila);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+  }
+
+  .choice-tile:hover .choice-tile__icon {
+    transform: scale(1.06) rotate(-4deg);
+  }
 }
 
 .choice-tile:has(input:focus-visible) {
@@ -34,6 +43,10 @@
   border-radius: var(--radius-pill);
   background: var(--brand-menta);
   color: var(--brand-petroleo);
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
 }
 
 .choice-tile__label {
@@ -57,9 +70,15 @@
   transition: opacity var(--duration-fast) var(--ease-out);
 }
 
-.choice-tile--checked {
+.choice-tile--checked,
+.choice-tile--checked:hover {
   border-color: var(--color-accent);
   background: var(--brand-lila-soft);
+  box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+.choice-tile--checked:has(input:focus-visible) {
+  box-shadow: var(--focus-ring);
 }
 
 .choice-tile--checked .choice-tile__icon {
@@ -73,4 +92,16 @@
 
 .choice-tile--checked .choice-tile__check {
   opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .choice-tile--checked .choice-tile__check {
+    animation: choice-check 260ms var(--ease-out);
+  }
+}
+
+@keyframes choice-check {
+  from {
+    transform: scale(0.4);
+  }
 }
