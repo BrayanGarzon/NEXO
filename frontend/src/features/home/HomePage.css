@@ -122,6 +122,8 @@
   width: 24%;
   rotate: -18deg;
   stroke-width: 7;
+  transform-origin: center;
+  animation: hero-sun-bob 5s ease-in-out infinite;
 }
 
 .hero__note {
@@ -132,11 +134,13 @@
 .hero__note--top {
   top: 6%;
   right: -2%;
+  animation: hero-sticker-float 5.5s ease-in-out infinite;
 }
 
 .hero__note--bottom {
   bottom: 0;
   right: 2%;
+  animation: hero-sticker-float 6s ease-in-out -2s infinite;
 }
 
 .hero__sparkle {
@@ -145,6 +149,37 @@
   bottom: 12%;
   z-index: 1;
   width: 10%;
+  animation: hero-sparkle-pop 3s ease-in-out infinite;
+}
+
+@keyframes hero-sun-bob {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(0, -7px) scale(1.04);
+  }
+}
+
+@keyframes hero-sticker-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -7px;
+  }
+}
+
+@keyframes hero-sparkle-pop {
+  0%,
+  100% {
+    transform: scale(1) rotate(0);
+  }
+  50% {
+    transform: scale(1.12) rotate(8deg);
+  }
 }
 
 .hero__leaf {
