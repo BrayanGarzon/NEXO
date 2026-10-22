@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type RefObject } from 'react'
 import { Link } from 'react-router'
+import { useRevealOnView } from '../../app/useRevealOnView'
 import { Annotation } from '../../components/Annotation'
 import { Button, ButtonLink } from '../../components/Button'
 import { ChoiceTile } from '../../components/ChoiceTile'
@@ -21,6 +22,9 @@ export function BrujulaSection() {
   const [preferenceId, setPreferenceId] = useState<string | null>(null)
   const headingRef = useRef<HTMLHeadingElement>(null)
   const previousStep = useRef(step)
+  // Las opciones aparecen de forma escalonada la primera vez que la sección entra en pantalla.
+  const [optionsRef, optionsRevealed] = useRevealOnView<HTMLDivElement>()
+  const reveal = optionsRevealed ? 'shown' : 'pending'
 
   // Al cambiar de paso, lleva el foco a su título (lectores de pantalla y teclado).
   useEffect(() => {
@@ -40,6 +44,11 @@ export function BrujulaSection() {
 
   return (
     <section id="brujula" className="brujula" aria-labelledby="brujula-title">
+      <div className="brujula__decor" aria-hidden="true">
+        <Doodle name="branch" tone="menta" className="brujula__branch" />
+        <Doodle name="sprout" tone="menta" className="brujula__sprout" />
+        <Doodle name="sparkle" tone="lila" className="brujula__decor-spark" />
+      </div>
       <div className="container">
         <p className="section-eyebrow">
           <Icon name="compass" size={18} /> Brújula · orientación informativa
@@ -75,10 +84,11 @@ export function BrujulaSection() {
               </p>
               <div className="brujula__art" aria-hidden="true">
                 <span className="brujula__compass">
-                  <Icon name="compass" size={64} />
+                  <Icon name="compass" size={76} />
                 </span>
                 <Doodle name="sparkle" tone="amarillo" filled className="brujula__spark" />
                 <Doodle name="leaf" tone="menta" className="brujula__leaf" />
+                <Doodle name="squiggle" tone="lila" className="brujula__squiggle" />
               </div>
             </div>
             <form
@@ -90,7 +100,7 @@ export function BrujulaSection() {
             >
               <fieldset className="brujula__fieldset">
                 <legend className="visually-hidden">¿Qué estás buscando hoy?</legend>
-                <div className="brujula__grid">
+                <div ref={optionsRef} className="brujula__grid" data-reveal={reveal}>
                   {needOptions.map((option) => (
                     <ChoiceTile
                       key={option.id}
@@ -136,7 +146,7 @@ export function BrujulaSection() {
             >
               <fieldset className="brujula__fieldset">
                 <legend className="visually-hidden">¿Cómo te gustaría empezar?</legend>
-                <div className="brujula__grid brujula__grid--two">
+                <div className="brujula__grid brujula__grid--two" data-reveal={reveal}>
                   {preferenceOptions.map((option) => (
                     <ChoiceTile
                       key={option.id}

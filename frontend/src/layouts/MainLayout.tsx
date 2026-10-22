@@ -1,20 +1,48 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, Outlet } from 'react-router'
 import { mainNav, sectionHref, sectionIds } from '../app/navigation'
 import { useActiveSection, useScrollToHash } from '../app/useSectionNavigation'
 import { ButtonLink } from '../components/Button'
+import { Doodle } from '../components/Doodle'
 import { Icon } from '../components/Icon'
 import { Logo } from '../components/Logo'
 import { ApiStatus } from '../features/home/ApiStatus'
+import { AmbientSound } from '../features/sonido/AmbientSound'
 import './MainLayout.css'
 
 export function MainLayout() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const layoutRef = useRef<HTMLDivElement>(null)
+  const footerRef = useRef<HTMLElement>(null)
   const activeSection = useActiveSection(sectionIds)
   useScrollToHash()
 
+  // Escape cierra el menú móvil y devuelve el foco al botón que lo abrió.
+  useEffect(() => {
+    if (!menuOpen) return
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key !== 'Escape') return
+      setMenuOpen(false)
+      menuButtonRef.current?.focus()
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [menuOpen])
+
+  // Expone la altura del pie para que la última sección y el pie compartan la pantalla final.
+  useEffect(() => {
+    const footer = footerRef.current
+    if (!footer || typeof ResizeObserver === 'undefined') return
+    const observer = new ResizeObserver(() => {
+      layoutRef.current?.style.setProperty('--site-footer-height', `${footer.offsetHeight}px`)
+    })
+    observer.observe(footer)
+    return () => observer.disconnect()
+  }, [])
+
   return (
-    <div className="layout">
+    <div className="layout" ref={layoutRef}>
       <a className="skip-link" href="#contenido">
         Saltar al contenido
       </a>
@@ -59,6 +87,7 @@ export function MainLayout() {
               Explorar
             </ButtonLink>
             <button
+              ref={menuButtonRef}
               type="button"
               className="site-header__menu"
               aria-expanded={menuOpen}
@@ -78,7 +107,8 @@ export function MainLayout() {
         <Outlet />
       </main>
 
-      <footer className="site-footer">
+      <footer className="site-footer" ref={footerRef}>
+        <Doodle name="branch" tone="menta" className="site-footer__branch" />
         <div className="site-footer__inner container">
           <div className="site-footer__brand">
             <Logo inverse />
@@ -87,9 +117,12 @@ export function MainLayout() {
               tu siguiente paso.
             </p>
           </div>
-          <nav aria-label="Enlaces del pie de página">
+          <nav aria-labelledby="pie-secciones">
+            <h2 id="pie-secciones" className="site-footer__heading">
+              Secciones
+            </h2>
             <ul className="site-footer__links">
-              {mainNav.slice(1).map((item) => (
+              {mainNav.map((item) => (
                 <li key={item.id}>
                   <Link to={sectionHref(item.id)}>{item.label}</Link>
                 </li>
@@ -97,6 +130,7 @@ export function MainLayout() {
             </ul>
           </nav>
           <div className="site-footer__note">
+            <h2 className="site-footer__heading">Importante</h2>
             <p>
               NEXO JOVEN 360 no ofrece diagnósticos. Si estás en peligro o necesitas ayuda
               inmediata, llama a la línea de emergencias <strong>123</strong>.
@@ -108,6 +142,8 @@ export function MainLayout() {
           </div>
         </div>
       </footer>
+
+      <AmbientSound />
     </div>
   )
 }

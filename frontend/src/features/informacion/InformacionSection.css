@@ -3,7 +3,9 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--space-6) var(--space-7);
   align-items: start;
-  padding-block: var(--space-8) 0;
+  /* Las filas no se estiran con la altura mínima: el contenido queda centrado sobre el pie. */
+  align-content: center;
+  padding-block: var(--space-8) var(--space-6);
 }
 
 .informacion__intro {
@@ -18,6 +20,25 @@
 
 .informacion__intro .section-eyebrow {
   margin-bottom: 0;
+}
+
+/* Nota manuscrita con un brote: decoración discreta (aria-hidden en los trazos). */
+.informacion__art {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.informacion__sprout {
+  width: 3.5rem;
+  opacity: 0.8;
+}
+
+.informacion__spark {
+  width: 1.5rem;
+  align-self: flex-start;
 }
 
 .informacion__list {
@@ -59,19 +80,37 @@
 }
 
 .informacion__help {
+  position: relative;
   grid-column: 1 / -1;
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-4) var(--space-5);
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-8) var(--space-4) var(--space-4);
+  overflow: hidden;
+  border: var(--border-width) solid color-mix(in srgb, var(--brand-coral) 45%, transparent);
   border-radius: var(--radius-lg);
   background: var(--brand-coral-soft);
   font-weight: var(--font-weight-medium);
 }
 
-.informacion__help .icon {
+.informacion__help-icon {
+  display: grid;
+  place-items: center;
   flex: none;
-  color: var(--brand-coral-ink);
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 46% 54% 40% 60% / 55% 45% 55% 45%;
+  background: var(--brand-coral);
+  color: var(--brand-grafito);
+}
+
+.informacion__help-leaf {
+  position: absolute;
+  right: var(--space-4);
+  bottom: -0.75rem;
+  width: 3.5rem;
+  rotate: 20deg;
+  opacity: 0.6;
 }
 
 .informacion__help a {

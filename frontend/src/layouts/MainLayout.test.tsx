@@ -43,6 +43,34 @@ describe('MainLayout', () => {
     expect(scrollIntoView.mock.contexts.at(-1)).toBe(document.getElementById('pausa'))
   })
 
+  it('Escape cierra el menú móvil, actualiza aria-expanded y devuelve el foco', async () => {
+    const user = userEvent.setup()
+    renderRoute('/')
+    await user.click(screen.getByRole('button', { name: 'Abrir menú' }))
+    expect(screen.getByRole('button', { name: 'Cerrar menú' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    )
+
+    await user.keyboard('{Escape}')
+
+    const toggle = screen.getByRole('button', { name: 'Abrir menú' })
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    expect(toggle).toHaveFocus()
+    expect(screen.getByRole('navigation', { name: 'Navegación principal' })).not.toHaveClass(
+      'site-nav--open',
+    )
+  })
+
+  it('Escape no hace nada si el menú está cerrado', async () => {
+    const user = userEvent.setup()
+    renderRoute('/')
+    const search = within(document.getElementById('inicio')!).getByRole('searchbox')
+    await user.click(search)
+    await user.keyboard('{Escape}')
+    expect(search).toHaveFocus()
+  })
+
   it('marca Inicio como sección activa al cargar', () => {
     renderRoute('/')
     const nav = screen.getByRole('navigation', { name: 'Navegación principal' })
@@ -58,5 +86,48 @@ describe('MainLayout', () => {
       'href',
       '#contenido',
     )
+  })
+
+  it('Información cierra la página justo antes del pie, que mide su altura', () => {
+    let notifySize = () => {}
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(callback: () => void) {
+          notifySize = callback
+        }
+        observe() {}
+        disconnect() {}
+      },
+    )
+    const { container } = renderRoute('/')
+    const footer = screen.getByRole('contentinfo')
+    Object.defineProperty(footer, 'offsetHeight', { configurable: true, value: 280 })
+    notifySize()
+
+    // La última sección usa esta variable para compartir la pantalla final con el pie.
+    const layout = container.querySelector<HTMLElement>('.layout')!
+    expect(layout.style.getPropertyValue('--site-footer-height')).toBe('280px')
+
+    const main = screen.getByRole('main')
+    expect(main.lastElementChild).toHaveAttribute('id', 'informacion')
+    expect(main.nextElementSibling).toBe(footer)
+
+    const informacion = screen.getByRole('region', { name: '¿Qué es NEXO JOVEN 360?' })
+    expect(within(informacion).getByRole('link', { name: '123' })).toHaveAttribute(
+      'href',
+      'tel:123',
+    )
+    const links = within(
+      within(footer).getByRole('navigation', { name: 'Secciones' }),
+    ).getAllByRole('link')
+    expect(links.map((link) => link.getAttribute('href'))).toEqual([
+      '/#inicio',
+      '/#brujula',
+      '/#territorio',
+      '/#pausa',
+      '/#mi-siguiente-paso',
+      '/#informacion',
+    ])
   })
 })

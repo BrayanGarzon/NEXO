@@ -2,7 +2,7 @@ import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import * as catalog from '../../services/catalog'
-import { renderRoute } from '../../test/renderRoute'
+import { renderRoute, withinSection } from '../../test/renderRoute'
 import { demoServices } from '../../mocks/demoServices'
 
 describe('TerritorioSection', () => {
@@ -45,6 +45,34 @@ describe('TerritorioSection', () => {
 
     await user.click(within(detail).getByRole('button', { name: 'Cerrar detalle' }))
     expect(screen.queryByRole('complementary', { name: /Espacios culturales/ })).toBeNull()
+  })
+
+  it('incluye los servicios destacados como datos de demostración', () => {
+    renderRoute('/')
+    const featured = withinSection('territorio').getByRole('region', {
+      name: 'Servicios destacados en Villavicencio',
+    })
+    expect(within(featured).getByText('Datos de demostración')).toBeInTheDocument()
+    expect(within(featured).getAllByRole('listitem')).toHaveLength(3)
+    expect(
+      screen.getAllByRole('region', { name: 'Servicios destacados en Villavicencio' }),
+    ).toHaveLength(1)
+  })
+
+  it('«Ver todos» muestra el listado completo y cada destacado abre su detalle', async () => {
+    const user = userEvent.setup()
+    const { router } = renderRoute('/?categoria=cultura#territorio')
+    const featured = screen.getByRole('region', { name: 'Servicios destacados en Villavicencio' })
+    expect(
+      within(featured).getByRole('link', { name: 'Centro de Orientación Juvenil' }),
+    ).toHaveAttribute('href', '/?servicio=demo-orientacion-juvenil#territorio-explorar')
+
+    await user.click(within(featured).getByRole('link', { name: /Ver todos/ }))
+    expect(router.state.location.search).toBe('')
+    expect(router.state.location.hash).toBe('#territorio-explorar')
+    expect(
+      await screen.findByRole('heading', { name: `${demoServices.length} servicios` }),
+    ).toBeInTheDocument()
   })
 
   it('abre el detalle indicado en la URL', async () => {

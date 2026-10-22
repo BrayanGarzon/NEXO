@@ -26,11 +26,13 @@ describe('HomePage', () => {
     }
   })
 
-  it('identifica los servicios destacados como datos de demostración', () => {
+  it('Inicio incluye los cuatro accesos y no los servicios destacados', () => {
     renderRoute('/')
-    const featured = screen.getByRole('region', { name: 'Servicios destacados en Villavicencio' })
-    expect(within(featured).getByText('Datos de demostración')).toBeInTheDocument()
-    expect(within(featured).getAllByRole('listitem')).toHaveLength(3)
+    const inicio = withinSection('inicio')
+    expect(inicio.getByRole('region', { name: 'Explora NEXO JOVEN 360' })).toBeInTheDocument()
+    expect(
+      inicio.queryByRole('region', { name: 'Servicios destacados en Villavicencio' }),
+    ).toBeNull()
   })
 
   it('la búsqueda del inicio filtra Nexo Territorio sin salir de la página', async () => {
