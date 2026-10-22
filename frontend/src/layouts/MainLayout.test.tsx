@@ -16,11 +16,10 @@ describe('MainLayout', () => {
     scrollIntoView.mockReset()
   })
 
-  it('enlaza al panel institucional desde el encabezado y el menú', () => {
+  it('no muestra el acceso al panel institucional en el encabezado', () => {
     renderRoute('/')
-    const enlaces = screen.getAllByRole('link', { name: 'Panel institucional' })
-    expect(enlaces).toHaveLength(2)
-    for (const enlace of enlaces) expect(enlace).toHaveAttribute('href', '/panel')
+    expect(screen.queryByRole('link', { name: 'Panel institucional' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Panel institucional' })).not.toBeInTheDocument()
   })
 
   it('el menú lleva a la sección y se cierra en móvil', async () => {

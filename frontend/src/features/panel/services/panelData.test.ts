@@ -3,9 +3,12 @@ import { CONFIGURACION_POR_DEFECTO, configuracionActual } from '../reglas'
 import {
   cambiarActivoUsuario,
   cambiarRolUsuario,
+  eliminarServicio,
   guardarConfiguracion,
   invitarUsuario,
   listarFuentes,
+  listarHistorial,
+  listarServicios,
   listarUsuarios,
   marcarFuenteConsultada,
   reiniciarDatosPanel,
@@ -55,6 +58,25 @@ describe('capa de datos del panel', () => {
       const hoy = new Date()
       const esperado = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`
       expect(actualizada.fechaConsulta).toBe(esperado)
+    })
+  })
+
+  describe('servicios no vigentes', () => {
+    it('elimina el servicio no vigente junto con su historial', async () => {
+      await eliminarServicio('sv-taller-programacion')
+      expect(await listarServicios()).not.toContainEqual(
+        expect.objectContaining({ id: 'sv-taller-programacion' }),
+      )
+      expect(await listarHistorial('sv-taller-programacion')).toEqual([])
+    })
+
+    it('impide eliminar un servicio vigente', async () => {
+      await expect(eliminarServicio('sv-liga-futbol')).rejects.toThrow(
+        'Solo se pueden eliminar servicios no vigentes.',
+      )
+      expect(await listarServicios()).toContainEqual(
+        expect.objectContaining({ id: 'sv-liga-futbol' }),
+      )
     })
   })
 

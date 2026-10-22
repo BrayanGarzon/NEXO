@@ -164,7 +164,11 @@ function TablaServicios({ servicios, total }: { servicios: ServicioAdmin[]; tota
                       {servicio.nombre}
                     </Link>
                   </th>
-                  <td data-label="Categoría">{categoria.label}</td>
+                  <td data-label="Categoría">
+                    {servicio.categoria === 'otra' && servicio.categoriaPersonalizada
+                      ? servicio.categoriaPersonalizada
+                      : categoria.label}
+                  </td>
                   <td data-label="Institución">{servicio.institucion}</td>
                   <td data-label="Estado">
                     <EstadoTag estado={servicio.estado} />

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useState, type FormEvent } from 'react'
-import { Link, useLocation, useParams } from 'react-router'
+import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import { Button, ButtonLink } from '../../../components/Button'
 import { Icon } from '../../../components/Icon'
 import { StatusMessage } from '../../../components/StatusMessage'
@@ -20,6 +20,7 @@ import {
 import {
   agregarFuente,
   cambiarEstado,
+  eliminarServicio,
   listarHistorial,
   obtenerServicio,
   quitarFuente,
@@ -105,7 +106,11 @@ export function ServicioDetallePage() {
       <PanelHeader titulo={servicio.nombre} subtitulo={servicio.institucion} antes={volver}>
         <div className="panel-header__tags">
           <EstadoTag estado={servicio.estado} />
-          <Tag icon={categoria.icon}>{categoria.label}</Tag>
+          <Tag icon={categoria.icon}>
+            {servicio.categoria === 'otra' && servicio.categoriaPersonalizada
+              ? servicio.categoriaPersonalizada
+              : categoria.label}
+          </Tag>
         </div>
       </PanelHeader>
 
@@ -124,6 +129,7 @@ export function ServicioDetallePage() {
             </div>
             <dl className="panel-dl">
               <Dato titulo="Resumen" valor={servicio.resumen} />
+              <Dato titulo="Motivo de creación" valor={servicio.motivoCreacion ?? ''} />
               <Dato titulo="Dirección" valor={servicio.direccion} />
               <Dato titulo="Comuna" valor={`Comuna ${servicio.comuna}`} />
               <Dato titulo="Horario" valor={servicio.horario} />
@@ -359,6 +365,7 @@ function NuevaFuente({ servicio, onCambio }: SeccionProps) {
 
 function Revision({ servicio, onCambio }: SeccionProps) {
   const id = useId()
+  const navigate = useNavigate()
   const [comentario, setComentario] = useState('')
   const [enviando, setEnviando] = useState(false)
   const [mensaje, setMensaje] = useState<{ tipo: 'ok' | 'error'; texto: string } | null>(null)
@@ -376,6 +383,27 @@ function Revision({ servicio, onCambio }: SeccionProps) {
         texto: causa instanceof Error ? causa.message : 'No se pudo cambiar el estado.',
       })
     } finally {
+      setEnviando(false)
+    }
+  }
+
+  async function eliminar() {
+    if (
+      servicio.estado !== 'no_vigente' ||
+      !window.confirm(`¿Eliminar «${servicio.nombre}»? Esta acción no se puede deshacer.`)
+    ) {
+      return
+    }
+    setEnviando(true)
+    setMensaje(null)
+    try {
+      await eliminarServicio(servicio.id)
+      navigate('/panel/servicios')
+    } catch (causa) {
+      setMensaje({
+        tipo: 'error',
+        texto: causa instanceof Error ? causa.message : 'No se pudo eliminar el servicio.',
+      })
       setEnviando(false)
     }
   }
@@ -418,6 +446,16 @@ function Revision({ servicio, onCambio }: SeccionProps) {
           )
         })}
       </div>
+      {servicio.estado === 'no_vigente' && (
+        <div className="panel-transition">
+          <Button variant="secondary" size="sm" disabled={enviando} onClick={eliminar}>
+            Eliminar servicio
+          </Button>
+          <p className="panel-hint">
+            Eliminará el servicio y su historial. Esta acción no se puede deshacer.
+          </p>
+        </div>
+      )}
       <div aria-live="polite">
         {mensaje && (
           <p className={mensaje.tipo === 'ok' ? 'panel-success' : 'panel-error'}>{mensaje.texto}</p>

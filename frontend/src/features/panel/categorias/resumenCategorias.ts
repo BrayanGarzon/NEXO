@@ -17,20 +17,22 @@ export interface ResumenCategoria {
 /** Indicadores por categoría para la vista Categorías. */
 export function resumirCategorias(servicios: ServicioAdmin[], hoy: FechaIso): ResumenCategoria[] {
   const incidencias = detectarIncidencias(servicios, hoy)
-  return categoryOrder.map((categoria) => {
-    const lista = servicios.filter((servicio) => servicio.categoria === categoria)
-    const activos = lista.filter((servicio) => servicio.estado !== 'no_vigente')
-    const ids = new Set(lista.map((servicio) => servicio.id))
-    return {
-      categoria,
-      total: lista.length,
-      porEstado: Object.fromEntries(
-        estados.map((estado) => [estado, lista.filter((s) => s.estado === estado).length]),
-      ) as Record<EstadoServicio, number>,
-      conFuenteVerificable: activos.filter((servicio) => tieneFuenteVerificable(servicio, hoy))
-        .length,
-      activos: activos.length,
-      incidencias: incidencias.filter((incidencia) => ids.has(incidencia.servicioId)).length,
-    }
-  })
+  return categoryOrder
+    .filter((categoria) => categoria !== 'otra')
+    .map((categoria) => {
+      const lista = servicios.filter((servicio) => servicio.categoria === categoria)
+      const activos = lista.filter((servicio) => servicio.estado !== 'no_vigente')
+      const ids = new Set(lista.map((servicio) => servicio.id))
+      return {
+        categoria,
+        total: lista.length,
+        porEstado: Object.fromEntries(
+          estados.map((estado) => [estado, lista.filter((s) => s.estado === estado).length]),
+        ) as Record<EstadoServicio, number>,
+        conFuenteVerificable: activos.filter((servicio) => tieneFuenteVerificable(servicio, hoy))
+          .length,
+        activos: activos.length,
+        incidencias: incidencias.filter((incidencia) => ids.has(incidencia.servicioId)).length,
+      }
+    })
 }

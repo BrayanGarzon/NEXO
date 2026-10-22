@@ -27,7 +27,7 @@ export function filtrarServicios(
       (!categoria || servicio.categoria === categoria) &&
       (!q ||
         normalizar(
-          `${servicio.nombre} ${servicio.institucion} ${categories[servicio.categoria].label}`,
+          `${servicio.nombre} ${servicio.institucion} ${categories[servicio.categoria].label} ${servicio.categoriaPersonalizada ?? ''}`,
         ).includes(q)),
   )
 }

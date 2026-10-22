@@ -52,10 +52,16 @@ export function porcentaje(parte: number, total: number): number {
 
 export function calcularPorCategoria(
   servicios: ServicioAdmin[],
-): { categoria: ServiceCategory; total: number }[] {
-  return categoryOrder.map((categoria) => ({
+): { categoria: ServiceCategory; total: number; porcentaje: number }[] {
+  const categoriasVisibles = categoryOrder.filter((categoria) => categoria !== 'otra')
+  const totalServicios = servicios.filter((servicio) => servicio.categoria !== 'otra').length
+  return categoriasVisibles.map((categoria) => ({
     categoria,
     total: servicios.filter((servicio) => servicio.categoria === categoria).length,
+    porcentaje: porcentaje(
+      servicios.filter((servicio) => servicio.categoria === categoria).length,
+      totalServicios,
+    ),
   }))
 }
 
@@ -91,10 +97,12 @@ export function calcularCobertura(servicios: ServicioAdmin[]) {
   })
   const lista = publicados(servicios)
   return {
-    porCategoria: categoryOrder.map((categoria) => ({
-      categoria,
-      ...fila(lista.filter((servicio) => servicio.categoria === categoria)),
-    })),
+    porCategoria: categoryOrder
+      .filter((categoria) => categoria !== 'otra')
+      .map((categoria) => ({
+        categoria,
+        ...fila(lista.filter((servicio) => servicio.categoria === categoria)),
+      })),
     porComuna: COMUNAS.map((comuna) => ({
       comuna,
       ...fila(lista.filter((servicio) => servicio.comuna === comuna)),

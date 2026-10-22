@@ -10,7 +10,7 @@ const { servicios } = crearDatosSinteticos(new Date(2026, 9, 21))
 describe('resumen por categoría', () => {
   afterEach(() => aplicarConfiguracion(CONFIGURACION_POR_DEFECTO))
 
-  it('cubre todas las categorías y suma el total del catálogo', () => {
+  it('cubre las categorías activas del panel y excluye Otro', () => {
     const resumen = resumirCategorias(servicios, HOY)
     expect(resumen.map((fila) => fila.categoria)).toEqual([
       'salud-mental',
@@ -20,7 +20,10 @@ describe('resumen por categoría', () => {
       'empleo',
       'recreacion',
     ])
-    expect(resumen.reduce((suma, fila) => suma + fila.total, 0)).toBe(servicios.length)
+    expect(resumen.some((fila) => fila.categoria === 'otra')).toBe(false)
+    expect(resumen.reduce((suma, fila) => suma + fila.total, 0)).toBe(
+      servicios.filter((servicio) => servicio.categoria !== 'otra').length,
+    )
   })
 
   it('cuenta estados, fuentes verificables e incidencias de cada categoría', () => {

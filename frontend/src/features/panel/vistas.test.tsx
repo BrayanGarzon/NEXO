@@ -30,7 +30,9 @@ describe('vistas complementarias del panel', () => {
     const user = userEvent.setup()
     const { router } = renderRoute('/panel/categorias')
     const lista = await screen.findByRole('list', { name: 'Categorías del catálogo' })
+    expect(lista).toHaveClass('panel-category-grid')
     expect(within(lista).getAllByRole('heading', { level: 3 })).toHaveLength(6)
+    expect(within(lista).queryByRole('heading', { name: 'Otro' })).not.toBeInTheDocument()
 
     await user.click(screen.getByRole('link', { name: 'Ver servicios de Cultura' }))
     expect(router.state.location.search).toBe('?categoria=cultura')

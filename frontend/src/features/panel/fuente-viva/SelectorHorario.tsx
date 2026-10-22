@@ -25,6 +25,7 @@ const atajos = [
 /** Campo de horario: se puede escribir o elegir días/fecha y horas en un desplegable. */
 export function SelectorHorario({ id, value, onChange }: SelectorHorarioProps) {
   const [abierto, setAbierto] = useState(false)
+  const [colocarArriba, setColocarArriba] = useState(false)
   const [tipo, setTipo] = useState<SeleccionHorario['tipo']>('semanal')
   const [dias, setDias] = useState<number[]>([0, 1, 2, 3, 4])
   const [fecha, setFecha] = useState('')
@@ -41,7 +42,30 @@ export function SelectorHorario({ id, value, onChange }: SelectorHorarioProps) {
 
   useEffect(() => {
     if (!abierto) return
-    ventana.current?.focus()
+    ventana.current?.focus({ preventScroll: true })
+
+    let frame = requestAnimationFrame(() => {
+      const botonRect = boton.current?.getBoundingClientRect()
+      const ventanaRect = ventana.current?.getBoundingClientRect()
+      if (!botonRect || !ventanaRect) return
+
+      const espacioAbajo = window.innerHeight - botonRect.bottom
+      const espacioArriba = botonRect.top
+      setColocarArriba(espacioAbajo < ventanaRect.height && espacioArriba > espacioAbajo)
+    })
+
+    function reubicar() {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(() => {
+        const botonRect = boton.current?.getBoundingClientRect()
+        const ventanaRect = ventana.current?.getBoundingClientRect()
+        if (!botonRect || !ventanaRect) return
+
+        const espacioAbajo = window.innerHeight - botonRect.bottom
+        const espacioArriba = botonRect.top
+        setColocarArriba(espacioAbajo < ventanaRect.height && espacioArriba > espacioAbajo)
+      })
+    }
 
     function alPulsar(evento: PointerEvent) {
       if (!contenedor.current?.contains(evento.target as Node)) setAbierto(false)
@@ -54,9 +78,14 @@ export function SelectorHorario({ id, value, onChange }: SelectorHorarioProps) {
     }
     document.addEventListener('pointerdown', alPulsar)
     document.addEventListener('keydown', alTeclear)
+    window.addEventListener('resize', reubicar)
+    window.addEventListener('scroll', reubicar, true)
     return () => {
+      cancelAnimationFrame(frame)
       document.removeEventListener('pointerdown', alPulsar)
       document.removeEventListener('keydown', alTeclear)
+      window.removeEventListener('resize', reubicar)
+      window.removeEventListener('scroll', reubicar, true)
     }
   }, [abierto])
 
@@ -98,7 +127,11 @@ export function SelectorHorario({ id, value, onChange }: SelectorHorarioProps) {
       {abierto && (
         <div
           ref={ventana}
-          className="panel-horario__ventana"
+          className={
+            colocarArriba
+              ? 'panel-horario__ventana panel-horario__ventana--arriba'
+              : 'panel-horario__ventana'
+          }
           role="dialog"
           aria-labelledby={tituloId}
           tabIndex={-1}

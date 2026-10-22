@@ -28,6 +28,8 @@ export interface ServicioAdmin {
   id: string
   nombre: string
   categoria: ServiceCategory
+  categoriaPersonalizada?: string
+  motivoCreacion?: string
   institucion: string
   resumen: string
   direccion: string
@@ -71,13 +73,14 @@ export type DatosServicio = Pick<
   ServicioAdmin,
   | 'nombre'
   | 'categoria'
+  | 'categoriaPersonalizada'
   | 'institucion'
   | 'resumen'
   | 'direccion'
   | 'comuna'
   | 'horario'
   | 'serviciosOfrecidos'
->
+> & { motivoCreacion: string }
 
 export type DatosFuente = Omit<Fuente, 'id'>
 

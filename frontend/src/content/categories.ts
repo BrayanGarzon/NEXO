@@ -15,6 +15,7 @@ export const categories: Record<ServiceCategory, CategoryMeta> = {
   cultura: { label: 'Cultura', icon: 'palette', tone: 'coral' },
   empleo: { label: 'Empleo', icon: 'briefcase', tone: 'menta' },
   recreacion: { label: 'Recreación', icon: 'sparkle', tone: 'amarillo' },
+  otra: { label: 'Otro', icon: 'sparkle', tone: 'coral' },
 }
 
 export const categoryOrder = Object.keys(categories) as ServiceCategory[]

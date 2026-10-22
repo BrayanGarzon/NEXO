@@ -3,6 +3,8 @@ import { crearDatosSinteticos } from '../mocks/datosSinteticos'
 import type { Fuente, ServicioAdmin } from '../types'
 import {
   calcularCalidad,
+  calcularCobertura,
+  calcularPorCategoria,
   calcularResumen,
   calcularVigencia,
   detectarIncidencias,
@@ -50,6 +52,34 @@ describe('indicadores del Observatorio', () => {
       total: 5,
       porEstado: { borrador: 1, en_revision: 0, publicado: 3, no_vigente: 1 },
     })
+  })
+
+  it('calcula la participación de categorías visibles y excluye Otro', () => {
+    const distribucion = calcularPorCategoria([
+      servicio({ id: 'a', categoria: 'salud-mental' }),
+      servicio({ id: 'b', categoria: 'salud-mental' }),
+      servicio({ id: 'c', categoria: 'empleo' }),
+      servicio({ id: 'd', categoria: 'otra' }),
+    ])
+    expect(distribucion.some(({ categoria }) => categoria === 'otra')).toBe(false)
+    expect(distribucion.find(({ categoria }) => categoria === 'salud-mental')).toMatchObject({
+      total: 2,
+      porcentaje: 67,
+    })
+    expect(distribucion.find(({ categoria }) => categoria === 'empleo')).toMatchObject({
+      total: 1,
+      porcentaje: 33,
+    })
+    expect(calcularPorCategoria([]).every(({ porcentaje: valor }) => valor === 0)).toBe(true)
+  })
+
+  it('excluye Otro de la cobertura por categoría', () => {
+    const cobertura = calcularCobertura([
+      servicio({ id: 'publicado-otro', categoria: 'otra', estado: 'publicado' }),
+      servicio({ id: 'publicado-salud', categoria: 'salud-mental', estado: 'publicado' }),
+    ])
+    expect(cobertura.porCategoria.map(({ categoria }) => categoria)).not.toContain('otra')
+    expect(cobertura.porComuna.reduce((total, fila) => total + fila.publicados, 0)).toBe(2)
   })
 
   it('clasifica la calidad de la información de los servicios activos', () => {

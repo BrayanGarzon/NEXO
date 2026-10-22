@@ -8,21 +8,18 @@ import { categories } from '../../../content/categories'
 import { EstadoTag } from '../EstadoTag'
 import { formatearFechaHora, hoyIso } from '../fechas'
 import { PanelHeader } from '../PanelHeader'
-import { accionLabels, configuracionActual } from '../reglas'
+import { accionLabels } from '../reglas'
 import { cargarObservatorio, type DatosObservatorio } from '../services/panelData'
 import type { EstadoServicio } from '../types'
 import { useCarga } from '../useCarga'
-import { Barras, Dona, Proporcion } from './Graficos'
+import { Barras, TortaCobertura } from './Graficos'
 import {
-  calcularCalidad,
   calcularCobertura,
   calcularPorCategoria,
   calcularResumen,
-  calcularVigencia,
   detectarIncidencias,
   ejecutarValidaciones,
   incidenciaLabels,
-  porcentaje,
   type TipoIncidencia,
 } from './indicadores'
 
@@ -81,25 +78,10 @@ function Tablero({ datos }: { datos: DatosObservatorio }) {
   const { servicios, actividad } = datos
   const hoy = hoyIso()
   const resumen = calcularResumen(servicios)
-  const calidad = calcularCalidad(servicios, hoy)
-  const totalCalidad = calidad.conFuenteVerificable + calidad.pendienteRevision + calidad.sinFuente
-  const vigencia = calcularVigencia(servicios, hoy)
   const cobertura = calcularCobertura(servicios)
+  const distribucion = calcularPorCategoria(servicios)
+  const totalDistribucion = distribucion.reduce((suma, fila) => suma + fila.total, 0)
   const validaciones = ejecutarValidaciones(servicios, hoy)
-
-  const segmentosCalidad = [
-    {
-      etiqueta: 'Con fuente verificable',
-      valor: calidad.conFuenteVerificable,
-      serie: 'panel-serie--ok',
-    },
-    {
-      etiqueta: 'Pendiente de revisión',
-      valor: calidad.pendienteRevision,
-      serie: 'panel-serie--pendiente',
-    },
-    { etiqueta: 'Sin fuente', valor: calidad.sinFuente, serie: 'panel-serie--sin' },
-  ]
 
   return (
     <div className="panel-dashboard">
@@ -130,137 +112,137 @@ function Tablero({ datos }: { datos: DatosObservatorio }) {
       <div className="panel-grid">
         <Incidencias incidencias={detectarIncidencias(servicios, hoy)} />
 
-        <section className="panel-card" aria-labelledby="calidad-titulo">
-          <h3 id="calidad-titulo">Calidad de la información</h3>
-          <div className="panel-quality">
-            <Dona
-              segmentos={segmentosCalidad}
-              centro={`${porcentaje(calidad.conFuenteVerificable, totalCalidad)}%`}
-              detalle="con fuente verificable"
+        <div className="panel-grid__wide panel-category-charts">
+          <section className="panel-card" aria-labelledby="categorias-grafica-titulo">
+            <h3 id="categorias-grafica-titulo">Servicios por categoría</h3>
+            <p className="panel-hint">
+              Cantidad y porcentaje sobre el total de {totalDistribucion} servicios. Selecciona una
+              categoría para revisar sus servicios.
+            </p>
+            <Barras
+              datos={distribucion.map(({ categoria, total, porcentaje: participacion }) => ({
+                etiqueta: categories[categoria].label,
+                valor: total,
+                porcentaje: participacion,
+                href: `/panel/servicios?categoria=${categoria}`,
+                serie: `panel-serie--${categories[categoria].tone}`,
+              }))}
             />
-            <ul className="panel-legend">
-              {segmentosCalidad.map((segmento) => (
-                <li key={segmento.etiqueta}>
-                  <span className={`panel-legend__dot ${segmento.serie}`} aria-hidden="true" />
-                  <span>{segmento.etiqueta}</span>
-                  <strong>{porcentaje(segmento.valor, totalCalidad)}%</strong>
-                  <span className="visually-hidden">({segmento.valor} servicios)</span>
+          </section>
+
+          <section className="panel-card" aria-labelledby="categorias-titulo">
+            <h3 id="categorias-titulo">Distribución de servicios por categoría</h3>
+            <p className="panel-hint">
+              Participación de cada categoría sobre el total de {totalDistribucion} servicios, en
+              cualquier estado. Selecciona una categoría para revisar sus servicios.
+            </p>
+            <div role="region" aria-label="Gráfica de distribución por categoría">
+              <Barras
+                className="panel-bars--wide"
+                datos={distribucion.map(({ categoria, total, porcentaje: participacion }) => ({
+                  etiqueta: categories[categoria].label,
+                  valor: total,
+                  porcentaje: participacion,
+                  href: `/panel/servicios?categoria=${categoria}`,
+                  serie: `panel-serie--${categories[categoria].tone}`,
+                }))}
+              />
+            </div>
+          </section>
+        </div>
+
+        <div className="panel-grid__wide panel-activity-validation">
+          <section className="panel-card" aria-labelledby="actividad-titulo">
+            <h3 id="actividad-titulo">Actividad reciente</h3>
+            <p className="panel-hint">Últimos cambios de estado en los servicios.</p>
+            <ol className="panel-activity">
+              {actividad.map((evento) => (
+                <li key={evento.id}>
+                  <div>
+                    <p className="panel-activity__title">{accionLabels[evento.accion]}</p>
+                    <Link to={`/panel/servicios/${evento.servicioId}`}>
+                      {evento.servicioNombre}
+                    </Link>
+                    <p className="panel-timeline__meta">
+                      <time dateTime={evento.fecha}>{formatearFechaHora(evento.fecha)}</time>
+                    </p>
+                  </div>
+                  {evento.estadoNuevo && <EstadoTag estado={evento.estadoNuevo} />}
                 </li>
               ))}
-            </ul>
-          </div>
-          <p className="panel-hint">Servicios activos ({totalCalidad}); excluye los no vigentes.</p>
-        </section>
+            </ol>
+          </section>
 
-        <section className="panel-card" aria-labelledby="vigencia-titulo">
-          <h3 id="vigencia-titulo">Vigencia de publicados</h3>
-          <p className="panel-hint">
-            Un servicio publicado debe revisarse cada {configuracionActual().plazoVigenciaDias}{' '}
-            días.
-          </p>
-          <ul className="panel-stats">
-            <li className="panel-stat panel-stat--ok">
-              <strong>{vigencia.vigentes}</strong> Vigentes
-            </li>
-            <li className="panel-stat panel-stat--pendiente">
-              <strong>{vigencia.porVencer}</strong> Por vencer (
-              {configuracionActual().avisoPorVencerDias} días)
-            </li>
-            <li className="panel-stat panel-stat--sin">
-              <strong>{vigencia.vencidos}</strong> Vencidos
-            </li>
-          </ul>
-        </section>
-
-        <section className="panel-card" aria-labelledby="categorias-titulo">
-          <h3 id="categorias-titulo">Servicios por categoría</h3>
-          <p className="panel-hint">Todos los servicios del catálogo, en cualquier estado.</p>
-          <Barras
-            datos={calcularPorCategoria(servicios).map(({ categoria, total }) => ({
-              etiqueta: categories[categoria].label,
-              valor: total,
-              serie: `panel-serie--${categories[categoria].tone}`,
-            }))}
-          />
-        </section>
-
-        <section className="panel-card" aria-labelledby="actividad-titulo">
-          <h3 id="actividad-titulo">Actividad reciente</h3>
-          <p className="panel-hint">Últimos cambios de estado en los servicios.</p>
-          <ol className="panel-activity">
-            {actividad.map((evento) => (
-              <li key={evento.id}>
-                <div>
-                  <p className="panel-activity__title">{accionLabels[evento.accion]}</p>
-                  <Link to={`/panel/servicios/${evento.servicioId}`}>{evento.servicioNombre}</Link>
-                  <p className="panel-timeline__meta">
-                    <time dateTime={evento.fecha}>{formatearFechaHora(evento.fecha)}</time>
-                  </p>
-                </div>
-                {evento.estadoNuevo && <EstadoTag estado={evento.estadoNuevo} />}
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        <section className="panel-card panel-grid__span2" aria-labelledby="validaciones-titulo">
-          <div className="panel-card__head">
-            <h3 id="validaciones-titulo">Validaciones de calidad</h3>
-            <Tag tone="demo">Conjunto sintético</Tag>
-          </div>
-          <p className="panel-hint">
-            Reglas automáticas sobre los servicios activos. Cada fallo aparece en «Necesitan
-            atención».
-          </p>
-          <div className="panel-table-scroll" tabIndex={0} role="region" aria-label="Validaciones">
-            <table className="panel-table">
-              <thead>
-                <tr>
-                  <th scope="col">Regla</th>
-                  <th scope="col">Aprobados</th>
-                  <th scope="col">Fallidos</th>
-                </tr>
-              </thead>
-              <tbody>
-                {validaciones.map((regla) => (
-                  <tr key={regla.nombre}>
-                    <th scope="row">{regla.nombre}</th>
-                    <td>{regla.aprobados}</td>
-                    <td>
-                      {regla.fallidos > 0 ? (
-                        <Tag tone="warning">{regla.fallidos}</Tag>
-                      ) : (
-                        <Tag tone="success">0</Tag>
-                      )}
-                    </td>
+          <section className="panel-card" aria-labelledby="validaciones-titulo">
+            <div className="panel-card__head">
+              <h3 id="validaciones-titulo">Validaciones de calidad</h3>
+              <Tag tone="demo">Conjunto sintético</Tag>
+            </div>
+            <p className="panel-hint">
+              Reglas automáticas sobre los servicios activos. Cada fallo aparece en «Necesitan
+              atención».
+            </p>
+            <div
+              className="panel-table-scroll"
+              tabIndex={0}
+              role="region"
+              aria-label="Validaciones"
+            >
+              <table className="panel-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Regla</th>
+                    <th scope="col">Aprobados</th>
+                    <th scope="col">Fallidos</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="panel-hint">
-            Ejecutadas el {formatearFechaHora(new Date().toISOString())}.
-          </p>
-        </section>
+                </thead>
+                <tbody>
+                  {validaciones.map((regla) => (
+                    <tr key={regla.nombre}>
+                      <th scope="row">{regla.nombre}</th>
+                      <td>{regla.aprobados}</td>
+                      <td>
+                        {regla.fallidos > 0 ? (
+                          <Tag tone="warning">{regla.fallidos}</Tag>
+                        ) : (
+                          <Tag tone="success">0</Tag>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="panel-hint">
+              Ejecutadas el {formatearFechaHora(new Date().toISOString())}.
+            </p>
+          </section>
+        </div>
 
         <section className="panel-card panel-grid__wide" aria-labelledby="cobertura-titulo">
           <h3 id="cobertura-titulo">Cobertura de fuentes</h3>
           <p className="panel-hint">Servicios publicados y cuántos tienen una fuente oficial.</p>
           <div className="panel-coverage">
-            <TablaCobertura
-              titulo="Por categoría"
-              filas={cobertura.porCategoria.map((fila) => ({
-                ...fila,
-                nombre: categories[fila.categoria].label,
-              }))}
-            />
-            <TablaCobertura
-              titulo="Por comuna"
-              filas={cobertura.porComuna.map((fila) => ({
-                ...fila,
-                nombre: `Comuna ${fila.comuna}`,
-              }))}
-            />
+            <section className="panel-coverage__chart" aria-labelledby="cobertura-categoria-titulo">
+              <h4 id="cobertura-categoria-titulo">Por categoría</h4>
+              <TortaCobertura
+                grupo="categoria"
+                filas={cobertura.porCategoria.map((fila) => ({
+                  ...fila,
+                  nombre: categories[fila.categoria].label,
+                }))}
+              />
+            </section>
+            <section className="panel-coverage__chart" aria-labelledby="cobertura-comuna-titulo">
+              <h4 id="cobertura-comuna-titulo">Por comuna</h4>
+              <TortaCobertura
+                grupo="comuna"
+                filas={cobertura.porComuna.map((fila) => ({
+                  ...fila,
+                  nombre: `Comuna ${fila.comuna}`,
+                }))}
+              />
+            </section>
           </div>
         </section>
       </div>
@@ -314,62 +296,27 @@ function Incidencias({ incidencias }: { incidencias: ReturnType<typeof detectarI
           {visibles.map((incidencia) => (
             <li key={`${incidencia.servicioId}-${incidencia.tipo}`}>
               <div className="panel-issues__info">
-                <span className="panel-issues__name">
-                  {incidencia.nombre}
-                  <Tag tone="warning" icon="alert">
-                    {incidenciaLabels[incidencia.tipo]}
-                  </Tag>
-                </span>
+                <span className="panel-issues__name">{incidencia.nombre}</span>
                 <span className="panel-issues__action">{incidenciaAcciones[incidencia.tipo]}</span>
               </div>
-              <ButtonLink
-                to={`/panel/servicios/${incidencia.servicioId}`}
-                variant="secondary"
-                size="sm"
-                iconEnd="arrow-right"
-                aria-label={`Revisar ${incidencia.nombre}`}
-              >
-                Revisar
-              </ButtonLink>
+              <div className="panel-issues__review">
+                <Tag tone="warning" icon="alert">
+                  {incidenciaLabels[incidencia.tipo]}
+                </Tag>
+                <ButtonLink
+                  to={`/panel/servicios/${incidencia.servicioId}`}
+                  variant="secondary"
+                  size="sm"
+                  iconEnd="arrow-right"
+                  aria-label={`Revisar ${incidencia.nombre}`}
+                >
+                  Revisar
+                </ButtonLink>
+              </div>
             </li>
           ))}
         </ul>
       )}
     </section>
-  )
-}
-
-function TablaCobertura({
-  titulo,
-  filas,
-}: {
-  titulo: string
-  filas: { nombre: string; publicados: number; conFuenteOficial: number }[]
-}) {
-  return (
-    <table className="panel-table panel-table--compact">
-      <caption>{titulo}</caption>
-      <thead>
-        <tr>
-          <th scope="col">Grupo</th>
-          <th scope="col">Publicados</th>
-          <th scope="col">Con fuente oficial</th>
-        </tr>
-      </thead>
-      <tbody>
-        {filas.map((fila) => (
-          <tr key={fila.nombre}>
-            <th scope="row">{fila.nombre}</th>
-            <td>{fila.publicados}</td>
-            <td>
-              <span className="panel-ratio-cell">
-                {fila.conFuenteOficial}
-                <Proporcion parte={fila.conFuenteOficial} total={fila.publicados} />
-              </span>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
   )
 }

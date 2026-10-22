@@ -142,6 +142,18 @@ export function actualizarServicio(id: string, cambios: DatosServicio): Promise<
   })
 }
 
+/** Elimina un servicio no vigente y sus eventos para evitar referencias huérfanas. */
+export function eliminarServicio(id: string): Promise<void> {
+  return responder(() => {
+    const servicio = buscar(id)
+    if (servicio.estado !== 'no_vigente') {
+      throw new ErrorPanel('Solo se pueden eliminar servicios no vigentes.')
+    }
+    datos.servicios = datos.servicios.filter((item) => item.id !== id)
+    datos.eventos = datos.eventos.filter((evento) => evento.servicioId !== id)
+  })
+}
+
 /** Equivale a `POST /admin/services/{id}/transiciones`; rechaza las no permitidas (409). */
 export function cambiarEstado(
   id: string,
