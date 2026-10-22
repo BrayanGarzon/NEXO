@@ -8,7 +8,8 @@ import { SearchField } from '../../components/SearchField'
 import { BrujulaSection } from '../brujula/BrujulaSection'
 import { InformacionSection } from '../informacion/InformacionSection'
 import { TerritorioSection } from '../territorio/TerritorioSection'
-import { UpcomingSection } from '../upcoming/UpcomingSection'
+import { PasoSection } from '../paso/PasoSection'
+import { PausaSection } from '../pausa/PausaSection'
 import { FeaturedServices } from './FeaturedServices'
 import { quickLinks } from './homeContent'
 import { ModuleCards } from './ModuleCards'
@@ -86,7 +87,8 @@ export function HomePage() {
 
       <BrujulaSection />
       <TerritorioSection />
-      <UpcomingSection />
+      <PausaSection />
+      <PasoSection />
       <InformacionSection />
     </>
   )

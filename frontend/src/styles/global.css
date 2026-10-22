@@ -56,6 +56,11 @@ body {
   overflow-x: hidden;
 }
 
+/* El atributo hidden siempre oculta, aunque el componente defina su propio display. */
+[hidden] {
+  display: none !important;
+}
+
 img,
 svg {
   display: block;
