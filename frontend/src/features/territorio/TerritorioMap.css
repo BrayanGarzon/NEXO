@@ -1,0 +1,140 @@
+/* ---------- Contenedor del mapa (3D o vista simple) ---------- */
+
+.map-canvas__flat {
+  position: absolute;
+  inset: 0;
+}
+
+.map-canvas__loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--space-2);
+  background: var(--brand-menta);
+  color: var(--color-heading);
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-semibold);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .map-canvas__loading .icon {
+    animation: map-loading-spin 1.6s linear infinite;
+  }
+}
+
+@keyframes map-loading-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* Controles visibles: acercar, alejar, restablecer y cambiar de vista (44 px táctiles). */
+.map-toolbar {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+}
+
+.map-toolbar__button {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.75rem;
+  height: 2.75rem;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-heading);
+  box-shadow: var(--shadow-md);
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.map-toolbar__button:hover {
+  background: var(--brand-lila-soft);
+}
+
+.map-toolbar__button:focus-visible {
+  border-radius: var(--radius-pill);
+}
+
+.map-toolbar__button--text {
+  padding-inline: var(--space-4);
+  font-family: var(--font-display);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.map-canvas__notice {
+  position: absolute;
+  left: var(--space-4);
+  top: var(--space-4);
+  z-index: 1;
+  max-width: min(22rem, calc(100% - 9rem));
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  font-size: var(--font-size-sm);
+}
+
+.map-canvas__notice--center {
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  max-width: calc(100% - 2 * var(--space-4));
+  text-align: center;
+}
+
+.map-canvas--3d .map-canvas__badge {
+  z-index: 1;
+}
+
+.map-toolbar__short,
+.map-canvas__badge-short {
+  display: none;
+}
+
+/*
+ * Pantallas estrechas: controles en una columna de botones de 44 px y aviso en una línea.
+ * Los textos largos pasan a ser solo para lectores de pantalla.
+ */
+@media (max-width: 36rem) {
+  .map-toolbar {
+    top: var(--space-3);
+    right: var(--space-3);
+  }
+
+  .map-toolbar__button--text {
+    width: 2.75rem;
+    padding-inline: 0;
+    font-size: var(--font-size-xs);
+  }
+
+  .map-toolbar__long,
+  .map-canvas__badge-long {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .map-toolbar__short,
+  .map-canvas__badge-short {
+    display: inline;
+  }
+
+  .map-canvas__badge {
+    left: var(--space-3);
+    bottom: var(--space-3);
+    max-width: calc(100% - 2 * var(--space-3));
+  }
+}
